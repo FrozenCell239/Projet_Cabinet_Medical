@@ -41,7 +41,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="mt-5 mb-3 d-flex justify-content-between">
                             <h2 class="pull-left">Liste du personnel interne</h2>
-                            <a href="create.php" class="btn btn-success"><i class="bi bi-plus"></i> Ajouter</a>
+                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
                         </div>
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -99,18 +99,20 @@
                             </div>
                         </div>
                         <hr>
-                        <form action="manage.php" method="post">
-                            <h1>Ajouter un personnel</h1>
-                            <input type="text" name="name" placeholder="Prénom" required/><br>
-                            <input type="text" name="last_name" placeholder="Nom" required/><br>
-                            <input type="text" name="profession" placeholder="Profession" required/><br>
-                            <input type="text" name="user_login" placeholder="Identifiant" required/><br>
-                            <input type="password" name="password" placeholder="Mot de passe" required/><br>
-                            <input type="password" name="confirm_password" placeholder="Confirmation du mot de passe" required/><br>
-                            <input type="checkbox" name="admin"> Administrateur<br>
-                            <button type="submit" name="register">Ajouter</button>
-                        </form>
-                        <hr>
+                        <div id="add_form" class="collapse">
+                            <form action="manage.php" method="post">
+                                <h1>Ajouter un personnel</h1>
+                                <input type="text" name="name" placeholder="Prénom" required/><br>
+                                <input type="text" name="last_name" placeholder="Nom" required/><br>
+                                <input type="text" name="profession" placeholder="Profession" required/><br>
+                                <input type="text" name="user_login" placeholder="Identifiant" required/><br>
+                                <input type="password" name="password" placeholder="Mot de passe" required/><br>
+                                <input type="password" name="confirm_password" placeholder="Confirmation du mot de passe" required/><br>
+                                <input type="checkbox" name="admin"> Administrateur<br>
+                                <button type="submit" name="register">Ajouter</button>
+                            </form>
+                            <hr>
+                        </div>
                         <form action="manage.php" method="post">
                             <button type="submit" name="back_home">Revenir à la page principale</button>
                         </form>
