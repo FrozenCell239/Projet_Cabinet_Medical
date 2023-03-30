@@ -16,6 +16,7 @@
             include('server.php');
             if(!isset($_SESSION['profession'])){header("Location: index.php");};
             //if($_SESSION['admin'] == 1){include('serial_command.php');}; Currently unused.
+            if($_SESSION['admin'] == 1){include('access/command.php');};
         ?>
 
         <!--Others.-->
@@ -60,6 +61,9 @@
                                 header("Refresh: 0; url=manage.php");
 	                    	};
 	                    ?>
+                        <?php if($_SESSION['profession'] != 'secretaire'){ //Interface aux médecins. ?>
+                            <h2>Insérer emploi du temps ici.</h2>
+                        <?php }; ?>
                         <hr>
                     </div>
                 </div>
