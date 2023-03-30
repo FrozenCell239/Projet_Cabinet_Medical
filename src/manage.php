@@ -16,8 +16,28 @@
         </style>
 
         <!--JS scripts.-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+        <script><!-- //>Handling staff member deletion.
+            $(function(){
+                $('.remove').click(function(){
+                    var id = $(this).closest('tr').attr('id');
+                    if(confirm("Êtes-vous sûr(e) de vouloir retirer ce personnel de la liste ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
+                        $.ajax({
+                            url: 'delete.php?id=' + id,
+                            type: 'GET',
+                            success: function(data){
+                                alert(data);
+                                location.reload();
+                            },
+                            error: function(jqXHR, textStatus, errorThrown){
+                                alert('Error: ' + textStatus + ' - ' + errorThrown);
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
 
         <!--PHP scripts.-->
         <?php
@@ -63,15 +83,14 @@
                                         if($row['admin']){$is_admin = "Oui";}
                                         else{$is_admin = "Non";};
                                         echo(
-                                            "<tr>".
+                                            '<tr id="'.$row['id_personnel'].'">'.
                                             "<td>".$row['prenom_personnel']."</td>".
                                             "<td>".$row['nom_personnel']."</td>".
                                             "<td>".$row['identifiant']."</td>".
                                             "<td>".$row['profession']."</td>".
                                             "<td>".$is_admin."</td>".
                                             "<td>".
-                                            '<a href="update.php?what=\'1\'&id='.$row['id_personnel'].'" class="me-3"><span class="bi bi-pencil"></span></a>'.
-                                            '<a href="delete.php?what=\'1\'&id='.$row['id_personnel'].'"><span class="bi bi-trash"></span></a>'.
+                                            '<button class="btn btn-danger btn-sm remove">Delete</button>'.
                                             "</td>".
                                             "</tr>"
                                         );
@@ -81,7 +100,7 @@
                                 ?>
                             </tbody>
                         </table>
-                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <!--div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -97,11 +116,11 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div-->
                         <hr>
                         <div id="add_form" class="collapse">
                             <form action="manage.php" method="post">
-                                <h1>Ajouter un personnel</h1>
+                                <h2>Ajouter un personnel</h2>
                                 <input type="text" name="name" placeholder="Prénom" required/><br>
                                 <input type="text" name="last_name" placeholder="Nom" required/><br>
                                 <input type="text" name="profession" placeholder="Profession" required/><br>
