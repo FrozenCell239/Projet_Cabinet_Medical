@@ -9,7 +9,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!--JS scripts.-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
 
         <!--PHP scripts.-->
         <?php
@@ -18,7 +18,7 @@
 
         <!--Others.-->
         <title>Connexion</title>
-        <link rel="icon" type="image/x-icon" href="favicon.png"> <!--Favicon.-->
+        <link rel="icon" type="image/x-icon" href="../images/favicon.png"> <!--Favicon.-->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Permet l'adaptation de la page et la disposition de ses éléments à tous les terminaux.-->
     </head>
