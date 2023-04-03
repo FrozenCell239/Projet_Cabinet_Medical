@@ -6,7 +6,6 @@
         <!--Style sheets.-->
         <link rel="stylesheet" href="global.css"> <!--Customised style sheet.-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"> <!--Bootstrap 5.2.3.-->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
         <style>
             .wrapper{
                 width: 700px;
@@ -121,13 +120,13 @@
                         <div id="add_form" class="collapse">
                             <form action="staff_manage.php" method="post">
                                 <h2>Ajouter un personnel</h2>
-                                <input type="text" name="new_name" placeholder="Prénom" required/><br>
-                                <input type="text" name="new_last_name" placeholder="Nom" required/><br>
-                                <input type="text" name="new_profession" placeholder="Profession" required/><br>
-                                <input type="text" name="new_user_login" placeholder="Identifiant" required/><br>
-                                <input type="password" name="new_password" placeholder="Mot de passe" required/><br>
-                                <input type="password" name="new_confirm_password" placeholder="Confirmation du mot de passe" required/><br>
-                                <input type="checkbox" name="new_admin"> Administrateur<br>
+                                <input type="text" name="new_staff_name" placeholder="Prénom" required/><br>
+                                <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
+                                <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
+                                <input type="text" name="new_staff_user_login" placeholder="Identifiant" required/><br>
+                                <input type="password" name="new_staff_password" placeholder="Mot de passe" required/><br>
+                                <input type="password" name="new_staff_confirm_password" placeholder="Confirmation du mot de passe" required/><br>
+                                <input type="checkbox" name="new_staff_admin"> Administrateur<br>
                                 <button type="submit" name="staff_register">Ajouter</button>
                             </form>
                             <hr>
