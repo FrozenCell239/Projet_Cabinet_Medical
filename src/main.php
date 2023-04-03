@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="fr">
     <head>
         <!--Character encoding type declaration.-->
@@ -8,15 +9,15 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"> <!--Bootstrap 5.2.3.-->
 
         <!--JS scripts.-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
         <!--PHP scripts.-->
         <?php
             include('server.php');
             if(!isset($_SESSION['profession'])){header("Location: index.php");};
-            //if($_SESSION['admin'] == 1){include('serial_command.php');}; Currently unused.
-            if($_SESSION['admin'] == 1){include('access/command.php');};
+            ////if($_SESSION['admin'] == 1){include('serial_command.php');}; Currently unused.
+            //if($_SESSION['admin'] == 1){include('access/command.php');};
         ?>
 
         <!--Others.-->
@@ -44,24 +45,52 @@
                         </form>
                         <hr>
                         <form action="main.php" method="post">
-                            <button type="submit" name="go_to_register">Modifier la liste du personnel</button>
+                            <button type="submit" name="go_to_staff_manage">Liste du personnel</button>
+                        </form>
+                        <form action="main.php" method="post">
+                            <button type="submit" name="go_to_patients_manage">Liste des patients</button>
+                        </form>
+                        <form action="main.php" method="post">
+                            <button type="submit" name="go_to_rooms_manage">Liste des salles</button>
+                        </form>
+                        <form action="main.php" method="post">
+                            <button type="submit" name="go_to_access_manage">Gestion accès</button>
+                        </form>
+                        <form action="main.php" method="post">
+                            <button type="submit" name="go_to_rdv_manage">Gestion RDV</button>
                         </form>
                         <?php
                             };
-	                    	if(isset($_POST['door_unlock'])){
+                            if(isset($_POST['door_unlock'])){
                                 unset($_POST['door_unlock']);
-                                strikeOpen();
-	                    	};
+                                //strikeOpen();
+                            };
                             if(isset($_POST['door_open'])){
                                 unset($_POST['door_open']);
-                                doorOpen();
-	                    	};
-                            if(isset($_POST['go_to_register'])){
-                                unset($_POST['go_to_register']);
-                                header("Refresh: 0; url=manage.php");
-	                    	};
-	                    ?>
-                        <?php if($_SESSION['profession'] != 'secretaire'){ //Interface aux médecins. ?>
+                                //doorOpen();
+                            };
+                            if(isset($_POST['go_to_staff_manage'])){
+                                unset($_POST['go_to_staff_manage']);
+                                header("Refresh: 0; url=staff_manage.php");
+                            };
+                            if(isset($_POST['go_to_patients_manage'])){
+                                unset($_POST['go_to_patients_manage']);
+                                header("Refresh: 0; url=patients_manage.php");
+                            };
+                            if(isset($_POST['go_to_rooms_manage'])){
+                                unset($_POST['go_to_rooms_manage']);
+                                header("Refresh: 0; url=rooms_manage.php");
+                            };
+                            if(isset($_POST['go_to_access_manage'])){
+                                unset($_POST['go_to_access_manage']);
+                                header("Refresh: 0; url=access_manage.php");
+                            };
+                            if(isset($_POST['go_to_rdv_manage'])){
+                                unset($_POST['go_to_rdv_manage']);
+                                header("Refresh: 0; url=rdv_manage.php");
+                            };
+                        ?>
+                        <?php if($_SESSION['profession'] != 'secretaire'){ //Interface propre aux médecins. ?>
                             <h2>Insérer emploi du temps ici.</h2>
                         <?php }; ?>
                         <hr>
