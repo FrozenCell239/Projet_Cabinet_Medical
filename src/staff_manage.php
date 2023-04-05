@@ -52,7 +52,7 @@
     </head>
     <body>
         <header>
-            
+            <?php echo $navbar; ?>
         </header>
         <main>
             <div class="container">
@@ -75,7 +75,7 @@
                             </thead>
                             <tbody>
                                 <?php 
-                                    $staff_list_query = "SELECT id_personnel, prenom_personnel, nom_personnel, profession, identifiant, admin FROM personnel";
+                                    $staff_list_query = "SELECT * FROM personnel";
                                     $staff_list_query_result = mysqli_query($conn, $staff_list_query);
 
                                     while($row = mysqli_fetch_array($staff_list_query_result)){
@@ -87,7 +87,7 @@
                                             "<td>".$row['nom_personnel']."</td>".
                                             "<td>".$row['identifiant']."</td>".
                                             "<td>".$row['profession']."</td>".
-                                            "<td>".$is_admin."</td>".
+                                            "<td>$is_admin</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
                                             "</td>".
@@ -131,9 +131,6 @@
                             </form>
                             <hr>
                         </div>
-                        <form action="staff_manage.php" method="post">
-                            <button type="submit" name="back_home">Revenir à la page principale</button>
-                        </form>
                     </div>
                 </div>
             </div>
