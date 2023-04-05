@@ -19,7 +19,7 @@
         $check_query = "SELECT mdp_code FROM code_visiophone WHERE mdp_code='$value';";
     };
     if(isset($_GET['rt'])){
-        $value = sha1($_GET['rt']);
+        $value = base64_encode($_GET['rt']);
         $check_query = "SELECT id_badge, mdp_badge, actif FROM badges_visiophone WHERE mdp_badge='$value';";
     };
     $check_query_result = mysqli_query($conn, $check_query);
@@ -41,6 +41,7 @@
         enlog("Door opened with doorcode (".$_GET['dc'].").".PHP_EOL);
         echo '$';
     };
+    $_GET = array();
     unset($value);
     unset($check_query);
     unset($check_query_result);
