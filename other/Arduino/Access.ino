@@ -4,30 +4,29 @@
 #include "Relay.h" //Be careful about the path of this one if you downloaded it manually as I did.
 #include <MFRC522.h>
 
-#define PASSWORD_LENGTH 4 + 1
 #define BUZZER_PIN 49
 #define PIR_PIN 2
-#define SS_PIN 53
-#define RST_PIN 48
-#define DEBUG_PIN 4 //Declare this pin but put nothing on it in order to fix a weird bug on the Ethernet shield.
-const byte ROWS = 4, COLS = 4;
+#define SS_PIN 53 /*RFID*/
+#define RST_PIN 48 /*RFID*/
+#define DEBUG_PIN 4 //Declare this pin but put nothing on it to fix a bug on the Ethernet shield (pin reserved for SD card).
+const byte ROWS = 4, COLS = 4; /*Keypad.*/
 
 byte
     mac[] = {0xA8, 0x61, 0x0A, 0xAE, 0x96, 0x1D},
-    rowPins[ROWS] = {29, 27, 25, 23}, //{9, 8, 7, 6}
-    colPins[COLS] = {28, 26, 24, 22}, //{5, 4, 3, 2};
-    data_count = 0,
-    master_count = 0
+    rowPins[ROWS] = {29, 27, 25, 23}, /*Keypad.*/
+    colPins[COLS] = {28, 26, 24, 22}, /*Keypad.*/
+    data_count = 0, /*Keypad.*/
+    master_count = 0 /*Keypad.*/
 ;
 EthernetClient client;
-IPAddress ip(192, 168, 1, 177);
+IPAddress ip(192, 168, 1, 177); //Arduino board's IP.
 IPAddress dns(192, 168, 1, 1);
 char
-    reply,
-    customKey,
-    HOST_NAME[] = "192.168.1.69",
-    data[PASSWORD_LENGTH],
-    hexaKeys[ROWS][COLS] = {
+    reply, //Used to read the response from the server.
+    customKey, //Stores the last key pressed on keypad.
+    HOST_NAME[] = "192.168.1.70", //Server IP address/
+    data[11], //Doorcode can contain up to 10 characters.
+    hexaKeys[ROWS][COLS] = { /*Keypad.*/
         {'1', '2', '3', 'A'},
         {'4', '5', '6', 'B'},
         {'7', '8', '9', 'C'},
@@ -39,23 +38,20 @@ Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS)
 Relay strikeRelay(30);
 Relay doorRelay(31);
 MFRC522 rfid(SS_PIN, RST_PIN); //Instance of the class.
-MFRC522::MIFARE_Key key;
+MFRC522::MIFARE_Key key; /*RFID.*/
 String to_check;
 
 void setup(){
     Serial.begin(9600);
     Serial.println("\nStart init...");
-    pinMode(DEBUG_PIN, OUTPUT);
-    digitalWrite(DEBUG_PIN, HIGH);
+    pinMode(DEBUG_PIN, OUTPUT); /*Ethernet shield.*/
+    digitalWrite(DEBUG_PIN, HIGH); /*Ethernet shield.*/
     pinMode(BUZZER_PIN, OUTPUT);
     pinMode(PIR_PIN, INPUT);
     Ethernet.begin(mac, ip, dns); //Initializing the Ethernet shield not using DHCP.
     SPI.begin(); //Init SPI bus.
     rfid.PCD_Init(); //Init MFRC522.
     rfid.PCD_SetAntennaGain(rfid.RxGain_max); //Set antenna's gain to max to make it work correctly.
-    for(byte i = 0; i < 6; i++){
-        key.keyByte[i] = 0xFF;
-    };
     Serial.println("Inited !");
 };
 
@@ -67,15 +63,17 @@ void loop(){
     //        if(reply == '$'){unlockDoor();};
     //    };
     //};
-    //getOrder(); /**/
-    customKey = customKeypad.getKey();
-    if(customKey && customKey != '#'){
+    //getOrder();
+////Keypad.////////////////////////////////////////////////////////////////////////////////////////////
+    customKey = customKeypad.getKey(); /*Keypad.*/
+    if(customKey && customKey != '#'){ /*Keypad.*/
         data[data_count] = customKey;
         Serial.print(data[data_count++]);
     };
-    if(customKey == '#'){
+    if(customKey == '#'){ /*Keypad.*/
         doorcodeCheck();
     };
+////RFID.////////////////////////////////////////////////////////////////////////////////////////////
     if(!rfid.PICC_IsNewCardPresent()){return;}; //Resets the loop if no new card present on the reader. This saves the entire process when idle.
     if(!rfid.PICC_ReadCardSerial()){return;}; //Verify if the NUID has been readed.
     Serial.print(F("PICC type : "));
@@ -127,7 +125,7 @@ void openDoor(){
     delay(100);
 };
 
-void cheh(){
+void refused(){
     Serial.println("Accès refusé !");
     digitalWrite(BUZZER_PIN, HIGH);
     delay(1000);
@@ -135,7 +133,7 @@ void cheh(){
     delay(100);
 };
 
-void getOrder(){
+void getOrder(){ /*Une fonction que j'essaie de créer pour lire l'ordre venant du serveur.*/
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println("Waiting for order...");
         client.print("GET http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/command.php");
@@ -163,7 +161,7 @@ void getOrder(){
         client.stop(); //The server is disconnected, then stop the client.
         Serial.println("\n> Disconnected !");
         if(!opened){
-            cheh();
+            refused();
             Serial.println("No order received.");
         }
         else{
@@ -174,7 +172,7 @@ void getOrder(){
     else{Serial.println("\n> Connection failed !");}; //If not connected.
 };
 
-void doorcodeCheck(){
+void doorcodeCheck(){ /*Keypad.*/
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
         client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/access_checker.php?dc=");
@@ -197,7 +195,7 @@ void doorcodeCheck(){
         client.stop(); //The server is disconnected, then stop the client.
         Serial.println("\n> Disconnected !");
         if(!opened){
-            cheh();
+            refused();
         }
         else{opened = false;};
     }
@@ -207,7 +205,7 @@ void doorcodeCheck(){
     };
 };
 
-void rfidCheck(){
+void rfidCheck(){ /*RFID*/
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
         client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/access_checker.php?rt=");
@@ -230,7 +228,7 @@ void rfidCheck(){
         client.stop(); //The server is disconnected, then stop the client.
         Serial.println("\n> Disconnected !");
         if(!opened){
-            cheh();
+            refused();
         }
         else{opened = false;};
     }
@@ -238,7 +236,7 @@ void rfidCheck(){
     to_check = "";
 };
 
-void printDec(byte *buffer, byte bufferSize){ //Helper routine to dump a byte array as dec values to Serial.
+void printDec(byte *buffer, byte bufferSize){ /*RFID*/ //Helper routine to dump a byte array as dec values to Serial.
     for(byte i = 0; i < bufferSize; i++){
         Serial.print(buffer[i] < 0x10 ? " 0" : " ");
         Serial.print(buffer[i], DEC);
