@@ -52,7 +52,7 @@
     </head>
     <body>
         <header>
-            
+            <?php echo $navbar; ?>
         </header>
         <main>
             <div class="container">
@@ -114,9 +114,6 @@
                             </form>
                             <hr>
                         </div>
-                        <form action="rooms_manage.php" method="post">
-                            <button type="submit" name="back_home">Revenir à la page principale</button>
-                        </form>
                     </div>
                 </div>
             </div>
