@@ -1,14 +1,41 @@
 <?php
+    $navbar ='
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="main.php">&#8962;</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="staff_manage.php">Personnel</a></li>
+                                <li><a class="dropdown-item" href="patients_manage.php">Patients</a></li>
+                                <li><a class="dropdown-item" href="rooms_manage.php">Salles</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestion</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="rdv_manage.php">Rendez-vous</a></li>
+                                <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
+                            </ul>
+                        </li>    
+                    </ul>
+                    <form class="d-flex" action="logout.php" method="post">
+                        <button class="btn btn-primary" type="submit">Se déconnecter</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    ';
+
     session_start();
 
     $errors = array(); //Used to collect errors if some happen.
     $conn = mysqli_connect('localhost:3307', 'root', '', 'cabinet'); //On Debian Linux : $conn = mysqli_connect('localhost', 'phpmyadmin', 'phpmyadmin', 'cabinet');
-    
-    # Goes back on main page when thecback home button is pressed.
-    if(isset($_POST['back_home'])){
-        $_POST = array();
-        header("Refresh: 0; url=main.php");
-    };
 
     # Staff registration
     if(isset($_POST['staff_register'])){
@@ -17,10 +44,17 @@
         $new_profession = trim($_POST['new_staff_profession']);
         $new_user_login = trim($_POST['new_staff_user_login']);
         $new_password = sha1($_POST['new_staff_password']);
+        $new_confirm_password = sha1($_POST['new_staff_confirm_password']);
         if(isset($_POST['new_staff_admin'])){$new_admin = 1;}
         else{$new_admin = 0;};
-        $new_confirm_password = sha1($_POST['new_staff_confirm_password']);
-        unset($_POST['staff_register']);
+        if($new_password != $new_confirm_password){
+            array_push($errors, "Les mots de passe ne correspondent pas.");
+            ?>
+            <script>
+                alert("Les mots de passe ne correspondent pas.");
+            </script>
+            <?php
+        };
         $login_check_query = "SELECT id_personnel FROM personnel WHERE identifiant='$new_user_login'";
         $login_check_query_result = mysqli_query($conn, $login_check_query);
         if(mysqli_num_rows($login_check_query_result) > 0){ //Check if user login already exist.
@@ -73,7 +107,6 @@
         $patient_name = trim($_POST['new_patient_name']);
         $patient_last_name = trim($_POST['new_patient_last_name']);
         if(isset($_POST['new_patient_need'])){$patient_need = mysqli_real_escape_string($conn, trim($_POST['new_patient_need']));}
-        unset($_POST['staff_register']);
         $patient_check_query = "SELECT id_patient FROM patients WHERE prenom_patient='$patient_name' AND nom_patient='$patient_last_name'";
         $patient_check_query_result = mysqli_query($conn, $patient_check_query);
         if(mysqli_num_rows($patient_check_query_result) != 0){ //Check if patient already exist.
@@ -95,26 +128,65 @@
     if(isset($_POST['login'])){ //Check if Login button is pressed.
         $password = sha1($_POST['psswrd']);
         $login = trim($_POST['user_login']);
-        if(count($errors) == 0){ //If no errors, then log in.
-            $login_query = "SELECT identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE identifiant='$login' AND mot_de_passe='$password';";
-            $login_query_result = mysqli_query($conn, $login_query);
-            $select_row = mysqli_fetch_array($login_query_result, MYSQLI_ASSOC);
-            if(mysqli_num_rows($login_query_result) > 0){
-                $_SESSION['username'] = $select_row['identifiant'];
-                $_SESSION['profession'] = $select_row['profession'];
-                $_SESSION['name'] = $select_row['prenom_personnel'];
-                $_SESSION['last_name'] = $select_row['nom_personnel'];
-                $_SESSION['admin'] = $select_row['admin'];
-                $_POST = array();
-                header("Refresh: 0; url=main.php");
-            }
-            else{
-                ?>
-                <script>
-                    alert("Incorrect username or password.");
-                </script>
-                <?php
-            };
+        $login_query = "SELECT identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE identifiant='$login' AND mot_de_passe='$password';";
+        $login_query_result = mysqli_query($conn, $login_query);
+        $select_row = mysqli_fetch_array($login_query_result, MYSQLI_ASSOC);
+        if(mysqli_num_rows($login_query_result) > 0){
+            $_SESSION['username'] = $select_row['identifiant'];
+            $_SESSION['profession'] = $select_row['profession'];
+            $_SESSION['name'] = $select_row['prenom_personnel'];
+            $_SESSION['last_name'] = $select_row['nom_personnel'];
+            $_SESSION['admin'] = $select_row['admin'];
+            $_POST = array();
+            header("Refresh: 0; url=main.php");
+        }
+        else{
+            ?>
+            <script>
+                alert("Identifiant ou mot de passe incorrect.");
+            </script>
+            <?php
+        };
+        $_POST = array();
+    };
+
+    # Doorcode changing
+    if(isset($_POST['change_doorcode'])){
+        $current_doorcode = sha1($_POST['current_doorcode']);
+        $new_doorcode = sha1($_POST['new_doorcode']);
+        $confirm_new_doorcode = sha1($_POST['confirm_new_doorcode']);
+        if($new_doorcode != $confirm_new_doorcode){ //Checks if new doorcodes match.
+            array_push($errors, "Les codes ne correspondent pas.");
+            ?>
+            <script>
+                alert("Les codes ne correspondent pas.");
+            </script>
+            <?php
+        };
+        $current_doorcode_check = "SELECT * FROM code_visiophone WHERE mdp_code='$current_doorcode';";
+        $current_doorcode_check_result = mysqli_query($conn, $current_doorcode_check);
+        if(mysqli_num_rows($current_doorcode_check_result) == 0){ //Checks if typed current doorcode exists.
+            array_push($errors, "Le code actuel saisi est incorrect.");
+            ?>
+            <script>
+                alert("Le code actuel saisi est incorrect.");
+            </script>
+            <?php
+        }
+        else{
+            $row = mysqli_fetch_array($current_doorcode_check_result, MYSQLI_ASSOC);
+            $doorcode_id = $row['id_code'];
+        };
+        //mysqli_free_result($current_doorcode_check_result);
+        if(count($errors) == 0){
+            $doorcode_change_query = "UPDATE code_visiophone SET mdp_code='$new_doorcode' WHERE id_code='$doorcode_id';";
+            $doorcode_change_query_result = mysqli_query($conn, $doorcode_change_query);
+            ?>
+            <script>
+                alert("Code modifié avec succès.");
+            </script>
+            <?php
+            //mysqli_free_result($doorcode_change_query_result);
         };
         $_POST = array();
     };
