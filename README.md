@@ -1,5 +1,5 @@
 # Projet Cabinet Medical
-Projet développé dans le cadre de mon projet de deuxième BTS. Essentiellement axé UX et Backend. **Toujours en cours de développement.**
+Projet développé dans le cadre de mon projet de deuxième BTS. Essentiellement Backend. **Toujours en cours de développement.**
 
 ## Description :
 Interface sous forme d'applicatif web destinée à la gestion d'un cabinet médical.
