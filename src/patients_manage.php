@@ -67,13 +67,12 @@
                                 <tr>
                                     <th>Prénom</th>
                                     <th>Nom</th>
-                                    <th>Besoin</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                    $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient, besoin FROM patients";
+                                    $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient FROM patients";
                                     $patient_list_query_result = mysqli_query($conn, $patient_list_query);
 
                                     while($row = mysqli_fetch_array($patient_list_query_result)){
@@ -81,7 +80,6 @@
                                             '<tr id="'.$row['id_patient'].'">'.
                                             "<td>".$row['prenom_patient']."</td>".
                                             "<td>".$row['nom_patient']."</td>".
-                                            "<td>".$row['besoin']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
                                             "</td>".
