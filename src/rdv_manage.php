@@ -104,12 +104,12 @@
                         </div-->
                         <hr>
                         <div id="add_form" class="collapse">
-                            <form action="staff_manage.php" method="post">
+                            <form action="rdv_manage.php" method="post">
                                 <h2>Créer un rendez-vous</h2>
-                                <input type="text" name="" placeholder="Prénom patient" required/><br>
-                                <input type="text" name="" placeholder="Nom patient" required/><br>
-                                <input type="text" name="" placeholder="Besoin patient" required/><br>
-                                <select name="doctor_select" id="doctor_select" required>
+                                <input type="text" name="patient_name" placeholder="Prénom patient" required/><br>
+                                <input type="text" name="patient_last_name" placeholder="Nom patient" required/><br>
+                                <input type="text" name="patient_need" placeholder="Besoin patient" required/><br>
+                                <select name="doctor_select" required>
                                     <option value="">-- Choisir un médecin --</option>
                                     <?php
                                         $doctor_select_query = "SELECT id_personnel, prenom_personnel, nom_personnel, profession FROM personnel;";
@@ -127,7 +127,7 @@
                                         };
                                     ?>
                                 </select><br>
-                                <select name="room_select" id="room_select" required>
+                                <select name="room_select" required>
                                     <option value="">-- Choisir une salle --</option>
                                     <?php
                                         $room_select_query = "SELECT id_salle, nom_salle FROM salles;";
