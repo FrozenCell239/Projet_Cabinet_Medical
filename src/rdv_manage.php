@@ -45,21 +45,41 @@
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Patient</th>
-                                    <th>Médecin</th>
-                                    <th>Besoin</th>
-                                    <th>Salle</th>
-                                    <th>Date et heure</th>
+                                    <th>Patient</th> <!--Nom prénom DE patient-->
+                                    <th>Besoin</th> <!--Besoin DE patient-->
+                                    <th>Médecin</th> <!--Nom prénom DE médecin-->
+                                    <th>Salle</th> <!--Nom DE salle-->
+                                    <th>Date et heure</th> <!--Date_heure DE réservations-->
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                    $rdv_query = "SELECT * FROM reservations;";
+                                    $rdv_query = "
+                                        SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
+                                        FROM reservations
+                                        INNER JOIN patients
+                                        ON reservations.id_patient = patients.id_patient
+                                        INNER JOIN personnel
+                                        ON reservations.id_personnel = personnel.id_personnel
+                                        INNER JOIN salles
+                                        ON reservations.id_salle = salles.id_salle
+                                    ;";
                                     $rdv_query_result = mysqli_query($conn, $rdv_query);
 
-                                    while($row = mysqli_fetch_array($rdv_query_result)){
-                                        //echo();
+                                    while($rdv_row = mysqli_fetch_array($rdv_query_result)){
+                                        echo(
+                                            '<tr id="'.$rdv_row['id_reservation'].'">'.
+                                            "<td>".$rdv_row['prenom_patient']." ".$rdv_row['nom_patient']."</td>".
+                                            "<td>".$rdv_row['besoin']."</td>".
+                                            "<td>".$rdv_row['prenom_personnel']." ".$rdv_row['nom_personnel']."</td>".
+                                            "<td>".$rdv_row['nom_salle']."</td>".
+                                            "<td>".$rdv_row['date_heure']."</td>".
+                                            "<td>".
+                                            '<button class="btn btn-danger btn-sm remove">Action</button>'.
+                                            "</td>".
+                                            "</tr>"
+                                        );
                                     };
                                     mysqli_free_result($rdv_query_result); //Free result set.
                                 ?>
@@ -124,7 +144,6 @@
                                 <input type="datetime-local" name="rdv_datetime" required/><br>
                                 <button type="submit" name="rdv_register">Créer</button>
                             </form>
-                            <hr>
                         </div>
                     </div>
                 </div>
