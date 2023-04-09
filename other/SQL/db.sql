@@ -26,6 +26,7 @@ CREATE TABLE `personnel`(
     `profession` VARCHAR(42) NOT NULL,
     `identifiant` VARCHAR(42) NOT NULL,
     `mot_de_passe` VARCHAR(42) NOT NULL,
+    `date_mdp` DATETIME NOT NULL,
     `admin` BOOLEAN NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
