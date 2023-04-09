@@ -2,7 +2,7 @@
     $navbar ='
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="main.php">&#8962;</a>
+                <a class="navbar-brand" href="main.php">Accueil</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -104,10 +104,9 @@
 
     # Patient registration
     if(isset($_POST['patient_register'])){
-        $patient_name = trim($_POST['new_patient_name']);
-        $patient_last_name = trim($_POST['new_patient_last_name']);
-        if(isset($_POST['new_patient_need'])){$patient_need = mysqli_real_escape_string($conn, trim($_POST['new_patient_need']));}
-        $patient_check_query = "SELECT id_patient FROM patients WHERE prenom_patient='$patient_name' AND nom_patient='$patient_last_name'";
+        $new_patient_name = trim($_POST['new_patient_name']);
+        $new_patient_last_name = trim($_POST['new_patient_last_name']);
+        $patient_check_query = "SELECT id_patient FROM patients WHERE prenom_patient='$new_patient_name' AND nom_patient='$new_patient_last_name'";
         $patient_check_query_result = mysqli_query($conn, $patient_check_query);
         if(mysqli_num_rows($patient_check_query_result) != 0){ //Check if patient already exist.
             array_push($errors, "Ce(tte) patient(e) est déjà répertorié(e).");
@@ -118,7 +117,7 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-                $insert_query = "INSERT INTO patients (prenom_patient, nom_patient, besoin) VALUES ('$patient_name', '$patient_last_name', '$patient_need');";
+                $insert_query = "INSERT INTO patients (prenom_patient, nom_patient) VALUES ('$new_patient_name', '$new_patient_last_name');";
                 $insert_query_result = mysqli_query($conn, $insert_query);
         };
         $_POST = array();
@@ -188,6 +187,30 @@
             <?php
             //mysqli_free_result($doorcode_change_query_result);
         };
+        $_POST = array();
+    };
+
+    # New rendez-vous creating
+    if(isset($_POST['rdv_register'])){
+        $patient_name = $_POST['patient_name'];
+        $patient_last_name = $_POST['patient_last_name'];
+        $patient_need = mysqli_real_escape_string($conn, trim($_POST['patient_need']));
+        $doctor_select = $_POST['doctor_select'];
+        $room_select = $_POST['room_select'];
+        $new_rdv_datetime = $_POST['rdv_datetime'];
+        $get_patient_id_query = "SELECT id_patient FROM patients WHERE prenom_patient = '$patient_name' AND nom_patient = '$patient_last_name';";
+        $get_patient_id_query_result = mysqli_query($conn, $get_patient_id_query);
+        $get_patient_id_row = mysqli_fetch_array($get_patient_id_query_result, MYSQLI_ASSOC);
+        $patient_id = $get_patient_id_row['id_patient'];
+        $new_rdv_query = "INSERT INTO reservations (id_patient, id_personnel, id_salle, date_heure, besoin) VALUES ($patient_id, $doctor_select, $room_select, '$new_rdv_datetime', '$patient_need');";
+        $new_rdv_query_result = mysqli_query($conn, $new_rdv_query);
+        ?>
+            <script>
+                alert("Rendez-vous ajouté avec succès.");
+            </script>
+        <?php
+        //À ajouter : On doit vérifier que le patient existe !
+        //À ajouter : On doit update le besoin du patient avec le nouveau besoin !
         $_POST = array();
     };
 ?>
