@@ -14,6 +14,7 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
+            if(isset($_SESSION['profession'])){header("Location: main.php");};
         ?>
 
         <!--Others.-->
