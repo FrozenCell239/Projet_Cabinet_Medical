@@ -14,9 +14,8 @@ CREATE TABLE `code_visiophone`(
 
 CREATE TABLE `patients`(
     `id_patient` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `nom_patient` VARCHAR(42) NOT NULL,
     `prenom_patient` VARCHAR(42) NOT NULL,
-    `besoin` VARCHAR(42) NOT NULL
+    `nom_patient` VARCHAR(42) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `personnel`(
@@ -35,6 +34,7 @@ CREATE TABLE `reservations`(
     `id_personnel` INT(11) NOT NULL,
     `id_salle` INT(11) NOT NULL,
     `id_patient` INT(11) NOT NULL,
+    `besoin` VARCHAR(42) NOT NULL,
     `date_heure` DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
