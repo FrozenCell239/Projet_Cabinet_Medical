@@ -83,7 +83,6 @@
                                             ORDER BY reservations.date_heure ASC
                                         ;";
                                         $rdv_query_result = mysqli_query($conn, $rdv_query);
-
                                         while($rdv_row = mysqli_fetch_array($rdv_query_result)){
                                             echo(
                                                 '<tr id="'.$rdv_row['id_reservation'].'">'.
