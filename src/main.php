@@ -56,7 +56,48 @@
                             };
                         ?>
                         <?php if($_SESSION['profession'] != 'secretaire'){ //Interface propre aux médecins. ?>
-                            <h2>Insérer emploi du temps ici.</h2>
+                            <div class="mt-5 mb-3 d-flex justify-content-between">
+                                <h2 class="pull-left">Vos prochains rendez-vous</h2>
+                            </div>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Besoin</th>
+                                        <th>Salle</th>
+                                        <th>Date et heure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                        $rdv_query = "
+                                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
+                                            FROM reservations
+                                            INNER JOIN personnel
+                                            ON reservations.id_personnel = personnel.id_personnel
+                                            INNER JOIN patients
+                                            ON reservations.id_patient = patients.id_patient
+                                            INNER JOIN salles
+                                            ON reservations.id_salle = salles.id_salle
+                                            WHERE personnel.id_personnel = '".$_SESSION['user_id']."'
+                                            ORDER BY reservations.date_heure ASC
+                                        ;";
+                                        $rdv_query_result = mysqli_query($conn, $rdv_query);
+
+                                        while($rdv_row = mysqli_fetch_array($rdv_query_result)){
+                                            echo(
+                                                '<tr id="'.$rdv_row['id_reservation'].'">'.
+                                                "<td>".$rdv_row['prenom_patient']." ".$rdv_row['nom_patient']."</td>".
+                                                "<td>".$rdv_row['besoin']."</td>".
+                                                "<td>".$rdv_row['nom_salle']."</td>".
+                                                "<td>".$rdv_row['date_heure']."</td>".
+                                                "</tr>"
+                                            );
+                                        };
+                                        mysqli_free_result($rdv_query_result); //Free result set.
+                                    ?>
+                                </tbody>
+                            </table>
                         <?php }; ?>
                         <hr>
                     </div>
