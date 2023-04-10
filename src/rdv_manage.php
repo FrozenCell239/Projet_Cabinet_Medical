@@ -1,156 +1,223 @@
-<html lang="fr">
-    <head>
-        <!--Character encoding type declaration.-->
-        <meta charset="utf-8">
+<?php
+    function sqlGetID($BDD, $QUERY, $IDNAME){
+        $get_id_query_result = mysqli_query($BDD, $QUERY);
+        $get_id_row = mysqli_fetch_array($get_id_query_result, MYSQLI_ASSOC);
+        if(isset($get_id_row[$IDNAME])){return $get_id_row[$IDNAME];}
+        else{return -1;};
+    };
 
-        <!--Style sheets.-->
-        <link rel="stylesheet" href="global.css"> <!--Customised style sheet.-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"> <!--Bootstrap 5.2.3.-->
-        <style>
-            .wrapper{
-                width: 700px;
-                margin: 0 auto;
-            }
-            table tr td:last-child{width: 120px;}
-        </style>
-
-        <!--JS scripts.-->
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-
-        <!--PHP scripts.-->
-        <?php
-            include('server.php');
-            if($_SESSION['admin'] == 0 || !isset($_SESSION['profession'])){header("Location: index.php");};
-        ?>
-
-        <!--Others.-->
-        <title>Gestion des rendez-vous</title>
-        <link rel="icon" type="image/x-icon" href="../images/favicon.png"> <!--Favicon.-->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Permet l'adaptation de la page et la disposition de ses éléments à tous les terminaux.-->
-    </head>
-    <body>
-        <header>
-            <?php echo $navbar; ?>
-        </header>
-        <main>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="mt-5 mb-3 d-flex justify-content-between">
-                            <h2 class="pull-left">Rendez-vous à venir</h2>
-                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Ajouter</button>
-                        </div>
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Patient</th> <!--Nom prénom DE patient-->
-                                    <th>Besoin</th> <!--Besoin DE patient-->
-                                    <th>Médecin</th> <!--Nom prénom DE médecin-->
-                                    <th>Salle</th> <!--Nom DE salle-->
-                                    <th>Date et heure</th> <!--Date_heure DE réservations-->
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                    $rdv_query = "
-                                        SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
-                                        FROM reservations
-                                        INNER JOIN patients
-                                        ON reservations.id_patient = patients.id_patient
-                                        INNER JOIN personnel
-                                        ON reservations.id_personnel = personnel.id_personnel
-                                        INNER JOIN salles
-                                        ON reservations.id_salle = salles.id_salle
-                                    ;";
-                                    $rdv_query_result = mysqli_query($conn, $rdv_query);
-
-                                    while($rdv_row = mysqli_fetch_array($rdv_query_result)){
-                                        echo(
-                                            '<tr id="'.$rdv_row['id_reservation'].'">'.
-                                            "<td>".$rdv_row['prenom_patient']." ".$rdv_row['nom_patient']."</td>".
-                                            "<td>".$rdv_row['besoin']."</td>".
-                                            "<td>".$rdv_row['prenom_personnel']." ".$rdv_row['nom_personnel']."</td>".
-                                            "<td>".$rdv_row['nom_salle']."</td>".
-                                            "<td>".$rdv_row['date_heure']."</td>".
-                                            "<td>".
-                                            '<button class="btn btn-danger btn-sm remove">Action</button>'.
-                                            "</td>".
-                                            "</tr>"
-                                        );
-                                    };
-                                    mysqli_free_result($rdv_query_result); //Free result set.
-                                ?>
-                            </tbody>
-                        </table>
-                        <!--div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Avertissement</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ? Cette action est irréversible et n\'engage aucune autre responsabilité que la vôtre.
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                        <button type="button" class="btn btn-primary">Confirmer</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div-->
-                        <hr>
-                        <div id="add_form" class="collapse">
-                            <form action="rdv_manage.php" method="post">
-                                <h2>Créer un rendez-vous</h2>
-                                <input type="text" name="patient_name" placeholder="Prénom patient" required/><br>
-                                <input type="text" name="patient_last_name" placeholder="Nom patient" required/><br>
-                                <input type="text" name="patient_need" placeholder="Besoin patient" required/><br>
-                                <select name="doctor_select" required>
-                                    <option value="">-- Choisir un médecin --</option>
-                                    <?php
-                                        $doctor_select_query = "SELECT id_personnel, prenom_personnel, nom_personnel, profession FROM personnel;";
-                                        $doctor_select_query_result = mysqli_query($conn, $doctor_select_query);
-                                        while($doctor_select_row = mysqli_fetch_array($doctor_select_query_result)){
-                                            if($doctor_select_row['profession'] != 'secretaire'){
-                                                echo(
-                                                    '<option value="'.$doctor_select_row['id_personnel'].'">'.
-                                                    $doctor_select_row['prenom_personnel']." ".
-                                                    $doctor_select_row['nom_personnel']." (".
-                                                    $doctor_select_row['profession'].
-                                                    ")</option>"
-                                                );
-                                            };
-                                        };
-                                    ?>
-                                </select><br>
-                                <select name="room_select" required>
-                                    <option value="">-- Choisir une salle --</option>
-                                    <?php
-                                        $room_select_query = "SELECT id_salle, nom_salle FROM salles;";
-                                        $room_select_query_result = mysqli_query($conn, $room_select_query);
-                                        while($room_select_row = mysqli_fetch_array($room_select_query_result)){
-                                            echo(
-                                                '<option value="'.$room_select_row['id_salle'].'">'.
-                                                $room_select_row['nom_salle'].
-                                                "</option>"
-                                            );
-                                        };
-                                    ?>
-                                </select><br>
-                                <input type="datetime-local" name="rdv_datetime" required/><br>
-                                <button type="submit" name="rdv_register">Créer</button>
-                            </form>
-                        </div>
-                    </div>
+    $navbar ='
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="main.php">Accueil</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="staff_manage.php">Personnel</a></li>
+                                <li><a class="dropdown-item" href="patients_manage.php">Patients</a></li>
+                                <li><a class="dropdown-item" href="rooms_manage.php">Salles</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestion</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="rdv_manage.php">Rendez-vous</a></li>
+                                <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
+                            </ul>
+                        </li>    
+                    </ul>
+                    <form class="d-flex" action="logout.php" method="post">
+                        <button class="btn btn-primary" type="submit">Se déconnecter</button>
+                    </form>
                 </div>
             </div>
-        </main>
-        <footer>
-            <?php mysqli_close($conn); //Close the connection to the database. ?>
-        </footer>
-    </body>
-</html>
+        </nav>
+    ';
+
+    session_start();
+
+    $errors = array(); //Used to collect errors if some happen.
+    $conn = mysqli_connect('localhost:3307', 'root', '', 'cabinet'); //On Debian Linux : $conn = mysqli_connect('localhost', 'phpmyadmin', 'phpmyadmin', 'cabinet');
+
+    # Staff registration
+    if(isset($_POST['staff_register'])){
+        $new_name = trim($_POST['new_staff_name']);
+        $new_last_name = trim($_POST['new_staff_last_name']);
+        $new_profession = trim($_POST['new_staff_profession']);
+        $new_user_login = trim($_POST['new_staff_user_login']);
+        $new_password = sha1($_POST['new_staff_password']);
+        $new_confirm_password = sha1($_POST['new_staff_confirm_password']);
+        if(isset($_POST['new_staff_admin'])){$new_admin = 1;}
+        else{$new_admin = 0;};
+        if($new_password != $new_confirm_password){
+            array_push($errors, "Les mots de passe ne correspondent pas.");
+            ?>
+            <script>
+                alert("Les mots de passe ne correspondent pas.");
+            </script>
+            <?php
+        };
+        $login_check_query = "SELECT id_personnel FROM personnel WHERE identifiant='$new_user_login'";
+        $login_check_query_result = mysqli_query($conn, $login_check_query);
+        if(mysqli_num_rows($login_check_query_result) > 0){ //Check if user login already exist.
+              array_push($errors, "Identifiant déjà utilisé.");
+            ?>
+            <script>
+                alert("Identifiant déjà utilisé.");
+            </script>
+            <?php
+        };
+        $user_check_query = "SELECT id_personnel FROM personnel WHERE prenom_personnel='$new_name' AND nom_personnel='$new_last_name'";
+        $user_check_query_result = mysqli_query($conn, $user_check_query);
+        if(mysqli_num_rows($user_check_query_result) != 0){ //Check if user already exist.
+              array_push($errors, "Cette personne est déjà répertoriée.");
+            ?>
+            <script>
+                alert("Cette personne est déjà répertoriée.");
+            </script>
+            <?php
+        };
+        if(count($errors) == 0){ //If no errors, register.
+              $insert_query = "INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mot_de_passe, admin) VALUES ('$new_name', '$new_last_name', '$new_profession', '$new_user_login', '$new_password', '$new_admin');";
+              $insert_query_result = mysqli_query($conn, $insert_query);
+        };
+        $_POST = array();
+    };
+
+	# Room registration
+	if(isset($_POST['room_register'])){
+        $new_room_name = trim($_POST['new_room_name']);
+        $room_check_query = "SELECT id_salle FROM salles WHERE nom_salle='$new_room_name'";
+        $room_check_query_result = mysqli_query($conn, $room_check_query);
+        if(mysqli_num_rows($room_check_query_result) != 0){ //Check if room already exist.
+              array_push($errors, "Cette salle est déjà répertoriée.");
+            ?>
+            <script>
+                alert("Cette salle est déjà répertoriée.");
+            </script>
+            <?php
+        };
+        if(count($errors) == 0){ //If no errors, register.
+              $insert_query = "INSERT INTO salles (nom_salle) VALUES ('$new_room_name');";
+              $insert_query_result = mysqli_query($conn, $insert_query);
+        };
+        $_POST = array();
+    };
+
+    # Patient registration
+    if(isset($_POST['patient_register'])){
+        $new_patient_name = trim($_POST['new_patient_name']);
+        $new_patient_last_name = trim($_POST['new_patient_last_name']);
+        $patient_check_query = "SELECT id_patient FROM patients WHERE prenom_patient='$new_patient_name' AND nom_patient='$new_patient_last_name'";
+        $patient_check_query_result = mysqli_query($conn, $patient_check_query);
+        if(mysqli_num_rows($patient_check_query_result) != 0){ //Check if patient already exist.
+            array_push($errors, "Ce(tte) patient(e) est déjà répertorié(e).");
+            ?>
+            <script>
+                alert("Ce(tte) patient(e) est déjà répertorié(e).");
+            </script>
+            <?php
+        };
+        if(count($errors) == 0){ //If no errors, register.
+                $insert_query = "INSERT INTO patients (prenom_patient, nom_patient) VALUES ('$new_patient_name', '$new_patient_last_name');";
+                $insert_query_result = mysqli_query($conn, $insert_query);
+        };
+        $_POST = array();
+    };
+
+    # Login
+    if(isset($_POST['login'])){ //Check if Login button is pressed.
+        $password = sha1($_POST['psswrd']);
+        $login = trim($_POST['user_login']);
+        $login_query = "SELECT identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE identifiant='$login' AND mot_de_passe='$password';";
+        $login_query_result = mysqli_query($conn, $login_query);
+        $select_row = mysqli_fetch_array($login_query_result, MYSQLI_ASSOC);
+        if(mysqli_num_rows($login_query_result) > 0){
+            $_SESSION['username'] = $select_row['identifiant'];
+            $_SESSION['profession'] = $select_row['profession'];
+            $_SESSION['name'] = $select_row['prenom_personnel'];
+            $_SESSION['last_name'] = $select_row['nom_personnel'];
+            $_SESSION['admin'] = $select_row['admin'];
+            $_POST = array();
+            header("Refresh: 0; url=main.php");
+        }
+        else{
+            ?>
+            <script>
+                alert("Identifiant ou mot de passe incorrect.");
+            </script>
+            <?php
+        };
+        $_POST = array();
+    };
+
+    # Doorcode changing
+    if(isset($_POST['change_doorcode'])){
+        $current_doorcode = sha1($_POST['current_doorcode']);
+        $new_doorcode = sha1($_POST['new_doorcode']);
+        $confirm_new_doorcode = sha1($_POST['confirm_new_doorcode']);
+        if($new_doorcode != $confirm_new_doorcode){ //Checks if new doorcodes match.
+            array_push($errors, "Les codes ne correspondent pas.");
+            ?>
+            <script>
+                alert("Les codes ne correspondent pas.");
+            </script>
+            <?php
+        };
+        $current_doorcode_check = "SELECT * FROM code_visiophone WHERE mdp_code='$current_doorcode';";
+        $current_doorcode_check_result = mysqli_query($conn, $current_doorcode_check);
+        if(mysqli_num_rows($current_doorcode_check_result) == 0){ //Checks if typed current doorcode exists.
+            array_push($errors, "Le code actuel saisi est incorrect.");
+            ?>
+            <script>
+                alert("Le code actuel saisi est incorrect.");
+            </script>
+            <?php
+        }
+        else{
+            $row = mysqli_fetch_array($current_doorcode_check_result, MYSQLI_ASSOC);
+            $doorcode_id = $row['id_code'];
+        };
+        //mysqli_free_result($current_doorcode_check_result);
+        if(count($errors) == 0){
+            $doorcode_change_query = "UPDATE code_visiophone SET mdp_code='$new_doorcode' WHERE id_code='$doorcode_id';";
+            mysqli_query($conn, $doorcode_change_query);
+            ?>
+            <script>
+                alert("Code modifié avec succès.");
+            </script>
+            <?php
+            //mysqli_free_result($doorcode_change_query_result);
+        };
+        $_POST = array();
+    };
+
+    # New rendezvous creating
+    if(isset($_POST['rdv_register'])){
+        $patient_name = $_POST['patient_name'];
+        $patient_last_name = mysqli_real_escape_string($conn, trim($_POST['patient_last_name']));
+        $patient_need = mysqli_real_escape_string($conn, trim($_POST['patient_need']));
+        $doctor_select = $_POST['doctor_select'];
+        $room_select = $_POST['room_select'];
+        $new_rdv_datetime = $_POST['rdv_datetime'];
+        $get_patient_id_query = "SELECT id_patient FROM patients WHERE prenom_patient = '$patient_name' AND nom_patient = '$patient_last_name';";
+        if(sqlGetID($conn, $get_patient_id_query, 'id_patient') === -1){
+            $new_patient_query = "INSERT INTO patients (prenom_patient, nom_patient) VALUES ('$patient_name', '$patient_last_name');";
+            mysqli_query($conn, $new_patient_query);    
+        };
+        $patient_id = sqlGetID($conn, $get_patient_id_query, 'id_patient');
+        $new_rdv_query = "INSERT INTO reservations (id_patient, id_personnel, id_salle, date_heure, besoin) VALUES ($patient_id, $doctor_select, $room_select, '$new_rdv_datetime', '$patient_need');";
+        mysqli_query($conn, $new_rdv_query);
+        ?>
+            <script>
+                alert("Rendez-vous ajouté avec succès.");
+            </script>
+        <?php
+        $_POST = array();
+    };
+?>
