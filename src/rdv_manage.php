@@ -59,11 +59,12 @@
                                         SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
                                         FROM reservations
                                         INNER JOIN patients
-                                        ON reservations.id_patient = patients.id_patient
+                         x²              ON reservations.id_patient = patients.id_patient
                                         INNER JOIN personnel
                                         ON reservations.id_personnel = personnel.id_personnel
                                         INNER JOIN salles
                                         ON reservations.id_salle = salles.id_salle
+                                        WHERE date_heure > NOW()
                                         ORDER BY reservations.date_heure ASC
                                     ;";
                                     $rdv_query_result = mysqli_query($conn, $rdv_query);
