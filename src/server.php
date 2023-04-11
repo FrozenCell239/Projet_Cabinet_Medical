@@ -1,5 +1,12 @@
 <?php
-    $navbar ='
+    function sqlGetID($BDD, $QUERY, $IDNAME){
+        $get_id_query_result = mysqli_query($BDD, $QUERY);
+        $get_id_row = mysqli_fetch_array($get_id_query_result, MYSQLI_ASSOC);
+        if(isset($get_id_row[$IDNAME])){return $get_id_row[$IDNAME];}
+        else{return -1;};
+    };
+
+    $secretary_navbar = '
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" href="main.php">Accueil</a>
@@ -7,6 +14,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
+
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
@@ -24,6 +32,22 @@
                             </ul>
                         </li>    
                     </ul>
+
+                    <form class="d-flex" action="logout.php" method="post">
+                        <button class="btn btn-primary" type="submit">Se déconnecter</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    ';
+    $non_secretary_navbar = '
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="main.php">Accueil</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">    
                     <form class="d-flex" action="logout.php" method="post">
                         <button class="btn btn-primary" type="submit">Se déconnecter</button>
                     </form>
@@ -32,10 +56,14 @@
         </nav>
     ';
 
+    # Session and connection to database init
     session_start();
-
     $errors = array(); //Used to collect errors if some happen.
     $conn = mysqli_connect('localhost:3307', 'root', '', 'cabinet'); //On Debian Linux : $conn = mysqli_connect('localhost', 'phpmyadmin', 'phpmyadmin', 'cabinet');
+
+    # Navbar setting
+    if(isset($_SESSION['profession']) && $_SESSION['profession'] == 'secretaire'){$navbar = $secretary_navbar;};
+    if(isset($_SESSION['profession']) && $_SESSION['profession'] != 'secretaire'){$navbar = $non_secretary_navbar;};
 
     # Staff registration
     if(isset($_POST['staff_register'])){
@@ -127,10 +155,11 @@
     if(isset($_POST['login'])){ //Check if Login button is pressed.
         $password = sha1($_POST['psswrd']);
         $login = trim($_POST['user_login']);
-        $login_query = "SELECT identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE identifiant='$login' AND mot_de_passe='$password';";
+        $login_query = "SELECT id_personnel, identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE identifiant='$login' AND mot_de_passe='$password';";
         $login_query_result = mysqli_query($conn, $login_query);
         $select_row = mysqli_fetch_array($login_query_result, MYSQLI_ASSOC);
         if(mysqli_num_rows($login_query_result) > 0){
+            $_SESSION['user_id'] = $select_row['id_personnel'];
             $_SESSION['username'] = $select_row['identifiant'];
             $_SESSION['profession'] = $select_row['profession'];
             $_SESSION['name'] = $select_row['prenom_personnel'];
@@ -179,7 +208,7 @@
         //mysqli_free_result($current_doorcode_check_result);
         if(count($errors) == 0){
             $doorcode_change_query = "UPDATE code_visiophone SET mdp_code='$new_doorcode' WHERE id_code='$doorcode_id';";
-            $doorcode_change_query_result = mysqli_query($conn, $doorcode_change_query);
+            mysqli_query($conn, $doorcode_change_query);
             ?>
             <script>
                 alert("Code modifié avec succès.");
@@ -190,27 +219,27 @@
         $_POST = array();
     };
 
-    # New rendez-vous creating
+    # New rendezvous creating
     if(isset($_POST['rdv_register'])){
         $patient_name = $_POST['patient_name'];
-        $patient_last_name = $_POST['patient_last_name'];
+        $patient_last_name = mysqli_real_escape_string($conn, trim($_POST['patient_last_name']));
         $patient_need = mysqli_real_escape_string($conn, trim($_POST['patient_need']));
         $doctor_select = $_POST['doctor_select'];
         $room_select = $_POST['room_select'];
         $new_rdv_datetime = $_POST['rdv_datetime'];
         $get_patient_id_query = "SELECT id_patient FROM patients WHERE prenom_patient = '$patient_name' AND nom_patient = '$patient_last_name';";
-        $get_patient_id_query_result = mysqli_query($conn, $get_patient_id_query);
-        $get_patient_id_row = mysqli_fetch_array($get_patient_id_query_result, MYSQLI_ASSOC);
-        $patient_id = $get_patient_id_row['id_patient'];
+        if(sqlGetID($conn, $get_patient_id_query, 'id_patient') === -1){
+            $new_patient_query = "INSERT INTO patients (prenom_patient, nom_patient) VALUES ('$patient_name', '$patient_last_name');";
+            mysqli_query($conn, $new_patient_query);    
+        };
+        $patient_id = sqlGetID($conn, $get_patient_id_query, 'id_patient');
         $new_rdv_query = "INSERT INTO reservations (id_patient, id_personnel, id_salle, date_heure, besoin) VALUES ($patient_id, $doctor_select, $room_select, '$new_rdv_datetime', '$patient_need');";
-        $new_rdv_query_result = mysqli_query($conn, $new_rdv_query);
+        mysqli_query($conn, $new_rdv_query);
         ?>
             <script>
                 alert("Rendez-vous ajouté avec succès.");
             </script>
         <?php
-        //À ajouter : On doit vérifier que le patient existe !
-        //À ajouter : On doit update le besoin du patient avec le nouveau besoin !
         $_POST = array();
     };
 ?>
