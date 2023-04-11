@@ -1,4 +1,5 @@
 <?php
+    # Global use functions
     function sqlGetID($BDD, $QUERY, $IDNAME){
         $get_id_query_result = mysqli_query($BDD, $QUERY);
         $get_id_row = mysqli_fetch_array($get_id_query_result, MYSQLI_ASSOC);
@@ -6,6 +7,7 @@
         else{return -1;};
     };
 
+    # HTML snippets
     $secretary_navbar = '
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
             <div class="container-fluid">
@@ -60,6 +62,14 @@
     session_start();
     $errors = array(); //Used to collect errors if some happen.
     $conn = mysqli_connect('localhost:3307', 'root', '', 'cabinet'); //On Debian Linux : $conn = mysqli_connect('localhost', 'phpmyadmin', 'phpmyadmin', 'cabinet');
+
+    # Automatic deletion of old rendezvous
+    $delete_period = [
+        'amount' => 6, //The amount of days/month/years. Default value to 6.
+        'dmy' => "MONTH", //Days or month or years. Default value to "MONTH".
+    ];
+    $delete_query = "DELETE FROM reservations WHERE date_heure < DATE_ADD(NOW(), INTERVAL -".$delete_period['amount']." ".$delete_period['dmy'].");";
+    mysqli_query($conn, $delete_query);
 
     # Navbar setting
     if(isset($_SESSION['profession']) && $_SESSION['profession'] == 'secretaire'){$navbar = $secretary_navbar;};
@@ -205,7 +215,6 @@
             $row = mysqli_fetch_array($current_doorcode_check_result, MYSQLI_ASSOC);
             $doorcode_id = $row['id_code'];
         };
-        //mysqli_free_result($current_doorcode_check_result);
         if(count($errors) == 0){
             $doorcode_change_query = "UPDATE code_visiophone SET mdp_code='$new_doorcode' WHERE id_code='$doorcode_id';";
             mysqli_query($conn, $doorcode_change_query);
@@ -214,8 +223,9 @@
                 alert("Code modifié avec succès.");
             </script>
             <?php
-            //mysqli_free_result($doorcode_change_query_result);
         };
+        mysqli_free_result($current_doorcode_check_result);
+        mysqli_free_result($doorcode_change_query_result);
         $_POST = array();
     };
 
