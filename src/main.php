@@ -79,7 +79,7 @@
                                             ON reservations.id_patient = patients.id_patient
                                             INNER JOIN salles
                                             ON reservations.id_salle = salles.id_salle
-                                            WHERE personnel.id_personnel = '".$_SESSION['user_id']."'
+                                            WHERE date_heure > NOW() AND personnel.id_personnel = '".$_SESSION['user_id']."'
                                             ORDER BY reservations.date_heure ASC
                                         ;";
                                         $rdv_query_result = mysqli_query($conn, $rdv_query);
