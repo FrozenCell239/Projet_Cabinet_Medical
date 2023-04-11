@@ -1,5 +1,4 @@
 # Changement et ajouts prévus :
-- Enlever les boutons de gestion de la navbar pour les non-admins.
 - Mettre en erreur si le médecin demandé a déjà un rendez-vous à l'instant demandé.
 - Réafficher les besoins des patients dans la liste des patients.
 - Inclure delete.php dans server.php. (?)
