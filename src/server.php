@@ -62,13 +62,6 @@
     session_start();
     $errors = array(); //Used to collect errors if some happen.
     $conn = mysqli_connect('localhost:3307', 'root', '', 'cabinet'); //On Debian Linux : $conn = mysqli_connect('localhost', 'phpmyadmin', 'phpmyadmin', 'cabinet');
-
-    # Automatic deletion of old rendezvous
-    $delete_period = [
-        'amount' => 6, //The amount of days/month/years. Default value to 6.
-        'dmy' => " MONTH", //Day(s) or month(s) or year(s). Default value to "MONTH".
-    ];
-    $delete_query = "DELETE FROM reservations WHERE date_heure < DATE_ADD(NOW(), INTERVAL -".$delete_period['amount'].$delete_period['dmy'].");";
     mysqli_query($conn, $delete_query);
 
     # Navbar setting
