@@ -17,6 +17,11 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+        <script>
+            var today = new Date().toISOString().slice(0, 16);
+
+            document.getElementsByName("rdv_datetime")[0].min = today;
+        </script>
 
         <!--PHP scripts.-->
         <?php
@@ -45,11 +50,11 @@
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Patient</th> <!--Nom prénom DE patient-->
-                                    <th>Besoin</th> <!--Besoin DE patient-->
-                                    <th>Médecin</th> <!--Nom prénom DE médecin-->
-                                    <th>Salle</th> <!--Nom DE salle-->
-                                    <th>Date et heure</th> <!--Date_heure DE réservations-->
+                                    <th>Patient</th>
+                                    <th>Besoin</th>
+                                    <th>Médecin</th>
+                                    <th>Salle</th>
+                                    <th>Date et heure</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -59,7 +64,7 @@
                                         SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
                                         FROM reservations
                                         INNER JOIN patients
-                         x²              ON reservations.id_patient = patients.id_patient
+                                        ON reservations.id_patient = patients.id_patient
                                         INNER JOIN personnel
                                         ON reservations.id_personnel = personnel.id_personnel
                                         INNER JOIN salles
@@ -144,6 +149,9 @@
                                     ?>
                                 </select><br>
                                 <input type="datetime-local" name="rdv_datetime" required/><br>
+                                <script>
+                                    document.getElementsByName("rdv_datetime")[0].setAttribute("min", new Date().toISOString().slice(0, 16));
+                                </script>
                                 <button type="submit" name="rdv_register">Créer</button>
                             </form>
                         </div>
