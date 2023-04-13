@@ -62,7 +62,6 @@
     session_start();
     $errors = array(); //Used to collect errors if some happen.
     $conn = mysqli_connect('localhost:3307', 'root', '', 'cabinet'); //On Debian Linux : $conn = mysqli_connect('localhost', 'phpmyadmin', 'phpmyadmin', 'cabinet');
-    mysqli_query($conn, $delete_query);
 
     # Navbar setting
     if(isset($_SESSION['profession']) && $_SESSION['profession'] == 'secretaire'){$navbar = $secretary_navbar;};
