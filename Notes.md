@@ -9,7 +9,6 @@
 - Notifier les médecins en cas du changement du digicode (par mail ?). (?)
 - Notifier les médecins pour changer régulièrement leur mot de passe.
 - Possibilité d'afficher les rendez-vous passés qui ne sont pas encore supprimés.
-- Possibilité de régler la période de suppression des rendez-vous passés (X jours ou X mois ou X années).
 - Reset le $row dans chaque script avec `$row = array();` & tester l'ajout de `mysqli_close($conn);` à chaque fin de script. (?)
 - Afficher les logs dans access_manage.php (avec collapsing).
 - Ajouter conditions de mots de passe comptes (minimum 8 caractères alphanumériques).
