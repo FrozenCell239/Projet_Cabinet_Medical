@@ -17,10 +17,6 @@
         <?php
             include('server.php');
             if(!isset($_SESSION['profession'])){header("Location: index.php");};
-            if($_SESSION['admin'] == 1){
-                $udp_port = 8888;
-                $arduino_ip = '192.168.1.177'; //Change this one to your Arduino's IP.
-            };
             //if($_SESSION['admin'] == 1){include('serial_command.php');}; Currently unused.
             //if($_SESSION['admin'] == 1){include('access/command.php');};
         ?>
@@ -52,28 +48,8 @@
                         </form>
                         <?php
                             };
-                            if(isset($_POST['door_unlock'])){
-                                $order = '$';
-                                if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
-                                    socket_sendto($socket, $order, strlen($order), 0, $arduino_ip, $udp_port);
-                                    //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
-                                    //echo "Acknowledgement : $udp_buffer<br>";
-                                    sleep(1);
-                                }
-                                else{echo("Can't create socket.<br>");};
-                                unset($order);
-                            };
-                            if(isset($_POST['door_open'])){
-                                $order = '#';
-                                if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
-                                    socket_sendto($socket, $order, strlen($order), 0, $arduino_ip, $udp_port);
-                                    //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
-                                    //echo "Acknowledgement : $udp_buffer<br>";
-                                    sleep(1);
-                                }
-                                else{echo("Can't create socket.<br>");};
-                                unset($order);
-                            };
+                            if(isset($_POST['door_unlock'])){doorControl('$');};
+                            if(isset($_POST['door_open'])){doorControl('#');};
                             $_POST = array();
                         ?>
                         <?php if($_SESSION['profession'] != 'secretaire'){ //Interface propre aux médecins. ?>

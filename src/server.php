@@ -6,6 +6,17 @@
         if(isset($get_id_row[$IDNAME])){return $get_id_row[$IDNAME];}
         else{return -1;};
     };
+    function doorControl($ORDER){
+        if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
+            $udp_port = 8888;
+            $arduino_ip = '192.168.1.177';
+            socket_sendto($socket, $ORDER, strlen($ORDER), 0, $arduino_ip, $udp_port);
+            //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
+            //echo "Acknowledgement : $udp_buffer<br>";
+            sleep(1);
+        }
+        else{echo("Can't create socket.<br>");};
+    };
 
     # HTML snippets
     $secretary_navbar = '
