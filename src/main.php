@@ -42,6 +42,8 @@
                         <h1>Connecté(e) en tant que <b><?php echo $_SESSION['name']." ".$_SESSION['last_name']."</b>, poste ".$_SESSION['profession']; ?>.</h1>
                         <hr>
                         <?php if($_SESSION['admin'] == 1){ //Interface propre aux administrateurs. ?>
+                        <h2>Caméras de surveillance</h2>
+                        <div></div>
                         <form action="main.php" method="post">
                             <button type="submit" name="door_unlock">Déverrouiller la porte</button>
                         </form>
@@ -51,7 +53,6 @@
                         <?php
                             };
                             if(isset($_POST['door_unlock'])){
-                                unset($_POST['door_unlock']);
                                 $order = '$';
                                 if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
                                     socket_sendto($socket, $order, strlen($order), 0, $arduino_ip, $udp_port);
@@ -63,7 +64,6 @@
                                 unset($order);
                             };
                             if(isset($_POST['door_open'])){
-                                unset($_POST['door_open']);
                                 $order = '#';
                                 if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
                                     socket_sendto($socket, $order, strlen($order), 0, $arduino_ip, $udp_port);
@@ -74,6 +74,7 @@
                                 else{echo("Can't create socket.<br>");};
                                 unset($order);
                             };
+                            $_POST = array();
                         ?>
                         <?php if($_SESSION['profession'] != 'secretaire'){ //Interface propre aux médecins. ?>
                             <div class="mt-5 mb-3 d-flex justify-content-between">
