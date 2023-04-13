@@ -3,77 +3,105 @@
 #include <Keypad.h>
 #include "Relay.h" //Be careful about the path of this one if you downloaded it manually as I did.
 #include <MFRC522.h>
+#include <EthernetUdp.h>
 
 #define BUZZER_PIN 49
 #define PIR_PIN 2
-#define SS_PIN 53 /*RFID*/
-#define RST_PIN 48 /*RFID*/
+#define SS_PIN 53
+#define RST_PIN 48
 #define DEBUG_PIN 4 //Declare this pin but put nothing on it to fix a bug on the Ethernet shield (pin reserved for SD card).
-const byte ROWS = 4, COLS = 4; /*Keypad.*/
+#define UDP_PORT 8888
+const byte ROWS = 4, COLS = 4;
 
 byte
     mac[] = {0xA8, 0x61, 0x0A, 0xAE, 0x96, 0x1D},
-    rowPins[ROWS] = {29, 27, 25, 23}, /*Keypad.*/
-    colPins[COLS] = {28, 26, 24, 22}, /*Keypad.*/
-    data_count = 0, /*Keypad.*/
-    master_count = 0 /*Keypad.*/
+    rowPins[ROWS] = {29, 27, 25, 23},
+    colPins[COLS] = {28, 26, 24, 22},
+    data_count = 0,
+    master_count = 0
 ;
 EthernetClient client;
+EthernetUDP udp;
 IPAddress ip(192, 168, 1, 177); //Arduino board's IP.
 IPAddress dns(192, 168, 1, 1);
 char
     reply, //Used to read the response from the server.
     customKey, //Stores the last key pressed on keypad.
-    HOST_NAME[] = "192.168.1.70", //Server IP address/
-    data[11], //Doorcode can contain up to 10 characters.
-    hexaKeys[ROWS][COLS] = { /*Keypad.*/
+    HOST_NAME[] = "192.168.1.69", //Server IP address/
+    data[9], //Doorcode can contain up to 8 characters.
+    hexaKeys[ROWS][COLS] = {
         {'1', '2', '3', 'A'},
         {'4', '5', '6', 'B'},
         {'7', '8', '9', 'C'},
         {'*', '0', '#', 'D'}
-    }
+    },
+    packetBuffer[UDP_TX_PACKET_MAX_SIZE], //Buffer to hold incoming packet.
+    ReplyBuffer[] = "Acknowledged !"
 ;
 bool opened = false;
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 Relay strikeRelay(30);
 Relay doorRelay(31);
 MFRC522 rfid(SS_PIN, RST_PIN); //Instance of the class.
-MFRC522::MIFARE_Key key; /*RFID.*/
+MFRC522::MIFARE_Key key;
 String to_check;
 
 void setup(){
     Serial.begin(9600);
     Serial.println("\nStart init...");
-    pinMode(DEBUG_PIN, OUTPUT); /*Ethernet shield.*/
-    digitalWrite(DEBUG_PIN, HIGH); /*Ethernet shield.*/
+    pinMode(DEBUG_PIN, OUTPUT);
+    digitalWrite(DEBUG_PIN, HIGH);
     pinMode(BUZZER_PIN, OUTPUT);
     pinMode(PIR_PIN, INPUT);
     Ethernet.begin(mac, ip, dns); //Initializing the Ethernet shield not using DHCP.
     SPI.begin(); //Init SPI bus.
     rfid.PCD_Init(); //Init MFRC522.
     rfid.PCD_SetAntennaGain(rfid.RxGain_max); //Set antenna's gain to max to make it work correctly.
+    udp.begin(UDP_PORT); //Init UDP.
     Serial.println("Inited !");
 };
 
 void loop(){
-    //while(client.connected()){ À tester !!
-    //    if(client.available()){ // C : Arduino get .php > .php read .txt > .php return to .ino value from .txt;
-    //        reply = client.read(); //Read an incoming byte from the server.
-    //        Serial.print(reply); //Print it to serial monitor.
-    //        if(reply == '$'){unlockDoor();};
-    //    };
-    //};
-    //getOrder();
-////Keypad.////////////////////////////////////////////////////////////////////////////////////////////
-    customKey = customKeypad.getKey(); /*Keypad.*/
-    if(customKey && customKey != '#'){ /*Keypad.*/
+    customKey = customKeypad.getKey();
+    if(customKey && customKey != '#'){
         data[data_count] = customKey;
         Serial.print(data[data_count++]);
     };
-    if(customKey == '#'){ /*Keypad.*/
+    if(customKey == '#'){
         doorcodeCheck();
     };
-////RFID.////////////////////////////////////////////////////////////////////////////////////////////
+    int packetSize = udp.parsePacket();
+    if(packetSize){ //If there is available data, read packet.
+        Serial.print("Received packet of size ");
+        Serial.print(packetSize);
+        Serial.print(" from ");
+        IPAddress remote = udp.remoteIP();
+        for(int i = 0; i < 4; i++){
+            Serial.print(remote[i], DEC);
+            if(i < 3){
+                Serial.print(".");
+            };
+        };
+        Serial.print(", port ");
+        Serial.print(udp.remotePort());
+        Serial.println(".");
+        udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE); //Reads the packet into packetBuffer.
+        Serial.print("Contents : ");
+        Serial.println(packetBuffer);
+        if(packetBuffer[0] == '$'){
+            Serial.println();
+            unlockDoor();
+        };
+        if(packetBuffer[0] == '#'){
+            Serial.println();
+            openDoor();
+        };
+        udp.beginPacket(udp.remoteIP(), udp.remotePort()); //Sends a reply to the IP address and port that sent us the packet we received.
+        udp.write(ReplyBuffer);
+        udp.endPacket();
+    };
+    delay(100);
+    //getOrder();
     if(!rfid.PICC_IsNewCardPresent()){return;}; //Resets the loop if no new card present on the reader. This saves the entire process when idle.
     if(!rfid.PICC_ReadCardSerial()){return;}; //Verify if the NUID has been readed.
     Serial.print(F("PICC type : "));
@@ -133,34 +161,40 @@ void refused(){
     delay(100);
 };
 
-void getOrder(){ /*Une fonction que j'essaie de créer pour lire l'ordre venant du serveur.*/
-    if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
-        Serial.println("Waiting for order...");
-        client.print("GET http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/command.php");
-        //client.print(to_check);
-        client.println(" HTTP/2.0");
-        client.println("Host: " + String(HOST_NAME));
-        client.println("Connection: close");
-        client.println(); //End HTTP header.
-        while(client.connected()){
-            if(client.available()){
-                reply = client.read(); //Read an incoming byte from the server.
-                Serial.print(reply); //Print it to serial monitor.
-                if(reply == '$'){
-                    Serial.println();
-                    unlockDoor();
-                    opened = true;
-                };
-                if(reply == '£'){
-                    Serial.println();
-                    openDoor();
-                    opened = true;
-                };
+void getOrder(){
+    int packetSize = udp.parsePacket();
+    if(packetSize){ //If there is available data, read packet.
+        Serial.print("Received packet of size ");
+        Serial.print(packetSize);
+        Serial.print(" from ");
+        IPAddress remote = udp.remoteIP();
+        for(int i = 0; i < 4; i++){
+            Serial.print(remote[i], DEC);
+            if(i < 3){
+                Serial.print(".");
             };
         };
-        client.stop(); //The server is disconnected, then stop the client.
-        Serial.println("\n> Disconnected !");
-        if(!opened){
+        Serial.print(", port ");
+        Serial.print(udp.remotePort());
+        Serial.println(".");
+        udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE); //Reads the packet into packetBuffer.
+        Serial.print("Contents : ");
+        Serial.println(packetBuffer);
+        if(packetBuffer == '$'){
+            Serial.println();
+            unlockDoor();
+            opened = true;
+        };
+        if(packetBuffer == '£'){
+            Serial.println();
+            openDoor();
+            opened = true;
+        };
+        udp.beginPacket(udp.remoteIP(), udp.remotePort()); //Sends a reply to the IP address and port that sent us the packet we received.
+        udp.write(ReplyBuffer);
+        udp.endPacket();
+    };
+    if(!opened){
             refused();
             Serial.println("No order received.");
         }
@@ -168,11 +202,10 @@ void getOrder(){ /*Une fonction que j'essaie de créer pour lire l'ordre venant 
             opened = false;
             Serial.println("Houston, we got an order !");
         };
-    }
-    else{Serial.println("\n> Connection failed !");}; //If not connected.
+    delay(100);
 };
 
-void doorcodeCheck(){ /*Keypad.*/
+void doorcodeCheck(){
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
         client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/access_checker.php?dc=");
@@ -205,7 +238,7 @@ void doorcodeCheck(){ /*Keypad.*/
     };
 };
 
-void rfidCheck(){ /*RFID*/
+void rfidCheck(){
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
         client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/access_checker.php?rt=");
@@ -236,7 +269,7 @@ void rfidCheck(){ /*RFID*/
     to_check = "";
 };
 
-void printDec(byte *buffer, byte bufferSize){ /*RFID*/ //Helper routine to dump a byte array as dec values to Serial.
+void printDec(byte *buffer, byte bufferSize){ //Helper routine to dump a byte array as dec values to Serial.
     for(byte i = 0; i < bufferSize; i++){
         Serial.print(buffer[i] < 0x10 ? " 0" : " ");
         Serial.print(buffer[i], DEC);
