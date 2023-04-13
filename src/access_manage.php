@@ -52,7 +52,6 @@
                                 <input type="password" name="confirm_new_doorcode" placeholder="Confirmation du nouveau code" required/><br>
                                 <button type="submit" name="change_doorcode">Ajouter</button>
                             </form>
-                            <hr>
                         </div>
 
                         <hr>

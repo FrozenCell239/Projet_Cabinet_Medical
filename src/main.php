@@ -17,6 +17,10 @@
         <?php
             include('server.php');
             if(!isset($_SESSION['profession'])){header("Location: index.php");};
+            if($_SESSION['admin'] == 1){
+                $udp_port = 8888;
+                $arduino_ip = '192.168.1.177'; //Change this one to your Arduino's IP.
+            };
             //if($_SESSION['admin'] == 1){include('serial_command.php');}; Currently unused.
             //if($_SESSION['admin'] == 1){include('access/command.php');};
         ?>
@@ -37,7 +41,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <h1>Connecté(e) en tant que <b><?php echo $_SESSION['name']." ".$_SESSION['last_name']."</b>, poste ".$_SESSION['profession']; ?>.</h1>
                         <hr>
-                        <?php if($_SESSION['admin'] == 1){ //Interface propre à la secrétaire. ?>
+                        <?php if($_SESSION['admin'] == 1){ //Interface propre aux administrateurs. ?>
                         <form action="main.php" method="post">
                             <button type="submit" name="door_unlock">Déverrouiller la porte</button>
                         </form>
@@ -48,11 +52,27 @@
                             };
                             if(isset($_POST['door_unlock'])){
                                 unset($_POST['door_unlock']);
-                                //strikeOpen();
+                                $order = '$';
+                                if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
+                                    socket_sendto($socket, $order, strlen($order), 0, $arduino_ip, $udp_port);
+                                    //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
+                                    //echo "Acknowledgement : $udp_buffer<br>";
+                                    sleep(1);
+                                }
+                                else{echo("Can't create socket.<br>");};
+                                unset($order);
                             };
                             if(isset($_POST['door_open'])){
                                 unset($_POST['door_open']);
-                                //doorOpen();
+                                $order = '#';
+                                if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
+                                    socket_sendto($socket, $order, strlen($order), 0, $arduino_ip, $udp_port);
+                                    //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
+                                    //echo "Acknowledgement : $udp_buffer<br>";
+                                    sleep(1);
+                                }
+                                else{echo("Can't create socket.<br>");};
+                                unset($order);
                             };
                         ?>
                         <?php if($_SESSION['profession'] != 'secretaire'){ //Interface propre aux médecins. ?>

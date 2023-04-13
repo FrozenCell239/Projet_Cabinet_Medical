@@ -2,7 +2,12 @@
 - Mettre en erreur si le médecin demandé a déjà un rendez-vous à l'instant demandé.
 - Mettre en erreur si la date demandée est dans le passée.
 - Possibilité de modifier un rendez-vous.
+- Possibilité de modifier une salle.
+- Possibilité de supprimer un rendez-vous (en cas d'annulation par le pastient ou le docteur).
+- Possibilité de mofidier un patient. (?)
+- Dans la section des patients, afficher leurs rendez-vous.
 - Réafficher les besoins des patients dans la liste des patients.
+- Ajout et suppression de badges.
 - Inclure delete.php dans server.php. (?)
 - Notifier les médecins en cas du changement du digicode. (?)
 - Notifier les médecins pour changer régulièrement leur mot de passe.

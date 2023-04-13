@@ -23,5 +23,5 @@
         echo 'Patient supprimé avec succès.';
     };
 
-    $_GET = array();
+    $_GET = array(); //Flushing the GET array to avoid some weird bugs.
 ?>
