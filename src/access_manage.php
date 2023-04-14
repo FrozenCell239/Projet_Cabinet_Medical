@@ -10,6 +10,24 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+        <script> //Handling room deletion.
+            $(function(){
+                $('.toggle').click(function(){
+                    var id = $(this).closest('tr').attr('id');
+                    $.ajax({
+                        url: 'server.php?what=10&id=' + id,
+                        type: 'GET',
+                        success: function(data){
+                            alert(data);
+                            location.reload();
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            alert('Error : ' + textStatus + ' - ' + errorThrown);
+                        }
+                    });
+                });
+            });
+        </script>
 
         <!--PHP scripts.-->
         <?php
@@ -46,7 +64,6 @@
                                 <button type="submit" name="change_doorcode">Ajouter</button>
                             </form>
                         </div>
-
                         <hr>
                         <div class="mt-5 mb-3 d-flex justify-content-between">
                             <h2 class="pull-left">Badges</h2>
@@ -63,14 +80,20 @@
                             <tbody>
                                 <?php
                                     while($row = mysqli_fetch_array($tag_list_query_result)){
-                                        if($row['actif']){$active = "Oui";}
-                                        else{$active = "Non";};
+                                        if($row['actif']){
+                                            $active = "Activé";
+                                            $stater = "Désactiver";
+                                        }
+                                        else{
+                                            $active = "Désactivé";
+                                            $stater = "Activer";
+                                        };
                                         echo(
-                                            '<tr id="'.$row['id_badge'].'">'.
+                                            "<tr id='".$row['id_badge']."'>".
                                             "<td>".base64_decode($row['mdp_badge'])."</td>".
                                             "<td>$active</td>".
                                             "<td>".
-                                            '<button class="btn btn-danger btn-sm remove">Modifier</button>'.
+                                            "<button class='btn btn-danger btn-sm toggle'>$stater</button>".
                                             "</td>".
                                             "</tr>"
                                         );

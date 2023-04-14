@@ -255,4 +255,11 @@
         <?php
         $_POST = array();
     };
+
+    # Tag toggling
+    if(isset($_GET['what']) && $_GET['what'] == 10 && isset($_GET['id'])){
+        $toggle_query = "UPDATE badges_visiophone SET actif = 1 - actif WHERE id_badge = ".$_GET['id'];
+        mysqli_query($conn, $toggle_query);
+        echo 'Badge activé/désactivé avec succès.';
+    };
 ?>
