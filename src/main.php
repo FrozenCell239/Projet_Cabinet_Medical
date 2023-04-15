@@ -105,3 +105,4 @@
         </footer>
     </body>
 </html>
+<?php mysqli_close($conn); //Close the connection to the database. ?>

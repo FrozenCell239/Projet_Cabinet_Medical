@@ -99,7 +99,6 @@
                                         );
                                     };
                                     mysqli_free_result($tag_list_query_result);
-                                    mysqli_close($conn); //Close the connection to the database.
                                 ?>
                             </tbody>
                         </table>
@@ -120,3 +119,4 @@
         </footer>
     </body>
 </html>
+<?php mysqli_close($conn); //Close the connection to the database. ?>

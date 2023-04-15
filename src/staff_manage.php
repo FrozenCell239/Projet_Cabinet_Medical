@@ -88,7 +88,6 @@
                                         );
                                     };
                                     mysqli_free_result($staff_list_query_result); //Free result set.
-                                    mysqli_close($conn); //Close the connection to the database.
                                 ?>
                             </tbody>
                         </table>
@@ -133,3 +132,4 @@
         </footer>
     </body>
 </html>
+<?php mysqli_close($conn); //Close the connection to the database. ?>
