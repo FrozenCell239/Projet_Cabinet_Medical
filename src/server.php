@@ -228,7 +228,6 @@
             <?php
         };
         mysqli_free_result($current_doorcode_check_result);
-        mysqli_free_result($doorcode_change_query_result);
         $_POST = array();
     };
 
