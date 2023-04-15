@@ -67,7 +67,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
+                                <?php
                                     $staff_list_query = "SELECT * FROM personnel";
                                     $staff_list_query_result = mysqli_query($conn, $staff_list_query);
 
