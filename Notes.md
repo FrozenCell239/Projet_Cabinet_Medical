@@ -1,5 +1,5 @@
 # Changement et ajouts prévus :
-- Mettre en erreur si le médecin demandé a déjà un rendez-vous à l'instant demandé.
+- Dans la gestion des rendez-vous, possibiliter de filtrer les médecins et les salles.
 - Possibilité de modifier une salle.
 - Possibilité de supprimer un rendez-vous (en cas d'annulation par le patient ou le docteur).
 - Possibilité de modifier un rendez-vous.

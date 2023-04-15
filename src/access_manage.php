@@ -10,8 +10,8 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-        <script> //Handling room deletion.
-            $(function(){
+        <script>
+            $(function(){ //Handling tag toggling.
                 $('.toggle').click(function(){
                     var id = $(this).closest('tr').attr('id');
                     $.ajax({
@@ -58,9 +58,12 @@
                         </div>
                         <div id="add_form" class="collapse">
                             <form action="access_manage.php" method="post">
-                                <input type="password" name="current_doorcode" placeholder="Code actuel" required/><br>
-                                <input type="password" name="new_doorcode" placeholder="Nouveau code" required/><br>
-                                <input type="password" name="confirm_new_doorcode" placeholder="Confirmation du nouveau code" required/><br>
+                                <label for="current_doorcode">Code actuel</label>
+                                <input type="text" id="current_doorcode" name="current_doorcode" minlength="4" maxlength="8" required/><br>
+                                <label for="new_doorcode">Nouveau code</label>
+                                <input type="password" name="new_doorcode" minlength="4" maxlength="8" required/><br>
+                                <label for="confirm_new_doorcode">Confirmation du nouveau code</label>
+                                <input type="password" name="confirm_new_doorcode" minlength="4" maxlength="8" required/><br>
                                 <button type="submit" name="change_doorcode">Ajouter</button>
                             </form>
                         </div>
