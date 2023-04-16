@@ -76,6 +76,7 @@
                                         );
                                     };
                                     mysqli_free_result($rdv_query_result); //Free result set.
+                                    unset($rdv_row);
                                 ?>
                             </tbody>
                         </table>
