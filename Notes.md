@@ -11,7 +11,6 @@
 - Possibilité d'afficher les rendez-vous passés qui ne sont pas encore supprimés.
 - Afficher les logs dans access_manage.php (avec collapsing).
 - Ajouter conditions de mots de passe comptes (minimum 8 caractères alphanumériques).
-- Ajouter conditions de code de porte (4 à 8 caractères entre '0' et '9', entre 'A' et 'D', et '*').
 - Pour les confirmations de suppression, remplacer le `confirm()` par un modal.
 
 # Notes personnelles :
