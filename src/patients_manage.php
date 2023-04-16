@@ -70,7 +70,7 @@
 
                                     while($row = mysqli_fetch_array($patient_list_query_result)){
                                         $patient_rdv_query = "
-                                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
+                                            SELECT id_reservation, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
                                             FROM reservations
                                             INNER JOIN patients
                                             ON reservations.id_patient = patients.id_patient
