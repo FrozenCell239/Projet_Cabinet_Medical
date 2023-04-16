@@ -147,6 +147,7 @@
     if(isset($_POST['patient_register'])){
         $new_patient_name = trim($_POST['new_patient_name']);
         $new_patient_last_name = trim($_POST['new_patient_last_name']);
+        $new_patient_number = trim($_POST['new_patient_number']);
         $patient_check_query = "SELECT id_patient FROM patients WHERE prenom_patient='$new_patient_name' AND nom_patient='$new_patient_last_name'";
         $patient_check_query_result = mysqli_query($conn, $patient_check_query);
         if(mysqli_num_rows($patient_check_query_result) != 0){ //Check if patient already exist.
@@ -158,8 +159,8 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-                $insert_query = "INSERT INTO patients (prenom_patient, nom_patient) VALUES ('$new_patient_name', '$new_patient_last_name');";
-                $insert_query_result = mysqli_query($conn, $insert_query);
+            $insert_query = "INSERT INTO patients (prenom_patient, nom_patient, numero_patient) VALUES ('$new_patient_name', '$new_patient_last_name', '$new_patient_number');";
+            $insert_query_result = mysqli_query($conn, $insert_query);
         };
         $_POST = array();
     };

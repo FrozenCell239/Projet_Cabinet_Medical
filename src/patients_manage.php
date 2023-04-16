@@ -53,19 +53,38 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="mt-5 mb-3 d-flex justify-content-between">
                             <h2 class="pull-left">Liste des patients</h2>
-                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
+                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Ajouter</button>
+                        </div>
+                        <div id="add_form" class="collapse">
+                            <form action="patients_manage.php" method="post">
+                                <h3>> Ajouter un patient</h3>
+                                <label for="new_patient_name">Prénom</label>
+                                <input type="text" name="new_patient_name" required/><br>
+                                <label for="new_patient_last_name">Nom</label>
+                                <input type="text" name="new_patient_last_name" required/><br>
+                                <label for="new_patient_number">Téléphone</label>
+                                <input
+                                    type="text"
+                                    name="new_patient_number"
+                                    pattern="(01|02|03|04|05|06|07|08|09)[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}"
+                                    maxlength="14"
+                                ><br>
+                                <button type="submit" name="patient_register">Ajouter</button>
+                            </form>
+                            <hr>
                         </div>
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Prénom</th>
                                     <th>Nom</th>
+                                    <th>Téléphone</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient FROM patients ORDER BY nom_patient ASC";
+                                    $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient, numero_patient FROM patients ORDER BY nom_patient ASC";
                                     $patient_list_query_result = mysqli_query($conn, $patient_list_query);
 
                                     while($row = mysqli_fetch_array($patient_list_query_result)){
@@ -85,12 +104,13 @@
                                             "<tr id='".$row['id_patient']."'>".
                                             "<td>".$row['prenom_patient']."</td>".
                                             "<td>".$row['nom_patient']."</td>".
+                                            "<td>".$row['numero_patient']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
                                             "</td>".
                                             "</tr>".
                                             "<tr>".
-                                            "<td colspan='3'>"
+                                            "<td colspan='4'>"
                                             
                                         );
                                         $patient_rdv_query_result = mysqli_query($conn, $patient_rdv_query);
@@ -135,17 +155,6 @@
                                 </div>
                             </div>
                         </div-->
-                        <hr>
-                        <div id="add_form" class="collapse">
-                            <form action="patients_manage.php" method="post">
-                                <h2>Ajouter un patient</h2>
-                                <input type="text" name="new_patient_name" placeholder="Prénom" required/><br>
-                                <input type="text" name="new_patient_last_name" placeholder="Nom" required/><br>
-                                <input type="text" name="new_patient_need" placeholder="Besoin"><br>
-                                <button type="submit" name="patient_register">Ajouter</button>
-                            </form>
-                            <hr>
-                        </div>
                     </div>
                 </div>
             </div>
