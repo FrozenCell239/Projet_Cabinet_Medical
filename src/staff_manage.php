@@ -68,7 +68,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                                    $staff_list_query = "SELECT * FROM personnel";
+                                    $staff_list_query = "SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, admin FROM personnel";
                                     $staff_list_query_result = mysqli_query($conn, $staff_list_query);
 
                                     while($row = mysqli_fetch_array($staff_list_query_result)){

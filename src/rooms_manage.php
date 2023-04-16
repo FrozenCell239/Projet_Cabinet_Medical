@@ -63,7 +63,7 @@
                             </thead>
                             <tbody>
                                 <?php 
-                                    $rooms_list_query = "SELECT id_salle, nom_salle FROM salles";
+                                    $rooms_list_query = "SELECT * FROM salles ORDER BY nom_salle;";
                                     $rooms_list_query_result = mysqli_query($conn, $rooms_list_query);
 
                                     while($row = mysqli_fetch_array($rooms_list_query_result)){
