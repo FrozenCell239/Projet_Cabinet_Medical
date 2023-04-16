@@ -4,8 +4,6 @@
 - Possibilité de supprimer un rendez-vous (en cas d'annulation par le patient ou le docteur).
 - Possibilité de modifier un rendez-vous.
 - Possibilité de mofidier un patient. (?)
-- Dans la section des patients, afficher leurs rendez-vous avec la salle et leur médecin.
-- Dans la section des médecins, afficher leurs rendez-vous avec la salle et leur patient.
 - Ajout et suppression de badges.
 - Notifier les médecins en cas du changement du digicode (par mail ?). (?)
 - Notifier les médecins pour changer régulièrement leur mot de passe.
