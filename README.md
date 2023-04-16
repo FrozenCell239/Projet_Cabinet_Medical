@@ -16,3 +16,4 @@ Interface sous forme d'applicatif web destinée à la gestion d'un cabinet médi
 - Gestion de la liste des badges.
 - Gestion des plannings des médecins.
 - Récupération du flux vidéo des caméras (vidéosurveillance).
+- Possibilité pour les médecins de consulter leur planning.
