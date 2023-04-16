@@ -16,7 +16,7 @@
 - Mise en beauté avec Tailwind et/ou Bootstrap.
 
 # Autres idées :
-- Dans la section des patients, ajouter une action "Créer un rendez-vous". → Redirection vers la page de création de rendez-vous avec le formulaire affiché et les cases "Prénom patient" et "Nom patient" pré-remplies avec le nom du patient.
+- Dans la section des patients, ajouter une action "Gérer rendez-vous" pour chaque patient. → Redirection vers la page de création de rendez-vous avec le formulaire affiché et les cases "Prénom patient" et "Nom patient" pré-remplies avec le nom du patient.
 - Idem avec médecins.
 
 # Notes personnelles :
