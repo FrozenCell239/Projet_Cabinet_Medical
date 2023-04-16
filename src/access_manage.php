@@ -59,11 +59,38 @@
                         <div id="add_form" class="collapse">
                             <form action="access_manage.php" method="post">
                                 <label for="current_doorcode">Code actuel</label>
-                                <input type="text" id="current_doorcode" name="current_doorcode" minlength="4" maxlength="8" required/><br>
+                                <input
+                                    type="password"
+                                    pattern="[A-D0-9*]{4,8}"
+                                    name="current_doorcode"
+                                    oninvalid="setCustomValidity('4 à 8 caractères. Les caracèters autorisés sont 0 à 9, A à D, et *.')"
+                                    oninput="setCustomValidity('')"
+                                    maxlength="8"
+                                    size="4"
+                                    required
+                                /><br>
                                 <label for="new_doorcode">Nouveau code</label>
-                                <input type="password" name="new_doorcode" minlength="4" maxlength="8" required/><br>
+                                <input
+                                    type="password"
+                                    pattern="[A-D0-9*]{4,8}"
+                                    name="new_doorcode"
+                                    oninvalid="setCustomValidity('4 à 8 caractères. Les caracèters autorisés sont 0 à 9, A à D, et *.')"
+                                    oninput="setCustomValidity('')"
+                                    maxlength="8"
+                                    size="4"
+                                    required
+                                /><br>
                                 <label for="confirm_new_doorcode">Confirmation du nouveau code</label>
-                                <input type="password" name="confirm_new_doorcode" minlength="4" maxlength="8" required/><br>
+                                <input
+                                    type="password"
+                                    pattern="[A-D0-9*]{4,8}"
+                                    name="confirm_new_doorcode"
+                                    oninvalid="setCustomValidity('4 à 8 caractères. Les caracèters autorisés sont 0 à 9, A à D, et *.')"
+                                    oninput="setCustomValidity('')"
+                                    maxlength="8"
+                                    size="4"
+                                    required
+                                /><br>
                                 <button type="submit" name="change_doorcode">Ajouter</button>
                             </form>
                         </div>
