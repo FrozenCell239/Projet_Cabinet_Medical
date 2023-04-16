@@ -56,6 +56,7 @@
                             <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Ajouter</button>
                         </div>
                         <div id="add_form" class="collapse">
+                            <hr>
                             <form action="patients_manage.php" method="post">
                                 <h3>> Ajouter un patient</h3>
                                 <label for="new_patient_name">Prénom</label>

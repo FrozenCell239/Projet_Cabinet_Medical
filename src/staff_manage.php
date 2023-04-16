@@ -55,6 +55,21 @@
                             <h2 class="pull-left">Liste du personnel interne</h2>
                             <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
                         </div>
+                        <div id="add_form" class="collapse">
+                            <hr>
+                            <form action="staff_manage.php" method="post">
+                                <h3>>Ajouter un personnel</h3>
+                                <input type="text" name="new_staff_name" placeholder="Prénom" required/><br>
+                                <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
+                                <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
+                                <input type="text" name="new_staff_user_login" placeholder="Identifiant" required/><br>
+                                <input type="password" name="new_staff_password" placeholder="Mot de passe" required/><br>
+                                <input type="password" name="new_staff_confirm_password" placeholder="Confirmation du mot de passe" required/><br>
+                                <input type="checkbox" name="new_staff_admin"> Administrateur<br>
+                                <button type="submit" name="staff_register">Ajouter</button>
+                            </form>
+                            <hr>
+                        </div>
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -143,20 +158,6 @@
                             </div>
                         </div-->
                         <hr>
-                        <div id="add_form" class="collapse">
-                            <form action="staff_manage.php" method="post">
-                                <h2>Ajouter un personnel</h2>
-                                <input type="text" name="new_staff_name" placeholder="Prénom" required/><br>
-                                <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
-                                <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
-                                <input type="text" name="new_staff_user_login" placeholder="Identifiant" required/><br>
-                                <input type="password" name="new_staff_password" placeholder="Mot de passe" required/><br>
-                                <input type="password" name="new_staff_confirm_password" placeholder="Confirmation du mot de passe" required/><br>
-                                <input type="checkbox" name="new_staff_admin"> Administrateur<br>
-                                <button type="submit" name="staff_register">Ajouter</button>
-                            </form>
-                            <hr>
-                        </div>
                     </div>
                 </div>
             </div>

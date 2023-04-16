@@ -55,6 +55,15 @@
                             <h2 class="pull-left">Liste des salles</h2>
                             <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
                         </div>
+                        <div id="add_form" class="collapse">
+                            <hr>
+                            <form action="rooms_manage.php" method="post">
+                                <h3>>Ajouter une salle</h3>
+                                <input type="text" name="new_room_name" placeholder="Nom" required/><br>
+                                <button type="submit" name="room_register">Ajouter</button>
+                            </form>
+                            <hr>
+                        </div>
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -97,15 +106,6 @@
                                 </div>
                             </div>
                         </div-->
-                        <hr>
-                        <div id="add_form" class="collapse">
-                            <form action="rooms_manage.php" method="post">
-                                <h2>Ajouter une salle</h2>
-                                <input type="text" name="new_room_name" placeholder="Nom" required/><br>
-                                <button type="submit" name="room_register">Ajouter</button>
-                            </form>
-                            <hr>
-                        </div>
                     </div>
                 </div>
             </div>
