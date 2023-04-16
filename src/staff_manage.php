@@ -72,6 +72,18 @@
                                     $staff_list_query_result = mysqli_query($conn, $staff_list_query);
 
                                     while($row = mysqli_fetch_array($staff_list_query_result)){
+                                        $doctor_rdv_query = "
+                                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
+                                            FROM reservations
+                                            INNER JOIN patients
+                                            ON reservations.id_patient = patients.id_patient
+                                            INNER JOIN personnel
+                                            ON reservations.id_personnel = personnel.id_personnel
+                                            INNER JOIN salles
+                                            ON reservations.id_salle = salles.id_salle
+                                            WHERE date_heure > NOW() AND patients.id_patient = ".$row['id_personnel']."
+                                            ORDER BY reservations.date_heure ASC
+                                        ;";
                                         if($row['admin']){$is_admin = "Oui";}
                                         else{$is_admin = "Non";};
                                         echo(
@@ -83,6 +95,28 @@
                                             "<td>$is_admin</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
+                                            "</td>".
+                                            "</tr>".
+                                            "<tr>".
+                                            "<td colspan='6'>"
+                                        );
+                                        $doctor_rdv_query_result = mysqli_query($conn, $doctor_rdv_query);
+                                        if(mysqli_fetch_array($doctor_rdv_query_result) == 0){
+                                            echo "Aucun rendez-vous à venir.";
+                                        }
+                                        else{
+                                            echo "Prochain(s) rendez-vous :<br>";
+                                        };
+                                        mysqli_data_seek($doctor_rdv_query_result, 0);
+                                        while($rdv_row = mysqli_fetch_array($doctor_rdv_query_result)){
+                                            echo(
+                                                "<i>- Le ".$rdv_row['date_heure'].", avec ".
+                                                $rdv_row['prenom_patient']." ".$rdv_row['nom_patient'].
+                                                " dans la ".lcfirst($rdv_row['nom_salle']).". Besoin. : ".lcfirst($rdv_row['besoin']).
+                                                "</i><br>"
+                                            );
+                                        };
+                                        echo(
                                             "</td>".
                                             "</tr>"
                                         );

@@ -64,29 +64,52 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
-                                    $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient FROM patients";
-                                    $rdv_per_patient_query = "
-                                        SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
-                                        FROM reservations
-                                        INNER JOIN patients
-                                        ON reservations.id_patient = patients.id_patient
-                                        INNER JOIN personnel
-                                        ON reservations.id_personnel = personnel.id_personnel
-                                        INNER JOIN salles
-                                        ON reservations.id_salle = salles.id_salle
-                                        WHERE date_heure > NOW()
-                                        ORDER BY reservations.date_heure ASC
-                                    ;";
+                                <?php
+                                    $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient FROM patients ORDER BY nom_patient ASC";
                                     $patient_list_query_result = mysqli_query($conn, $patient_list_query);
 
                                     while($row = mysqli_fetch_array($patient_list_query_result)){
+                                        $patient_rdv_query = "
+                                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
+                                            FROM reservations
+                                            INNER JOIN patients
+                                            ON reservations.id_patient = patients.id_patient
+                                            INNER JOIN personnel
+                                            ON reservations.id_personnel = personnel.id_personnel
+                                            INNER JOIN salles
+                                            ON reservations.id_salle = salles.id_salle
+                                            WHERE date_heure > NOW() AND patients.id_patient = ".$row['id_patient']."
+                                            ORDER BY reservations.date_heure ASC
+                                        ;";
                                         echo(
-                                            '<tr id="'.$row['id_patient'].'">'.
+                                            "<tr id='".$row['id_patient']."'>".
                                             "<td>".$row['prenom_patient']."</td>".
                                             "<td>".$row['nom_patient']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
+                                            "</td>".
+                                            "</tr>".
+                                            "<tr>".
+                                            "<td colspan='3'>"
+                                            
+                                        );
+                                        $patient_rdv_query_result = mysqli_query($conn, $patient_rdv_query);
+                                        if(mysqli_fetch_array($patient_rdv_query_result) == 0){
+                                            echo "Aucun rendez-vous à venir.";
+                                        }
+                                        else{
+                                            echo "Prochain(s) rendez-vous :<br>";
+                                        };
+                                        mysqli_data_seek($patient_rdv_query_result, 0);
+                                        while($rdv_row = mysqli_fetch_array($patient_rdv_query_result)){
+                                            echo(
+                                                "<i>- Le ".$rdv_row['date_heure'].", avec ".
+                                                $rdv_row['prenom_personnel']." ".$rdv_row['nom_personnel'].
+                                                " dans la ".lcfirst($rdv_row['nom_salle']).". Besoin : ".lcfirst($rdv_row['besoin']).
+                                                "</i><br>"
+                                            );
+                                        };
+                                        echo(
                                             "</td>".
                                             "</tr>"
                                         );
