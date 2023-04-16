@@ -4,8 +4,8 @@
 - Possibilité de supprimer un rendez-vous (en cas d'annulation par le patient ou le docteur).
 - Possibilité de modifier un rendez-vous.
 - Possibilité de mofidier un patient. (?)
-- Dans la section des patients, afficher leurs rendez-vous avec leur besoin, la salle, et leur médecin.
-- Dans la section des médecins, afficher leurs rendez-vous avec la salle, le patient et son besoin.
+- Dans la section des patients, afficher leurs rendez-vous avec la salle et leur médecin.
+- Dans la section des médecins, afficher leurs rendez-vous avec la salle et leur patient.
 - Ajout et suppression de badges.
 - Notifier les médecins en cas du changement du digicode (par mail ?). (?)
 - Notifier les médecins pour changer régulièrement leur mot de passe.
@@ -14,6 +14,10 @@
 - Ajouter conditions de mots de passe comptes (minimum 8 caractères alphanumériques).
 - Pour les confirmations de suppression, remplacer le `confirm()` par un modal.
 - Mise en beauté avec Tailwind et/ou Bootstrap.
+
+# Autres idées :
+- Dans la section des patients, ajouter une action "Créer un rendez-vous". → Redirection vers la page de création de rendez-vous avec le formulaire affiché et les cases "Prénom patient" et "Nom patient" pré-remplies avec le nom du patient.
+- Idem avec médecins.
 
 # Notes personnelles :
 - <u>/!\\</u> Enregistrer les badges dans la BDD en enlevant les zéros et les espaces des numéros !
