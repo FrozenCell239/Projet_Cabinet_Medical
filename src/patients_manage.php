@@ -66,6 +66,18 @@
                             <tbody>
                                 <?php 
                                     $patient_list_query = "SELECT id_patient, prenom_patient, nom_patient FROM patients";
+                                    $rdv_per_patient_query = "
+                                        SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
+                                        FROM reservations
+                                        INNER JOIN patients
+                                        ON reservations.id_patient = patients.id_patient
+                                        INNER JOIN personnel
+                                        ON reservations.id_personnel = personnel.id_personnel
+                                        INNER JOIN salles
+                                        ON reservations.id_salle = salles.id_salle
+                                        WHERE date_heure > NOW()
+                                        ORDER BY reservations.date_heure ASC
+                                    ;";
                                     $patient_list_query_result = mysqli_query($conn, $patient_list_query);
 
                                     while($row = mysqli_fetch_array($patient_list_query_result)){
@@ -80,7 +92,6 @@
                                         );
                                     };
                                     mysqli_free_result($patient_list_query_result); //Free result set.
-                                    mysqli_close($conn); //Close the connection to the database.
                                 ?>
                             </tbody>
                         </table>
