@@ -1,4 +1,5 @@
 # Changement et ajouts prévus :
+- Numéro de téléphone du patient.
 - Dans la gestion des rendez-vous, possibiliter de filtrer les médecins et les salles.
 - Possibilité de modifier une salle.
 - Possibilité de supprimer un rendez-vous (en cas d'annulation par le patient ou le docteur).
