@@ -34,6 +34,60 @@
                             <h2 class="pull-left">Rendez-vous à venir</h2>
                             <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Ajouter</button>
                         </div>
+                        <div id="add_form" class="collapse">
+                            <hr>
+                            <form action="rdv_manage.php" method="post">
+                                <h2>Créer un rendez-vous</h2>
+                                <input type="text" name="patient_name" placeholder="Prénom patient" required/><br>
+                                <input type="text" name="patient_last_name" placeholder="Nom patient" required/><br>
+                                <input type="text" name="patient_need" placeholder="Besoin patient" required/><br>
+                                <input
+                                    type="text"
+                                    name="patient_number"
+                                    pattern="(01|02|03|04|05|06|07|08|09)[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}"
+                                    maxlength="14"
+                                    placeholder="Tél patient"
+                                ><br>
+                                <select name="doctor_select" required>
+                                    <option value="">-- Choisir un médecin --</option>
+                                    <?php
+                                        $doctor_select_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel, profession FROM personnel;");
+                                        $doctor_select_query->execute();
+                                        while($doctor_select_row = $doctor_select_query->fetch()){
+                                            if($doctor_select_row['profession'] != 'secretaire'){
+                                                echo(
+                                                    '<option value="'.$doctor_select_row['id_personnel'].'">'.
+                                                    $doctor_select_row['prenom_personnel']." ".
+                                                    $doctor_select_row['nom_personnel']." (".
+                                                    $doctor_select_row['profession'].
+                                                    ")</option>"
+                                                );
+                                            };
+                                        };
+                                    ?>
+                                </select><br>
+                                <select name="room_select" required>
+                                    <option value="">-- Choisir une salle --</option>
+                                    <?php
+                                        $room_select_query = $conn->prepare("SELECT id_salle, nom_salle FROM salles;");
+                                        $room_select_query->execute();
+                                        while($room_select_row = $room_select_query->fetch()){
+                                            echo(
+                                                '<option value="'.$room_select_row['id_salle'].'">'.
+                                                $room_select_row['nom_salle'].
+                                                "</option>"
+                                            );
+                                        };
+                                    ?>
+                                </select><br>
+                                <input type="datetime-local" name="rdv_datetime" required/><br>
+                                <script>
+                                    document.getElementsByName("rdv_datetime")[0].setAttribute("min", new Date().toISOString().slice(0, 16));
+                                </script>
+                                <button type="submit" name="rdv_register">Créer</button>
+                            </form>
+                            <hr>
+                        </div>
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -47,7 +101,7 @@
                             </thead>
                             <tbody>
                                 <?php 
-                                    $rdv_query = "
+                                    $rdv_query = $conn->prepare("
                                         SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
                                         FROM reservations
                                         INNER JOIN patients
@@ -58,10 +112,9 @@
                                         ON reservations.id_salle = salles.id_salle
                                         WHERE date_heure > NOW()
                                         ORDER BY reservations.date_heure ASC
-                                    ;";
-                                    $rdv_query_result = mysqli_query($conn, $rdv_query);
-
-                                    while($rdv_row = mysqli_fetch_array($rdv_query_result)){
+                                    ;");
+                                    $rdv_query->execute();
+                                    while($rdv_row = $rdv_query->fetch()){
                                         echo(
                                             '<tr id="'.$rdv_row['id_reservation'].'">'.
                                             "<td>".$rdv_row['prenom_patient']." ".$rdv_row['nom_patient']."</td>".
@@ -75,7 +128,6 @@
                                             "</tr>"
                                         );
                                     };
-                                    mysqli_free_result($rdv_query_result); //Free result set.
                                     unset($rdv_row);
                                 ?>
                             </tbody>
@@ -97,52 +149,6 @@
                                 </div>
                             </div>
                         </div-->
-                        <hr>
-                        <div id="add_form" class="collapse">
-                            <form action="rdv_manage.php" method="post">
-                                <h2>Créer un rendez-vous</h2>
-                                <input type="text" name="patient_name" placeholder="Prénom patient" required/><br>
-                                <input type="text" name="patient_last_name" placeholder="Nom patient" required/><br>
-                                <input type="text" name="patient_need" placeholder="Besoin patient" required/><br>
-                                <select name="doctor_select" required>
-                                    <option value="">-- Choisir un médecin --</option>
-                                    <?php
-                                        $doctor_select_query = "SELECT id_personnel, prenom_personnel, nom_personnel, profession FROM personnel;";
-                                        $doctor_select_query_result = mysqli_query($conn, $doctor_select_query);
-                                        while($doctor_select_row = mysqli_fetch_array($doctor_select_query_result)){
-                                            if($doctor_select_row['profession'] != 'secretaire'){
-                                                echo(
-                                                    '<option value="'.$doctor_select_row['id_personnel'].'">'.
-                                                    $doctor_select_row['prenom_personnel']." ".
-                                                    $doctor_select_row['nom_personnel']." (".
-                                                    $doctor_select_row['profession'].
-                                                    ")</option>"
-                                                );
-                                            };
-                                        };
-                                    ?>
-                                </select><br>
-                                <select name="room_select" required>
-                                    <option value="">-- Choisir une salle --</option>
-                                    <?php
-                                        $room_select_query = "SELECT id_salle, nom_salle FROM salles;";
-                                        $room_select_query_result = mysqli_query($conn, $room_select_query);
-                                        while($room_select_row = mysqli_fetch_array($room_select_query_result)){
-                                            echo(
-                                                '<option value="'.$room_select_row['id_salle'].'">'.
-                                                $room_select_row['nom_salle'].
-                                                "</option>"
-                                            );
-                                        };
-                                    ?>
-                                </select><br>
-                                <input type="datetime-local" name="rdv_datetime" required/><br>
-                                <script>
-                                    document.getElementsByName("rdv_datetime")[0].setAttribute("min", new Date().toISOString().slice(0, 16));
-                                </script>
-                                <button type="submit" name="rdv_register">Créer</button>
-                            </form>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -152,4 +158,4 @@
         </footer>
     </body>
 </html>
-<?php mysqli_close($conn); //Close the connection to the database. ?>
+<?php $conn = null; //Close the connection to the database. ?>

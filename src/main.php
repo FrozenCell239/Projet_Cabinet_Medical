@@ -17,8 +17,6 @@
         <?php
             include('server.php');
             if(!isset($_SESSION['profession'])){header("Location: index.php");};
-            //if($_SESSION['admin'] == 1){include('serial_command.php');}; Currently unused.
-            //if($_SESSION['admin'] == 1){include('access/command.php');};
         ?>
 
         <!--Others.-->
@@ -67,7 +65,7 @@
                                 </thead>
                                 <tbody>
                                     <?php 
-                                        $rdv_query = "
+                                        $rdv_query = $conn->prepare("
                                             SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
                                             FROM reservations
                                             INNER JOIN personnel
@@ -76,11 +74,11 @@
                                             ON reservations.id_patient = patients.id_patient
                                             INNER JOIN salles
                                             ON reservations.id_salle = salles.id_salle
-                                            WHERE date_heure > NOW() AND personnel.id_personnel = '".$_SESSION['user_id']."'
+                                            WHERE date_heure > NOW() AND personnel.id_personnel = ?
                                             ORDER BY reservations.date_heure ASC
-                                        ;";
-                                        $rdv_query_result = mysqli_query($conn, $rdv_query);
-                                        while($rdv_row = mysqli_fetch_array($rdv_query_result)){
+                                        ;");
+                                        $rdv_query->execute([$_SESSION['user_id']]);
+                                        while($rdv_row = $rdv_query->fetch()){
                                             echo(
                                                 '<tr id="'.$rdv_row['id_reservation'].'">'.
                                                 "<td>".$rdv_row['prenom_patient']." ".$rdv_row['nom_patient']."</td>".
@@ -90,7 +88,7 @@
                                                 "</tr>"
                                             );
                                         };
-                                        mysqli_free_result($rdv_query_result); //Free result set.
+                                        unset($rdv_row);
                                     ?>
                                 </tbody>
                             </table>
@@ -105,4 +103,4 @@
         </footer>
     </body>
 </html>
-<?php mysqli_close($conn); //Close the connection to the database. ?>
+<?php $conn = null; //Close the connection to the database. ?>

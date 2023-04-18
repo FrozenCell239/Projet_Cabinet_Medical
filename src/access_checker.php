@@ -8,22 +8,29 @@
         fclose($fp); //Closes the log text file.
     };
 
-    $conn = new mysqli("localhost:3307", "root", "", "cabinet"); //Connection to the database.
-
-    if($conn->connect_error){ //If the connection to database fails...
-        die("Connection failed. : ".$conn->connect_error); //...then display the error...
-        enlog("Connection failed."); //...and logs an error message.
-    };
+    $pdo_options = [ //Some options to configure the PDO connection.
+        PDO::ATTR_EMULATE_PREPARES => false, //Turn off emulation mode for "real" prepared statements.
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, //Turn on errors in the form of exceptions.
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, //Makes the default fetch be an associative array.
+    ];
+    try{
+        $conn = new PDO("mysql:host=localhost:3307;dbname=cabinet;charset=utf8mb4", "root", "", $pdo_options); //Connection to the database.
+    }
+    catch(Exception $e){echo "Connection failed : " . $e->getMessage();};
     if(isset($_GET['dc'])){ //Determines the SQL query for checking in case a doorcode is typed.
         $value = sha1($_GET['dc']);
-        $check_query = "SELECT mdp_code FROM code_visiophone WHERE mdp_code='$value';";
+        $check_query = $conn->prepare("SELECT mdp_code FROM code_visiophone WHERE mdp_code=?;");
     };
     if(isset($_GET['rt'])){ //Determines the SQL query for checking in case a tag is detected.
         $value = base64_encode($_GET['rt']);
-        $check_query = "SELECT id_badge, mdp_badge, actif FROM badges_visiophone WHERE mdp_badge='$value';";
+        $check_query = $conn->prepare("SELECT id_badge, mdp_badge, actif FROM badges_visiophone WHERE mdp_badge=?;");
     };
-    $check_query_result = mysqli_query($conn, $check_query); //Sends the SQL query to the database.
-    $row = mysqli_fetch_array($check_query_result, MYSQLI_ASSOC); //Checking if the doorcode/tag received from Arduino exists in the database.
+    if(!isset($check_query)){
+        echo "TILT";
+        exit(0);
+    };
+    $check_query->execute([$value]); //Executes the SQL query.
+    $row = $check_query->fetch(); //Checking if the doorcode/tag received from Arduino exists in the database.
     if(!isset($row['mdp_code']) && !isset($row['mdp_badge'])){ //If doorcode/tag was wrong.
         if(isset($_GET['rt'])){enlog($_GET['rt']." is a wrong tag !\n");}; //...then logs an error message with the tag number.
         if(isset($_GET['dc'])){enlog($_GET['dc']." is a wrong doorcode !\n");};  //...then logs an error message with the typed doorcode.
@@ -44,6 +51,5 @@
     $_GET = array(); //Resets the array that contained received values.
     unset($value); //Unsets the variable that contained the doorcode/tag number received from Arduino.
     unset($check_query); //Unsets the variable that contained the SQL query.
-    mysqli_free_result($check_query_result); //Free the variable that contained the result of the SQL query.
-    $conn->close(); //Closes the connection to database
+    $conn = null; //Closes the connection to database
 ?>

@@ -58,7 +58,7 @@
                         <div id="add_form" class="collapse">
                             <hr>
                             <form action="staff_manage.php" method="post">
-                                <h3>>Ajouter un personnel</h3>
+                                <h3>> Ajouter un personnel</h3>
                                 <input type="text" name="new_staff_name" placeholder="Prénom" required/><br>
                                 <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
                                 <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
@@ -83,22 +83,21 @@
                             </thead>
                             <tbody>
                                 <?php
-                                    $staff_list_query = "SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, admin FROM personnel";
-                                    $staff_list_query_result = mysqli_query($conn, $staff_list_query);
-
-                                    while($row = mysqli_fetch_array($staff_list_query_result)){
-                                        $doctor_rdv_query = "
-                                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
-                                            FROM reservations
-                                            INNER JOIN patients
-                                            ON reservations.id_patient = patients.id_patient
-                                            INNER JOIN personnel
-                                            ON reservations.id_personnel = personnel.id_personnel
-                                            INNER JOIN salles
-                                            ON reservations.id_salle = salles.id_salle
-                                            WHERE date_heure > NOW() AND patients.id_patient = ".$row['id_personnel']."
-                                            ORDER BY reservations.date_heure ASC
-                                        ;";
+                                    $staff_list_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, admin FROM personnel");
+                                    $doctor_rdv_query = $conn->prepare("
+                                        SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
+                                        FROM reservations
+                                        INNER JOIN patients
+                                        ON reservations.id_patient = patients.id_patient
+                                        INNER JOIN personnel
+                                        ON reservations.id_personnel = personnel.id_personnel
+                                        INNER JOIN salles
+                                        ON reservations.id_salle = salles.id_salle
+                                        WHERE date_heure > NOW() AND personnel.id_personnel = ?
+                                        ORDER BY reservations.date_heure ASC
+                                    ;");
+                                    $staff_list_query->execute();
+                                    while($row = $staff_list_query->fetch()){
                                         if($row['admin']){$is_admin = "Oui";}
                                         else{$is_admin = "Non";};
                                         echo(
@@ -115,15 +114,11 @@
                                             "<tr>".
                                             "<td colspan='6'>"
                                         );
-                                        $doctor_rdv_query_result = mysqli_query($conn, $doctor_rdv_query);
-                                        if(mysqli_fetch_array($doctor_rdv_query_result) == 0){
-                                            echo "Aucun rendez-vous à venir.";
-                                        }
-                                        else{
-                                            echo "Prochain(s) rendez-vous :<br>";
-                                        };
-                                        mysqli_data_seek($doctor_rdv_query_result, 0);
-                                        while($rdv_row = mysqli_fetch_array($doctor_rdv_query_result)){
+                                        $doctor_rdv_query->execute([$row['id_personnel']]);
+                                        if($doctor_rdv_query->rowCount() == 0){echo "Aucun rendez-vous à venir.";}
+                                        elseif($doctor_rdv_query->rowCount() == 1){echo "Prochain rendez-vous :<br>";}
+                                        else{echo "Prochains rendez-vous :<br>";};
+                                        while($rdv_row = $doctor_rdv_query->fetch()){
                                             echo(
                                                 "<i>- Le ".$rdv_row['date_heure'].", avec ".
                                                 $rdv_row['prenom_patient']." ".$rdv_row['nom_patient'].
@@ -131,12 +126,10 @@
                                                 "</i><br>"
                                             );
                                         };
-                                        echo(
-                                            "</td>".
-                                            "</tr>"
-                                        );
+                                        echo "</td></tr>";
                                     };
-                                    mysqli_free_result($staff_list_query_result); //Free result set.
+                                    unset($row);
+                                    unset($rdv_row);
                                 ?>
                             </tbody>
                         </table>
@@ -167,4 +160,4 @@
         </footer>
     </body>
 </html>
-<?php mysqli_close($conn); //Close the connection to the database. ?>
+<?php $conn = null; //Close the connection to the database. ?>

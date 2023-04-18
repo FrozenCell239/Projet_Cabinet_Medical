@@ -58,7 +58,7 @@
                         <div id="add_form" class="collapse">
                             <hr>
                             <form action="rooms_manage.php" method="post">
-                                <h3>>Ajouter une salle</h3>
+                                <h3>> Ajouter une salle</h3>
                                 <input type="text" name="new_room_name" placeholder="Nom" required/><br>
                                 <button type="submit" name="room_register">Ajouter</button>
                             </form>
@@ -73,10 +73,9 @@
                             </thead>
                             <tbody>
                                 <?php 
-                                    $rooms_list_query = "SELECT * FROM salles ORDER BY nom_salle;";
-                                    $rooms_list_query_result = mysqli_query($conn, $rooms_list_query);
-
-                                    while($row = mysqli_fetch_array($rooms_list_query_result)){
+                                    $rooms_list_query = $conn->prepare("SELECT * FROM salles ORDER BY nom_salle;");
+                                    $rooms_list_query->execute();
+                                    while($row = $rooms_list_query->fetch()){
                                         echo(
                                             '<tr id="'.$row['id_salle'].'">'.
                                             "<td>".$row['nom_salle']."</td>".
@@ -86,7 +85,7 @@
                                             "</tr>"
                                         );
                                     };
-                                    mysqli_free_result($rooms_list_query_result); //Free result set.
+                                    unset($row);
                                 ?>
                             </tbody>
                         </table>
@@ -116,4 +115,4 @@
         </footer>
     </body>
 </html>
-<?php mysqli_close($conn); //Close the connection to the database. ?>
+<?php $conn = null; //Close the connection to the database. ?>

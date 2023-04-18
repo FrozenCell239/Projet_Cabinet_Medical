@@ -33,9 +33,6 @@
         <?php
             include('server.php');
             if($_SESSION['admin'] == 0 || !isset($_SESSION['profession'])){header("Location: index.php");};
-
-            $tag_list_query = "SELECT id_badge, mdp_badge, actif FROM badges_visiophone";
-            $tag_list_query_result = mysqli_query($conn, $tag_list_query);
         ?>
 
         <!--Others.-->
@@ -109,7 +106,9 @@
                             </thead>
                             <tbody>
                                 <?php
-                                    while($row = mysqli_fetch_array($tag_list_query_result)){
+                                    $tag_list_query = $conn->prepare("SELECT id_badge, mdp_badge, actif FROM badges_visiophone;");
+                                    $tag_list_query->execute();
+                                    while($row = $tag_list_query->fetch()){
                                         if($row['actif']){
                                             $active = "Activé";
                                             $stater = "Désactiver";
@@ -128,7 +127,7 @@
                                             "</tr>"
                                         );
                                     };
-                                    mysqli_free_result($tag_list_query_result);
+                                    unset($row);
                                 ?>
                             </tbody>
                         </table>
@@ -149,4 +148,4 @@
         </footer>
     </body>
 </html>
-<?php mysqli_close($conn); //Close the connection to the database. ?>
+<?php $conn = null; //Close the connection to the database. ?>
