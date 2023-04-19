@@ -48,11 +48,8 @@
                                 <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Autres</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="password_change.php">Modifier mot de passe</a></li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="password_change.php">Modifier mot de passe</a>
                         </li>
                     </ul>
                     <form class="d-flex" action="logout.php" method="post">
@@ -70,15 +67,14 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Autres</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="password_change.php">Modifier mot de passe</a></li>
-                        </ul>
-                    </li>
-                    <form class="d-flex" action="logout.php" method="post">
-                        <button class="btn btn-primary" type="submit">Se déconnecter</button>
-                    </form>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="password_change.php">Modifier mot de passe</a>
+                        </li>
+                        <form class="d-flex" action="logout.php" method="post">
+                            <button class="btn btn-primary" type="submit">Se déconnecter</button>
+                        </form>
+                    </ul>
                 </div>
             </div>
         </nav>

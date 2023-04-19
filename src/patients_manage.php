@@ -65,10 +65,11 @@
                                 <input type="text" name="new_patient_last_name" required/><br>
                                 <label for="new_patient_number">Téléphone</label>
                                 <input
-                                    type="text"
+                                    type="tel"
                                     name="new_patient_number"
                                     pattern="(01|02|03|04|05|06|07|08|09)[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}"
                                     maxlength="14"
+                                    required
                                 ><br>
                                 <button type="submit" name="patient_register">Ajouter</button>
                             </form>
