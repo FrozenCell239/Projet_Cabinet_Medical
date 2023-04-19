@@ -67,16 +67,16 @@
                                     type="password"
                                     name="new_staff_password"
                                     placeholder="Mot de passe"
-                                    pattern="[a-zA-Z0-9.*$]{8,}"
-                                    title="8 caractères minimum. Caractères autorisés : '...' et alphanumériques."
+                                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
+                                    title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
                                     required
                                 /><br>
                                 <input
                                     type="password"
                                     name="new_staff_confirm_password"
                                     placeholder="Confirmation du mot de passe"
-                                    pattern="[a-zA-Z0-9.*$]{8,}"
-                                    title="8 caractères minimum. Caractères autorisés : '...' et alphanumériques."
+                                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
+                                    title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
                                     required
                                 /><br>
                                 <input type="checkbox" name="new_staff_admin"> Administrateur<br>

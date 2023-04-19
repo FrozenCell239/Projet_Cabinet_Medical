@@ -29,15 +29,36 @@
             <form action="password_change.php" method="post">
                 <div class="mb-6">
                     <label class="block font-bold mb-2" for="current_password">Mot de passe actuel</label>
-                    <input class="block border border-gray-400 p-2 w-full" type="password" name="current_password"required>
+                    <input
+                        class="block border border-gray-400 p-2 w-full"
+                        type="password"
+                        name="current_password"
+                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
+                        title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
+                        required
+                    />
                 </div>
                 <div class="mb-6">
                     <label class="block font-bold mb-2" for="psswrd">Nouveau mot de passe</label>
-                    <input class="block border border-gray-400 p-2 w-full" type="password" name="new_password" required>
+                    <input
+                        class="block border border-gray-400 p-2 w-full"
+                        type="password"
+                        name="new_password"
+                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
+                        title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
+                        required
+                    />
                 </div>
                 <div class="mb-6">
                     <label class="block font-bold mb-2" for="psswrd">Confirmation mot de passe</label>
-                    <input class="block border border-gray-400 p-2 w-full" type="password" name="confirm_new_password" required>
+                    <input
+                        class="block border border-gray-400 p-2 w-full"
+                        type="password"
+                        name="confirm_new_password"
+                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
+                        title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
+                        required
+                    />
                 </div>
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="password_change">Valider</button>
             </form>
