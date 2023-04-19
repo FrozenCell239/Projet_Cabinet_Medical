@@ -33,6 +33,7 @@
                         <div class="mt-5 mb-3 d-flex justify-content-between">
                             <h2 class="pull-left">Rendez-vous à venir</h2>
                             <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Ajouter</button>
+                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#old_rdv_display">Afficher les anciens rendez-vous</button>
                         </div>
                         <div id="add_form" class="collapse">
                             <hr>
@@ -86,6 +87,50 @@
                                 </script>
                                 <button type="submit" name="rdv_register">Créer</button>
                             </form>
+                            <hr>
+                        </div>
+                        <div id="old_rdv_display" class="collapse">
+                            <h3>Anciens rendez-vous</h3>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Besoin</th>
+                                        <th>Médecin</th>
+                                        <th>Salle</th>
+                                        <th>Date et heure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                        $old_rdv_query = $conn->prepare("
+                                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
+                                            FROM reservations
+                                            INNER JOIN patients
+                                            ON reservations.id_patient = patients.id_patient
+                                            INNER JOIN personnel
+                                            ON reservations.id_personnel = personnel.id_personnel
+                                            INNER JOIN salles
+                                            ON reservations.id_salle = salles.id_salle
+                                            WHERE date_heure < NOW()
+                                            ORDER BY reservations.date_heure ASC
+                                        ;");
+                                        $old_rdv_query->execute();
+                                        while($old_rdv_row = $old_rdv_query->fetch()){
+                                            echo(
+                                                '<tr id="'.$old_rdv_row['id_reservation'].'">'.
+                                                "<td>".$old_rdv_row['prenom_patient']." ".$old_rdv_row['nom_patient']."</td>".
+                                                "<td>".$old_rdv_row['besoin']."</td>".
+                                                "<td>".$old_rdv_row['prenom_personnel']." ".$old_rdv_row['nom_personnel']."</td>".
+                                                "<td>".$old_rdv_row['nom_salle']."</td>".
+                                                "<td>".$old_rdv_row['date_heure']."</td>".
+                                                "</tr>"
+                                            );
+                                        };
+                                        unset($old_rdv_row);
+                                    ?>
+                                </tbody>
+                            </table>
                             <hr>
                         </div>
                         <table class="table table-bordered table-striped">

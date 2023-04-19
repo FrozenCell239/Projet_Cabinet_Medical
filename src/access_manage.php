@@ -131,13 +131,18 @@
                                 ?>
                             </tbody>
                         </table>
-                        <div>
-                            <!--?php
-                                if(file_exists("access/log.txt")){
-                                    $logs = nl2br(file_get_contents("access/log.txt" ));
+                        <hr>
+                        <button class="btn" data-bs-toggle="collapse" data-bs-target="#logs_display">Afficher l'historique des accès</button>
+                        <div id="logs_display" class="collapse">
+                            <?php
+                                define('LOG_FILE', "log.txt"); //Path and name of the log file. Only the name of the file here as all files are in the same folders.
+                                if(file_exists(LOG_FILE)){
+                                    $logs = nl2br(file_get_contents(LOG_FILE));
                                     echo $logs;
-                                };
-                            ?-->
+                                }
+                                else{echo "<i>&nbsp;&nbsp;&nbsp;&nbsp;Aucun accès répertorié pour le moment.</i>";};
+                            ?>
+                            <br>
                         </div>
                     </div>
                 </div>

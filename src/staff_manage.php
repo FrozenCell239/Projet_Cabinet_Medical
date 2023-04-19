@@ -63,8 +63,22 @@
                                 <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
                                 <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
                                 <input type="text" name="new_staff_user_login" placeholder="Identifiant" required/><br>
-                                <input type="password" name="new_staff_password" placeholder="Mot de passe" required/><br>
-                                <input type="password" name="new_staff_confirm_password" placeholder="Confirmation du mot de passe" required/><br>
+                                <input
+                                    type="password"
+                                    name="new_staff_password"
+                                    placeholder="Mot de passe"
+                                    pattern="[a-zA-Z0-9.*$]{8,}"
+                                    title="8 caractères minimum. Caractères autorisés : '...' et alphanumériques."
+                                    required
+                                /><br>
+                                <input
+                                    type="password"
+                                    name="new_staff_confirm_password"
+                                    placeholder="Confirmation du mot de passe"
+                                    pattern="[a-zA-Z0-9.*$]{8,}"
+                                    title="8 caractères minimum. Caractères autorisés : '...' et alphanumériques."
+                                    required
+                                /><br>
                                 <input type="checkbox" name="new_staff_admin"> Administrateur<br>
                                 <button type="submit" name="staff_register">Ajouter</button>
                             </form>

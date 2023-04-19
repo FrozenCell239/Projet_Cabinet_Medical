@@ -1,6 +1,14 @@
 <?php
+    date_default_timezone_set('Europe/Paris');
+
     # Global use functions
-    function doorControl($ORDER){
+    function enlog($LOG, $DISPLAY){ //Pushes some logs into a text file and to the Arduino board.
+        if($DISPLAY == true){echo "* ".$LOG;}; //Sends the log to the Arduino board.
+        $fp = fopen("log.txt", "a"); //Opens the log text file in "append" mode.
+        fwrite($fp, "• ".date(DATE_RFC2822)." : ".$LOG); //Pushes the date and time of the log message and its content.
+        fclose($fp); //Closes the log text file.
+    };
+    function doorControl($ORDER){ //Handles order sending to Arduino board.
         if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
             $udp_port = 8888;
             $arduino_ip = '192.168.1.177';
@@ -8,6 +16,9 @@
             //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
             //echo "Acknowledgement : $udp_buffer<br>";
             sleep(1);
+            if($ORDER == '$'){$order_type = "unlocked";};
+            if($ORDER == '#'){$order_type = "opened";};
+            enlog("Door $order_type from office.".PHP_EOL, false);
         }
         else{echo("Can't create socket.<br>");};
     };
@@ -21,7 +32,6 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
-
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
@@ -37,9 +47,14 @@
                                 <li><a class="dropdown-item" href="rdv_manage.php">Rendez-vous</a></li>
                                 <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
                             </ul>
-                        </li>    
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Autres</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="password_change.php">Modifier mot de passe</a></li>
+                            </ul>
+                        </li>
                     </ul>
-
                     <form class="d-flex" action="logout.php" method="post">
                         <button class="btn btn-primary" type="submit">Se déconnecter</button>
                     </form>
@@ -54,7 +69,13 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="collapsibleNavbar">    
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Autres</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="password_change.php">Modifier mot de passe</a></li>
+                        </ul>
+                    </li>
                     <form class="d-flex" action="logout.php" method="post">
                         <button class="btn btn-primary" type="submit">Se déconnecter</button>
                     </form>
@@ -86,11 +107,11 @@
         $new_last_name = filter_var(ucfirst(trim($_POST['new_staff_last_name'])), FILTER_SANITIZE_STRING);
         $new_profession = filter_var(trim($_POST['new_staff_profession']), FILTER_SANITIZE_STRING);
         $new_user_login = filter_var(trim($_POST['new_staff_user_login']), FILTER_SANITIZE_STRING);
-        $new_password = sha1($_POST['new_staff_password']);
-        $new_confirm_password = sha1($_POST['new_staff_confirm_password']);
+        $new_user_password = sha1($_POST['new_staff_password']);
+        $new_user_confirm_password = sha1($_POST['new_staff_confirm_password']);
         if(isset($_POST['new_staff_admin'])){$new_admin = 1;}
         else{$new_admin = 0;};
-        if($new_password != $new_confirm_password){
+        if($new_user_password != $new_user_confirm_password){ //Checks if passwords match.
             array_push($errors, "Les mots de passe ne correspondent pas.");
             ?>
             <script>
@@ -100,8 +121,8 @@
         };
         $login_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE identifiant=?;");
         $login_check_query->execute([$new_user_login]);
-        if($login_check_query->rowCount() > 0){ //Check if user login already exists.
-                array_push($errors, "Identifiant déjà utilisé.");
+        if($login_check_query->rowCount() > 0){ //Checks if user login already exists.
+            array_push($errors, "Identifiant déjà utilisé.");
             ?>
             <script>
                 alert("Identifiant déjà utilisé.");
@@ -111,7 +132,7 @@
         $user_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE prenom_personnel=? AND nom_personnel=?;");
         $user_check_query->execute([$new_name, $new_last_name]);
         if($user_check_query->rowCount() > 0){ //Check if user already exists.
-                array_push($errors, "Cette personne est déjà répertoriée.");
+            array_push($errors, "Cette personne est déjà répertoriée.");
             ?>
             <script>
                 alert("Cette personne est déjà répertoriée.");
@@ -120,7 +141,7 @@
         };
         if(count($errors) == 0){ //If no errors, register.
             $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mot_de_passe, admin) VALUES (?, ?, ?, ?, ?, ?);");
-            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_password, $new_admin]);
+            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_password, $new_admin]);
         };
         $_POST = array();
     };
@@ -131,7 +152,7 @@
         $room_check_query = $conn->prepare("SELECT id_salle FROM salles WHERE nom_salle=?");
         $room_check_query->execute([$new_room_name]);
         if($room_check_query->rowCount() > 0){ //Check if room already exists.
-                array_push($errors, "Cette salle est déjà répertoriée.");
+            array_push($errors, "Cette salle est déjà répertoriée.");
             ?>
             <script>
                 alert("Cette salle est déjà répertoriée.");
@@ -199,7 +220,7 @@
         $current_doorcode = sha1($_POST['current_doorcode']);
         $new_doorcode = sha1($_POST['new_doorcode']);
         $confirm_new_doorcode = sha1($_POST['confirm_new_doorcode']);
-        if($new_doorcode != $confirm_new_doorcode){ //Checks if new doorcodes matches.
+        if($new_doorcode != $confirm_new_doorcode){ //Checks if new doorcodes match.
             array_push($errors, "Les codes ne correspondent pas.");
             ?>
             <script>
@@ -207,7 +228,7 @@
             </script>
             <?php
         };
-        $current_doorcode_query = $conn->prepare("SELECT * FROM code_visiophone WHERE mdp_code = ? ;");
+        $current_doorcode_query = $conn->prepare("SELECT id_code FROM code_visiophone WHERE mdp_code = ? ;");
         $current_doorcode_query->execute([$current_doorcode]);
         if($current_doorcode_query->rowCount() == 0){ //Checks if typed current doorcode exists.
             array_push($errors, "Le code actuel saisi est incorrect.");
@@ -263,10 +284,54 @@
         $_POST = array();
     };
 
+    # Password changing
+    if(isset($_POST['password_change'])){
+        $current_password = sha1($_POST['current_password']);
+        $new_password = sha1($_POST['new_password']);
+        $confirm_new_password = sha1($_POST['confirm_new_password']);
+        if($new_password != $confirm_new_password){ //Checks if passwords match.
+            array_push($errors, "Les codes ne correspondent pas.");
+            ?>
+            <script>
+                alert("Les codes ne correspondent pas.");
+            </script>
+            <?php
+        };
+        $current_password_query = $conn->prepare("SELECT mot_de_passe FROM personnel WHERE id_personnel = ? ;");
+        $current_password_query->execute([$_SESSION['user_id']]);
+        if($current_password != ($current_password_query->fetch())['mot_de_passe']){ //Checks if typed current password exists.
+            array_push($errors, "Le mot de passe actuel saisi est incorrect.");
+            ?>
+            <script>
+                alert("Le mot de passe actuel saisi est incorrect.");
+            </script>
+            <?php
+        };
+        if(count($errors) == 0){
+            $password_change_query = $conn->prepare("UPDATE personnel SET mot_de_passe=? WHERE id_personnel=?;");
+            $password_change_query->execute([$new_password, $_SESSION['user_id']]);
+            ?>
+            <script>
+                alert("Mot de passe modifié avec succès.");
+            </script>
+            <?php
+        };
+        unset($row);
+        $_POST = array();
+        header("Refresh: 0; url=main.php");
+    };
+
+    # Password changing canceling
+    if(isset($_POST['password_change_cancel'])){
+        $_POST = array();
+        header("Refresh: 0; url=main.php");
+    };
+
     # Tag toggling
     if(isset($_GET['what']) && $_GET['what'] == 10 && isset($_GET['id'])){
         $toggle_query = $conn->prepare("UPDATE badges_visiophone SET actif = 1 - actif WHERE id_badge = ?;");
         $toggle_query->execute([$_GET['id']]);
         echo 'Badge activé/désactivé avec succès.';
+        $_GET = array();
     };
 ?>
