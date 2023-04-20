@@ -1,6 +1,6 @@
 # Projet Cabinet Medical
-Projet développé dans le cadre de mon projet de deuxième BTS. Essentiellement Backend.
-**Toujours en cours de développement.**
+Projet développé dans le cadre de mon projet de deuxième BTS. Essentiellement Backend.<br>
+**Toujours en cours de développement.**<br>
 <i>Chaque fonctionnalité est testée dans tous les scénarios d'utilisation possibles avant d'être portée dans ce dépôt.</i>
 
 ## Description :
