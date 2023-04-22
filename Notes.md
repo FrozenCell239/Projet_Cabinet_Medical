@@ -6,8 +6,6 @@
 - Ajout et suppression de badges.
 - Notifier les médecins en cas du changement du digicode (par mail ?). (?)
 - Notifier les médecins pour changer régulièrement leur mot de passe.
-- Possibilité d'afficher les rendez-vous passés qui ne sont pas encore supprimés.
--  Ajouter conditions de mots de passe comptes (minimum 8 caractères alphanumériques).
 - Pour les confirmations de suppression, remplacer le `confirm()` par un modal.
 - Mise en beauté avec Tailwind et/ou Bootstrap.
 

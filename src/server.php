@@ -49,7 +49,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="password_change.php">Modifier mot de passe</a>
+                            <a class="nav-link" href="password_update.php">Modifier mot de passe</a>
                         </li>
                     </ul>
                     <form class="d-flex" action="logout.php" method="post">
@@ -69,7 +69,7 @@
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="password_change.php">Modifier mot de passe</a>
+                            <a class="nav-link" href="password_update.php">Modifier mot de passe</a>
                         </li>
                         <form class="d-flex" action="logout.php" method="post">
                             <button class="btn btn-primary" type="submit">Se déconnecter</button>
@@ -280,8 +280,8 @@
         $_POST = array();
     };
 
-    # Password changing
-    if(isset($_POST['password_change'])){
+    # Password updating
+    if(isset($_POST['password_update'])){
         $current_password = sha1($_POST['current_password']);
         $new_password = sha1($_POST['new_password']);
         $confirm_new_password = sha1($_POST['confirm_new_password']);
@@ -304,8 +304,8 @@
             <?php
         };
         if(count($errors) == 0){
-            $password_change_query = $conn->prepare("UPDATE personnel SET mot_de_passe=? WHERE id_personnel=?;");
-            $password_change_query->execute([$new_password, $_SESSION['user_id']]);
+            $password_update_query = $conn->prepare("UPDATE personnel SET mot_de_passe=? WHERE id_personnel=?;");
+            $password_update_query->execute([$new_password, $_SESSION['user_id']]);
             ?>
             <script>
                 alert("Mot de passe modifié avec succès.");
@@ -317,10 +317,43 @@
         header("Refresh: 0; url=main.php");
     };
 
-    # Password changing canceling
-    if(isset($_POST['password_change_cancel'])){
+    # Password update canceling
+    if(isset($_POST['password_update_cancel'])){
         $_POST = array();
         header("Refresh: 0; url=main.php");
+    };
+
+    # Patient information updating
+    if(isset($_GET['ptid_u'])){ //Hiding the patient ID in the URL bar.
+        $_SESSION['u_patient_id'] = $_GET['ptid_u'];
+        header("Refresh: 0; url=patient_update.php");
+    };
+    if(isset($_POST['patient_update'])){
+        $u_patient_id = $_SESSION['u_patient_id'];
+        $u_patient_name = filter_var(ucfirst(trim($_POST['u_patient_name'])), FILTER_SANITIZE_STRING);
+        $u_patient_last_name = filter_var(ucfirst(trim($_POST['u_patient_last_name'])), FILTER_SANITIZE_STRING);
+        $u_patient_number = filter_var(trim($_POST['u_patient_number']), FILTER_SANITIZE_STRING);
+        $patient_update_query = $conn->prepare("UPDATE patients SET prenom_patient=?, nom_patient=?, numero_patient=? WHERE id_patient=?;");
+        $patient_update_query->execute([$u_patient_name, $u_patient_last_name, $u_patient_number, $u_patient_id]);
+        ?>
+        <script>
+            alert("Patient mis à jour avec succès.");
+        </script>
+        <?php
+        unset($row);
+        unset($u_patient_name);
+        unset($u_patient_last_name);
+        unset($u_patient_number);
+        unset($u_patient_id);
+        unset($_SESSION['u_patient_id']);
+        $_POST = array();
+        header("Refresh: 0; url=patients_manage.php");
+    };
+
+    # Patient information update canceling
+    if(isset($_POST['patient_update_cancel'])){
+        $_POST = array();
+        header("Refresh: 0; url=patients_manage.php");
     };
 
     # Tag toggling

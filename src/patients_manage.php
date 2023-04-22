@@ -108,7 +108,7 @@
                                             "<td>".$row['numero_patient']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
-                                            '<button class="btn btn-info btn-sm" href="patient_update.php">Modifier</button>'.
+                                            '<a class="btn btn-info btn-sm" href="patient_update.php?ptid_u='.$row['id_patient'].'">Modifier</a>'.
                                             "</td>".
                                             "</tr>".
                                             "<tr>".
