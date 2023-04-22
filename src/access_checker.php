@@ -9,9 +9,8 @@
         $value = base64_encode($_GET['rt']);
         $check_query = $conn->prepare("SELECT id_badge, mdp_badge, actif FROM badges_visiophone WHERE mdp_badge=?;");
     };
-    if(!isset($check_query)){
-        echo "TILT";
-        exit(0);
+    if(!isset($check_query)){ //Happens when no query is prepared because someone tried to access this page manually.
+        header("Location: main.php");
     };
     $check_query->execute([$value]); //Executes the SQL query.
     $row = $check_query->fetch(); //Checking if the doorcode/tag received from Arduino exists in the database.
