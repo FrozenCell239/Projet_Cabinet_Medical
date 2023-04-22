@@ -2,7 +2,6 @@
 - Dans la gestion des rendez-vous, possibilité de filtrer les médecins et les salles.
 - Possibilité de modifier une salle.
 - Possibilité de modifier un rendez-vous.
-- Possibilité de modifier un patient. (?)
 - Ajout et suppression de badges.
 - Notifier les médecins en cas du changement du digicode (par mail ?). (?)
 - Notifier les médecins pour changer régulièrement leur mot de passe.
