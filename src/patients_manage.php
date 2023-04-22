@@ -58,7 +58,7 @@
                         <div id="add_form" class="collapse">
                             <hr>
                             <form action="patients_manage.php" method="post">
-                                <h3>> Ajouter un patient</h3>
+                                <h3>Ajouter un patient</h3>
                                 <label for="new_patient_name">Prénom</label>
                                 <input type="text" name="new_patient_name" required/><br>
                                 <label for="new_patient_last_name">Nom</label>
@@ -70,7 +70,7 @@
                                     pattern="(01|02|03|04|05|06|07|08|09)[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}"
                                     maxlength="14"
                                     required
-                                ><br>
+                                /><br>
                                 <button type="submit" name="patient_register">Ajouter</button>
                             </form>
                             <hr>
@@ -108,6 +108,7 @@
                                             "<td>".$row['numero_patient']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
+                                            '<button class="btn btn-info btn-sm" href="patient_update.php">Modifier</button>'.
                                             "</td>".
                                             "</tr>".
                                             "<tr>".

@@ -58,7 +58,7 @@
                         <div id="add_form" class="collapse">
                             <hr>
                             <form action="rdv_manage.php" method="post">
-                                <h2>Créer un rendez-vous</h2>
+                                <h3>Créer un rendez-vous</h3>
                                 <input type="text" name="patient_name" placeholder="Prénom patient" required/><br>
                                 <input type="text" name="patient_last_name" placeholder="Nom patient" required/><br>
                                 <input type="text" name="patient_need" placeholder="Besoin patient" required/><br>
@@ -110,7 +110,7 @@
                             <hr>
                         </div>
                         <div id="old_rdv_display" class="collapse">
-                            <h2>Anciens rendez-vous</h2>
+                            <h3>Anciens rendez-vous</h3>
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
