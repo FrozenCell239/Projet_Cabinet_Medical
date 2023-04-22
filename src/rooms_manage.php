@@ -14,7 +14,7 @@
             $(function(){ //Handling room deletion.
                 $('.remove').click(function(){
                     var id = $(this).closest('tr').attr('id');
-                    if(confirm("Êtes-vous sûr(e) de vouloir annuler ce rendez-vous ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
+                    if(confirm("Êtes-vous sûr(e) de vouloir retirer cette salle de la liste ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
                         $.ajax({
                             url: 'delete.php?what=2&id=' + id,
                             type: 'GET',
