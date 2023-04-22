@@ -10,11 +10,11 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-        <script> //Handling room deletion.
-            $(function(){
+        <script>
+            $(function(){ //Handling room deletion.
                 $('.remove').click(function(){
                     var id = $(this).closest('tr').attr('id');
-                    if(confirm("Êtes-vous sûr(e) de vouloir retirer cette salle de la liste ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
+                    if(confirm("Êtes-vous sûr(e) de vouloir annuler ce rendez-vous ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
                         $.ajax({
                             url: 'delete.php?what=2&id=' + id,
                             type: 'GET',
