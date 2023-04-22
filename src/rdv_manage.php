@@ -188,7 +188,7 @@
                                             "<td>".$rdv_row['nom_salle']."</td>".
                                             "<td>".$rdv_row['date_heure']."</td>".
                                             "<td>".
-                                            '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
+                                            '<button class="btn btn-danger btn-sm remove">Annuler</button>'.
                                             "</td>".
                                             "</tr>"
                                         );
