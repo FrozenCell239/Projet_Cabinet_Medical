@@ -22,5 +22,13 @@
         echo 'Patient supprimé avec succès.';
     };
 
-    $_GET = array(); //Flushing the GET array to avoid some weird bugs.
+    # Rendezvous deletion
+    if(isset($_GET['what']) && $_GET['what'] == 4 && isset($_GET['id'])){
+        $delete_query = $conn->prepare("DELETE FROM reservations WHERE id_reservation = ? ;");
+        $delete_query->execute([$_GET['id']]);
+        echo 'Rendez-vous annulé avec succès.';
+    };
+
+    unset($delete_query);
+    $_GET = array(); //Flushing the GET array to avoid some bugs.
 ?>
