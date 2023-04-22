@@ -31,7 +31,6 @@
         enlog("Door opened with doorcode (".$_GET['dc'].").".PHP_EOL, true); //...then logs a message with the typed doorcode...
         echo '$'; //...and send the order to open the door.
     };
-    $_GET = array(); //Resets the array that contained received values.
     unset($value); //Unsets the variable that contained the doorcode/tag number received from Arduino.
     unset($check_query); //Unsets the variable that contained the SQL query.
     $conn = null; //Closes the connection to database
