@@ -1,7 +1,6 @@
 # Changement et ajouts prévus :
 - Dans la gestion des rendez-vous, possibilité de filtrer les médecins et les salles.
 - Possibilité de modifier une salle.
-- Possibilité de supprimer un rendez-vous (en cas d'annulation par le patient ou le docteur).
 - Possibilité de modifier un rendez-vous.
 - Possibilité de modifier un patient. (?)
 - Ajout et suppression de badges.
