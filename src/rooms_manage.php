@@ -81,6 +81,7 @@
                                             "<td>".$row['nom_salle']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
+                                            '<a class="btn btn-info btn-sm" href="room_update.php?rid_u='.$row['id_salle'].'">Modifier</a>'.
                                             "</td>".
                                             "</tr>"
                                         );

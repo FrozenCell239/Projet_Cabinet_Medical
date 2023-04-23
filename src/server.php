@@ -281,7 +281,7 @@
     };
 
     # Password updating
-    if(isset($_POST['password_update'])){
+    if(isset($_POST['password_update'])){ //Handling password update.
         $current_password = sha1($_POST['current_password']);
         $new_password = sha1($_POST['new_password']);
         $confirm_new_password = sha1($_POST['confirm_new_password']);
@@ -312,13 +312,10 @@
             </script>
             <?php
         };
-        unset($row);
         $_POST = array();
         header("Refresh: 0; url=main.php");
     };
-
-    # Password update canceling
-    if(isset($_POST['password_update_cancel'])){
+    if(isset($_POST['password_update_cancel'])){ //Password update canceling.
         $_POST = array();
         header("Refresh: 0; url=main.php");
     };
@@ -328,7 +325,7 @@
         $_SESSION['u_patient_id'] = $_GET['ptid_u'];
         header("Refresh: 0; url=patient_update.php");
     };
-    if(isset($_POST['patient_update'])){
+    if(isset($_POST['patient_update'])){ //Handling patient update.
         $u_patient_id = $_SESSION['u_patient_id'];
         $u_patient_name = filter_var(ucfirst(trim($_POST['u_patient_name'])), FILTER_SANITIZE_STRING);
         $u_patient_last_name = filter_var(ucfirst(trim($_POST['u_patient_last_name'])), FILTER_SANITIZE_STRING);
@@ -340,7 +337,6 @@
             alert("Patient mis à jour avec succès.");
         </script>
         <?php
-        unset($row);
         unset($u_patient_name);
         unset($u_patient_last_name);
         unset($u_patient_number);
@@ -354,6 +350,32 @@
     if(isset($_POST['patient_update_cancel'])){
         $_POST = array();
         header("Refresh: 0; url=patients_manage.php");
+    };
+
+    # Room information updating
+    if(isset($_GET['rid_u'])){ //Hiding the room ID in the URL bar.
+        $_SESSION['u_room_id'] = $_GET['rid_u'];
+        header("Refresh: 0; url=room_update.php");
+    };
+    if(isset($_POST['room_update'])){ //Handling room update.
+        $u_room_id = $_SESSION['u_room_id'];
+        $u_room_name = filter_var(ucfirst(trim($_POST['u_room_name'])), FILTER_SANITIZE_STRING);
+        $room_update_query = $conn->prepare("UPDATE salles SET nom_salle=? WHERE id_salle=?;");
+        $room_update_query->execute([$u_room_name, $u_room_id]);
+        ?>
+        <script>
+            alert("Salle mise à jour avec succès.");
+        </script>
+        <?php
+        unset($u_room_name);
+        unset($u_room_id);
+        unset($_SESSION['u_room_id']);
+        $_POST = array();
+        header("Refresh: 0; url=rooms_manage.php");
+    };
+    if(isset($_POST['room_update_cancel'])){ //Room information update canceling.
+        $_POST = array();
+        header("Refresh: 0; url=rooms_manage.php");
     };
 
     # Tag toggling
