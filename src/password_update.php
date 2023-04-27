@@ -5,7 +5,6 @@
         <meta charset="utf-8">
 
         <!--Style sheets.-->
-        <link rel="stylesheet" href="global.css"> <!--Customised style sheet.-->
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!--JS scripts.-->
@@ -61,9 +60,7 @@
                     />
                 </div>
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="password_update">Valider</button>
-            </form>
-            <form action="password_update.php" method="post">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="password_update_cancel">Annuler</button>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="location.href='main.php';"  name="password_update_cancel">Annuler</button>
             </form>
         </div>
     </body>

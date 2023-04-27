@@ -189,6 +189,7 @@
                                             "<td>".$rdv_row['date_heure']."</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Annuler</button>'.
+                                            '<a class="btn btn-info btn-sm" href="rdv_update.php?rdvid_u='.$rdv_row['id_reservation'].'">Modifier</a>'.
                                             "</td>".
                                             "</tr>"
                                         );

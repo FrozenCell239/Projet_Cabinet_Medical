@@ -5,7 +5,6 @@
         <meta charset="utf-8">
 
         <!--Style sheets.-->
-        <link rel="stylesheet" href="global.css"> <!--Customised style sheet.-->
         <script src="https://cdn.tailwindcss.com"></script>
 
         <!--JS scripts.-->

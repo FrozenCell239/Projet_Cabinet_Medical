@@ -315,10 +315,6 @@
         $_POST = array();
         header("Refresh: 0; url=main.php");
     };
-    if(isset($_POST['password_update_cancel'])){ //Password update canceling.
-        $_POST = array();
-        header("Refresh: 0; url=main.php");
-    };
 
     # Patient information updating
     if(isset($_GET['ptid_u'])){ //Hiding the patient ID in the URL bar.
@@ -337,18 +333,13 @@
             alert("Patient mis à jour avec succès.");
         </script>
         <?php
-        unset($u_patient_name);
-        unset($u_patient_last_name);
-        unset($u_patient_number);
-        unset($u_patient_id);
         unset($_SESSION['u_patient_id']);
         $_POST = array();
         header("Refresh: 0; url=patients_manage.php");
     };
-
-    # Patient information update canceling
-    if(isset($_POST['patient_update_cancel'])){
+    if(isset($_POST['patient_update_cancel'])){ //Patient information update canceling.
         $_POST = array();
+        unset($_SESSION['u_patient_id']);
         header("Refresh: 0; url=patients_manage.php");
     };
 
@@ -367,15 +358,47 @@
             alert("Salle mise à jour avec succès.");
         </script>
         <?php
-        unset($u_room_name);
-        unset($u_room_id);
         unset($_SESSION['u_room_id']);
         $_POST = array();
         header("Refresh: 0; url=rooms_manage.php");
     };
     if(isset($_POST['room_update_cancel'])){ //Room information update canceling.
         $_POST = array();
+        unset($_SESSION['u_room_id']);
         header("Refresh: 0; url=rooms_manage.php");
+    };
+
+    # Rendezvous updating
+    if(isset($_GET['rdvid_u'])){ //Hiding the room ID in the URL bar.
+        $_SESSION['u_rdv_id'] = $_GET['rdvid_u'];
+        header("Refresh: 0; url=rdv_update.php");
+    };
+    if(isset($_POST['rdv_update'])){ //Handling rendezvous update.
+        $rdv_update_query_options = [
+            filter_var(ucfirst(trim($_POST['urdv_patient_need'])), FILTER_SANITIZE_STRING),
+            $_SESSION['urdv_patient_id'],
+            filter_var($_POST['urdv_doctor'], FILTER_SANITIZE_STRING),
+            filter_var($_POST['urdv_room'], FILTER_SANITIZE_STRING),
+            filter_var($_POST['urdv_datetime'], FILTER_SANITIZE_STRING),
+            $_SESSION['u_rdv_id']
+        ];
+        $rdv_update_query = $conn->prepare("UPDATE reservations SET besoin=?, id_patient=?, id_personnel=?, id_salle=?, date_heure=? WHERE id_reservation=?;");
+        $rdv_update_query->execute($rdv_update_query_options);
+        ?>
+        <script>
+            alert("Rendez-vous modifié avec succès.");
+        </script>
+        <?php
+        unset($_SESSION['u_rdv_id']);
+        unset($_SESSION['urdv_patient_id']);
+        $_POST = array();
+        header("Refresh: 0; url=rdv_manage.php");
+    };
+    if(isset($_POST['rdv_update_cancel'])){ //Rendezvous update canceling.
+        $_POST = array();
+        unset($_SESSION['u_patient_id']);
+        unset($_SESSION['urdv_patient_id']);
+        header("Refresh: 0; url=rdv_manage.php");
     };
 
     # Tag toggling
