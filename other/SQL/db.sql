@@ -25,6 +25,7 @@ CREATE TABLE `personnel`(
     `nom_personnel` VARCHAR(42) NOT NULL,
     `profession` VARCHAR(42) NOT NULL,
     `identifiant` VARCHAR(42) NOT NULL,
+    `mail` VARCHAR(42) NOT NULL,
     `mot_de_passe` VARCHAR(42) NOT NULL,
     `date_mdp` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `admin` BOOLEAN NOT NULL

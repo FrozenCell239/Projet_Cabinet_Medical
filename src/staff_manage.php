@@ -63,6 +63,7 @@
                                 <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
                                 <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
                                 <input type="text" name="new_staff_user_login" placeholder="Identifiant" required/><br>
+                                <input type="email" name="new_staff_mail" placeholder="Mail" required/><br>
                                 <input
                                     type="password"
                                     name="new_staff_password"
@@ -91,13 +92,14 @@
                                     <th>Nom</th>
                                     <th>Identifiant</th>
                                     <th>Profession</th>
+                                    <th>Mail</th>
                                     <th>Administrateur</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    $staff_list_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, admin FROM personnel");
+                                    $staff_list_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, mail, admin FROM personnel");
                                     $doctor_rdv_query = $conn->prepare("
                                         SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
                                         FROM reservations
@@ -120,6 +122,7 @@
                                             "<td>".$row['nom_personnel']."</td>".
                                             "<td>".$row['identifiant']."</td>".
                                             "<td>".$row['profession']."</td>".
+                                            "<td>".$row['mail']."</td>".
                                             "<td>$is_admin</td>".
                                             "<td>".
                                             '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.

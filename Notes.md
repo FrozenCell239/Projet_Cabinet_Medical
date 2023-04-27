@@ -1,6 +1,5 @@
 # Changement et ajouts prévus :
 - Dans la gestion des rendez-vous, possibilité de filtrer les médecins et les salles.
-- Possibilité de modifier un rendez-vous. (En cours.)
 - Ajout et suppression de badges.
 - Notifier les médecins par mail en cas de changement du digicode.
     - Ajout du mail des personnels dans la BDD.

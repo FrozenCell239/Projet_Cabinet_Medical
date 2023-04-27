@@ -103,6 +103,7 @@
         $new_last_name = filter_var(ucfirst(trim($_POST['new_staff_last_name'])), FILTER_SANITIZE_STRING);
         $new_profession = filter_var(trim($_POST['new_staff_profession']), FILTER_SANITIZE_STRING);
         $new_user_login = filter_var(trim($_POST['new_staff_user_login']), FILTER_SANITIZE_STRING);
+        $new_user_mail = filter_var(trim($_POST['new_staff_mail']), FILTER_SANITIZE_STRING);
         $new_user_password = sha1($_POST['new_staff_password']);
         $new_user_confirm_password = sha1($_POST['new_staff_confirm_password']);
         if(isset($_POST['new_staff_admin'])){$new_admin = 1;}
@@ -136,8 +137,8 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-            $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mot_de_passe, admin) VALUES (?, ?, ?, ?, ?, ?);");
-            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_password, $new_admin]);
+            $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mail, mot_de_passe, admin) VALUES (?, ?, ?, ?, ?, ?, ?);");
+            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_mail, $new_user_password, $new_admin]);
         };
         $_POST = array();
     };
