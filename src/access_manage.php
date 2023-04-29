@@ -88,7 +88,7 @@
                                     size="4"
                                     required
                                 /><br>
-                                <button type="submit" name="change_doorcode">Ajouter</button>
+                                <button type="submit" name="change_doorcode">Modifier</button>
                             </form>
                         </div>
                         <hr>

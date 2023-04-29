@@ -1,8 +1,8 @@
 # Changement et ajouts prévus :
 - Dans la gestion des rendez-vous, possibilité de filtrer les médecins et les salles.
 - Ajout et suppression de badges.
+- Possibilité de modifier un médecin.
 - Notifier les médecins par mail en cas de changement du digicode.
-    - Ajout du mail des personnels dans la BDD.
 - Notifier les médecins pour changer régulièrement leur mot de passe.
 - Pour les confirmations de suppression, remplacer le `confirm()` par un modal.
 - Mise en beauté avec Tailwind et/ou Bootstrap.
