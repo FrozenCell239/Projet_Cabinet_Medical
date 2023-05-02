@@ -9,7 +9,7 @@
 #define PIR_PIN 2
 #define SS_PIN 53
 #define RST_PIN 48
-#define DEBUG_PIN 4 //Declare this pin but put nothing on it to fix a bug on the Ethernet shield (pin reserved for SD card).
+#define DEBUG_PIN 4 //Declare this pin but put nothing on it to fix a bug on the Ethernet shield (this pin is basically reserved for SD card).
 #define UDP_PORT 8888
 const byte ROWS = 4, COLS = 4;
 
@@ -27,7 +27,7 @@ IPAddress dns(192, 168, 1, 1);
 char
     reply, //Used to read the response from the server.
     customKey, //Stores the last key pressed on keypad.
-    HOST_NAME[] = "192.168.1.69", //Server IP address/
+    HOST_NAME[] = "192.168.1.69", //Server IP address.
     data[9], //Doorcode can contain up to 8 characters.
     hexaKeys[ROWS][COLS] = {
         {'1', '2', '3', 'A'},
@@ -70,38 +70,7 @@ void loop(){
     if(customKey == '#'){
         doorcodeCheck();
     };
-    int packetSize = udp.parsePacket();
-    if(packetSize){ //If there is available data, read packet.
-        Serial.print("Received packet of size ");
-        Serial.print(packetSize);
-        Serial.print(" from ");
-        IPAddress remote = udp.remoteIP();
-        for(int i = 0; i < 4; i++){
-            Serial.print(remote[i], DEC);
-            if(i < 3){
-                Serial.print(".");
-            };
-        };
-        Serial.print(", port ");
-        Serial.print(udp.remotePort());
-        Serial.println(".");
-        udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE); //Reads the packet into packetBuffer.
-        Serial.print("Contents : ");
-        Serial.println(packetBuffer);
-        if(packetBuffer[0] == '$'){
-            Serial.println();
-            unlockDoor();
-        };
-        if(packetBuffer[0] == '#'){
-            Serial.println();
-            openDoor();
-        };
-        udp.beginPacket(udp.remoteIP(), udp.remotePort()); //Sends a reply to the IP address and port that sent us the packet we received.
-        udp.write(ReplyBuffer);
-        udp.endPacket();
-    };
-    delay(100);
-    //getOrder();
+    getOrder();
     if(!rfid.PICC_IsNewCardPresent()){return;}; //Resets the loop if no new card present on the reader. This saves the entire process when idle.
     if(!rfid.PICC_ReadCardSerial()){return;}; //Verify if the NUID has been readed.
     Serial.print(F("PICC type : "));
@@ -180,35 +149,25 @@ void getOrder(){
         udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE); //Reads the packet into packetBuffer.
         Serial.print("Contents : ");
         Serial.println(packetBuffer);
-        if(packetBuffer == '$'){
+        if(packetBuffer[0] == '$'){
             Serial.println();
             unlockDoor();
-            opened = true;
         };
-        if(packetBuffer == '£'){
+        if(packetBuffer[0] == '#'){
             Serial.println();
             openDoor();
-            opened = true;
         };
         udp.beginPacket(udp.remoteIP(), udp.remotePort()); //Sends a reply to the IP address and port that sent us the packet we received.
         udp.write(ReplyBuffer);
         udp.endPacket();
     };
-    if(!opened){
-            refused();
-            Serial.println("No order received.");
-        }
-        else{
-            opened = false;
-            Serial.println("Houston, we got an order !");
-        };
     delay(100);
 };
 
 void doorcodeCheck(){
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/access_checker.php?dc=");
+        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access_checker.php?dc=");
         client.print(data);
         client.println(" HTTP/2.0");
         client.println("Host: " + String(HOST_NAME));
@@ -241,7 +200,7 @@ void doorcodeCheck(){
 void rfidCheck(){
     if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access/access_checker.php?rt=");
+        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access_checker.php?rt=");
         client.print(to_check);
         client.println(" HTTP/2.0");
         client.println("Host: " + String(HOST_NAME));
