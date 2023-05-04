@@ -187,7 +187,7 @@
 
     # Login
     if(isset($_POST['login'])){ //Check if Login button is pressed.
-        $password = sha1($_POST['psswrd'], FILTER_SANITIZE_STRING);
+        $password = sha1($_POST['psswrd']);
         $login = filter_var(trim($_POST['user_login']), FILTER_SANITIZE_STRING);
         $login_query = $conn->prepare("SELECT id_personnel, identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE mot_de_passe=? AND identifiant=?;");
         $login_query->execute([$password, $login]);
