@@ -22,12 +22,12 @@ byte
 ;
 EthernetClient client;
 EthernetUDP udp;
-IPAddress ip(192, 168, 1, 177); //Arduino board's IP.
-IPAddress dns(192, 168, 1, 1);
+IPAddress ip(192, 168, 20, 50); //Arduino board's IP.
+IPAddress dns(192, 168, 20, 1);
 char
     reply, //Used to read the response from the server.
     customKey, //Stores the last key pressed on keypad.
-    HOST_NAME[] = "192.168.1.69", //Server IP address.
+    HOST_NAME[] = "192.168.10.3", //Server IP address.
     data[9], //Doorcode can contain up to 8 characters.
     hexaKeys[ROWS][COLS] = {
         {'1', '2', '3', 'A'},
@@ -165,11 +165,11 @@ void getOrder(){
 };
 
 void doorcodeCheck(){
-    if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
+    if(client.connect(HOST_NAME, 1080)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access_checker.php?dc=");
+        client.print("POST http://192.168.10.3:1080/access_checker.php?dc=");
         client.print(data);
-        client.println(" HTTP/2.0");
+        client.println(" HTTP/1.0");
         client.println("Host: " + String(HOST_NAME));
         client.println("Connection: close");
         client.println(); //End HTTP header.
@@ -198,11 +198,11 @@ void doorcodeCheck(){
 };
 
 void rfidCheck(){
-    if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
+    if(client.connect(HOST_NAME, 1080)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/access_checker.php?rt=");
+        client.print("POST http://192.168.10.3:1080/access_checker.php?rt=");
         client.print(to_check);
-        client.println(" HTTP/2.0");
+        client.println(" HTTP/1.0");
         client.println("Host: " + String(HOST_NAME));
         client.println("Connection: close");
         client.println(); //End HTTP header.
