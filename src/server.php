@@ -187,10 +187,10 @@
 
     # Login
     if(isset($_POST['login'])){ //Check if Login button is pressed.
-        $password = sha1(filter_var($_POST['psswrd'], FILTER_SANITIZE_STRING));
+        $password = sha1($_POST['psswrd'], FILTER_SANITIZE_STRING);
         $login = filter_var(trim($_POST['user_login']), FILTER_SANITIZE_STRING);
-        $login_query = $conn->prepare("SELECT id_personnel, identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE identifiant=? AND mot_de_passe=?;");
-        $login_query->execute([$login, $password]);
+        $login_query = $conn->prepare("SELECT id_personnel, identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE mot_de_passe=? AND identifiant=?;");
+        $login_query->execute([$password, $login]);
         if($row = $login_query->fetch()){
             $_SESSION['user_id'] = $row['id_personnel'];
             $_SESSION['username'] = $row['identifiant'];
@@ -244,6 +244,11 @@
                 alert("Code modifié avec succès.");
             </script>
             <?php
+            //$doctors_mail_query = $conn->prepare("SELECT mail FROM personnel;");
+            //$doctors_mail_query->execute();
+            //while($row = $doctors_mail_query->fetch()){
+            //    mail($row['mail'], "Modification du code de porte du cabinet.", "TEST");
+            //};
         };
         unset($row);
         $_POST = array();
