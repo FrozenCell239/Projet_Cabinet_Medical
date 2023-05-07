@@ -62,7 +62,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="text"
                         name="urdv_patient_name"
-                        value="<?php echo $rdv_info_row['prenom_patient']; ?>"
+                        value="<?= $rdv_info_row['prenom_patient']; ?>"
                         readonly
                     />
                 </div>
@@ -72,7 +72,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="text"
                         name="urdv_patient_last_name"
-                        value="<?php echo $rdv_info_row['nom_patient']; ?>"
+                        value="<?= $rdv_info_row['nom_patient']; ?>"
                         readonly
                     />
                 </div>
@@ -82,7 +82,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="text"
                         name="urdv_patient_need"
-                        value="<?php echo $rdv_info_row['besoin']; ?>"
+                        value="<?= $rdv_info_row['besoin']; ?>"
                         required
                     />
                 </div>
@@ -93,7 +93,7 @@
                         name="urdv_room"
                         required
                     >
-                        <option value="<?php echo $rdv_info_row['id_salle']; ?>"><?php echo $rdv_info_row['nom_salle']; ?></option>
+                        <option value="<?= $rdv_info_row['id_salle']; ?>"><?= $rdv_info_row['nom_salle']; ?></option>
                         <?php
                             $room_select_query = $conn->prepare("SELECT id_salle, nom_salle FROM salles WHERE id_salle != ?;");
                             $room_select_query->execute([$rdv_info_row['id_salle']]);
@@ -114,7 +114,7 @@
                         name="urdv_doctor"
                         required
                     >
-                        <option value="<?php echo $rdv_info_row['id_personnel']; ?>"><?php echo $rdv_info_row['prenom_personnel']." ".$rdv_info_row['nom_personnel']; ?></option>
+                        <option value="<?= $rdv_info_row['id_personnel']; ?>"><?= $rdv_info_row['prenom_personnel']." ".$rdv_info_row['nom_personnel']; ?></option>
                         <?php
                             $doctor_select_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel FROM personnel WHERE id_personnel != ? AND profession !='secretaire';");
                             $doctor_select_query->execute([$rdv_info_row['id_personnel']]);
@@ -134,7 +134,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="datetime-local"
                         name="urdv_datetime"
-                        value="<?php echo $rdv_info_row['date_heure']; ?>"
+                        value="<?= $rdv_info_row['date_heure']; ?>"
                         required
                     />
                     <script>

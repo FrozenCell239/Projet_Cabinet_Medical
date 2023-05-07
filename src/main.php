@@ -27,13 +27,13 @@
     </head>
     <body>
         <header>
-            <?php echo $navbar; ?>
+            <?= $navbar; ?>
         </header>
         <main>
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <h1>Connecté(e) en tant que <b><?php echo $_SESSION['name']." ".$_SESSION['last_name']."</b>, poste ".$_SESSION['profession']; ?>.</h1>
+                        <h1>Connecté(e) en tant que <b><?= $_SESSION['name']." ".$_SESSION['last_name']."</b>, poste ".$_SESSION['profession']; ?>.</h1>
                         <hr>
                         <?php if($_SESSION['admin'] == 1){ //Interface propre aux administrateurs. ?>
                         <h2>Caméras de surveillance</h2>

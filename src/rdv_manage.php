@@ -44,7 +44,7 @@
     </head>
     <body>
         <header>
-            <?php echo $navbar; ?>
+            <?= $navbar; ?>
         </header>
         <main>
             <div class="container">

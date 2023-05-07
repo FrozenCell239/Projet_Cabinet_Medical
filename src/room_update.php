@@ -36,7 +36,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="text"
                         name="u_room_name"
-                        value="<?php echo $room_info_row['nom_salle']; ?>"
+                        value="<?= $room_info_row['nom_salle']; ?>"
                         required
                     />
                 </div>

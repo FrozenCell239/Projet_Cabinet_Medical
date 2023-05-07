@@ -35,7 +35,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="text"
                         name="u_patient_name"
-                        value="<?php echo $patient_info_row['prenom_patient']; ?>"
+                        value="<?= $patient_info_row['prenom_patient']; ?>"
                         required
                     />
                 </div>
@@ -45,7 +45,7 @@
                         class="block border border-gray-400 p-2 w-full"
                         type="text"
                         name="u_patient_last_name"
-                        value="<?php echo $patient_info_row['nom_patient']; ?>"
+                        value="<?= $patient_info_row['nom_patient']; ?>"
                         required
                     />
                 </div>
@@ -57,7 +57,7 @@
                         name="u_patient_number"
                         pattern="(01|02|03|04|05|06|07|08|09)[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}"
                         maxlength="14"
-                        value="<?php echo $patient_info_row['numero_patient']; ?>"
+                        value="<?= $patient_info_row['numero_patient']; ?>"
                         required
                     />
                 </div>
