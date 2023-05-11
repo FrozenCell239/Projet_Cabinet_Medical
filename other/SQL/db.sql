@@ -6,7 +6,7 @@ CREATE TABLE `patients`(
     `prenom_patient` VARCHAR(42) NOT NULL,
     `nom_patient` VARCHAR(42) NOT NULL,
     `numero_patient` VARCHAR(14) NOT NULL,
-    `numero_securite_sociale` VARCHAR(42) NOT NULL,
+    `numero_securite_sociale` VARCHAR(21) NOT NULL,
     `adresse_patient` VARCHAR(42) NOT NULL,
     `ville_patient` VARCHAR(42) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
