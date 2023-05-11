@@ -1,34 +1,29 @@
 CREATE DATABASE IF NOT EXISTS `cabinet` DEFAULT CHARACTER SET UTF8MB4 COLLATE utf8mb4_unicode_ci;
 USE `cabinet`;
 
-CREATE TABLE `badges_visiophone`(
-    `id_badge` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `mdp_badge` VARCHAR(42) NOT NULL,
-    `actif` BOOLEAN NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
-
-CREATE TABLE `code_visiophone`(
-    `id_code` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `mdp_code` VARCHAR(42) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
-
 CREATE TABLE `patients`(
     `id_patient` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `prenom_patient` VARCHAR(42) NOT NULL,
     `nom_patient` VARCHAR(42) NOT NULL,
-    `numero_patient` VARCHAR(14) NOT NULL
+    `numero_patient` VARCHAR(14) NOT NULL,
+    `numero_securite_sociale` VARCHAR(42) NOT NULL,
+    `adresse_patient` VARCHAR(42) NOT NULL,
+    `ville_patient` VARCHAR(42) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `personnel`(
-    `id_personnel` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `prenom_personnel` VARCHAR(42) NOT NULL,
-    `nom_personnel` VARCHAR(42) NOT NULL,
-    `profession` VARCHAR(42) NOT NULL,
-    `identifiant` VARCHAR(42) NOT NULL,
-    `mail` VARCHAR(42) NOT NULL,
-    `mot_de_passe` VARCHAR(42) NOT NULL,
-    `date_mdp` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `admin` BOOLEAN NOT NULL
+  `id_personnel` int(11) NOT NULL AUTO_INCREMENT,
+  `prenom_personnel` varchar(42) NOT NULL,
+  `nom_personnel` varchar(42) NOT NULL,
+  `profession` varchar(42) NOT NULL,
+  `mail` varchar(42) NOT NULL,
+  `identifiant` varchar(42) DEFAULT NULL,
+  `mot_de_passe` varchar(42) DEFAULT NULL,
+  `date_mdp` DATE DEFAULT NULL, -- CURRENT_TIMESTAMP
+  `code_porte` varchar(42) DEFAULT NULL,
+  `numero_badge` varchar(42) DEFAULT NULL,
+  `niveau_privilege` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id_personnel`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `reservations`(
