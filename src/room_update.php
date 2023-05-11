@@ -14,7 +14,9 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if(!isset($_SESSION['profession'])){header("Location: index.php");};
+            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+            else{header("Location: index.php");};
+            if($user->getPrivilegeLevel() < 3){header("Location: main.php");};
             $room_info = $conn->prepare("SELECT nom_salle FROM salles WHERE id_salle=?;");
             $room_info->execute([$_SESSION['u_room_id']]);
             $room_info_row = $room_info->fetch();

@@ -13,7 +13,7 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if(isset($_SESSION['profession'])){header("Location: main.php");};
+            if(isset($_SESSION['user'])){header("Location: main.php");};
         ?>
 
         <!--Others.-->

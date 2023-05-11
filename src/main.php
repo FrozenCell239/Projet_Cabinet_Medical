@@ -16,7 +16,8 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if(!isset($_SESSION['profession'])){header("Location: index.php");};
+            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+            else{header("Location: index.php");};
         ?>
 
         <!--Others.-->
@@ -33,9 +34,9 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <h1>Connecté(e) en tant que <b><?= $_SESSION['name']." ".$_SESSION['last_name']."</b>, poste ".$_SESSION['profession']; ?>.</h1>
+                        <h1>Connecté(e) en tant que <b><?= $user->getFullName()."</b>, poste ".$user->getProfession(); ?>.</h1>
                         <hr>
-                        <?php if($_SESSION['admin'] == 1){ //Interface propre aux administrateurs. ?>
+                        <?php if($user->getPrivilegeLevel() >= 2){ //Interface propre aux administrateurs. ?>
                         <h2>Caméras de surveillance</h2>
                         <div></div>
                         <form action="main.php" method="post">
@@ -50,7 +51,7 @@
                             if(isset($_POST['door_open'])){doorControl('#');};
                             $_POST = array();
                         ?>
-                        <?php if($_SESSION['profession'] != 'secretaire'){ //Interface propre aux médecins. ?>
+                        <?php if($user->getPrivilegeLevel() == 1 || $user->getPrivilegeLevel() == 2){ //Interface propre aux médecins. ?>
                             <div class="mt-5 mb-3 d-flex justify-content-between">
                                 <h2 class="pull-left">Vos prochains rendez-vous</h2>
                             </div>
@@ -77,7 +78,7 @@
                                             WHERE date_heure > NOW() AND personnel.id_personnel = ?
                                             ORDER BY reservations.date_heure ASC
                                         ;");
-                                        $rdv_query->execute([$_SESSION['user_id']]);
+                                        $rdv_query->execute([$user->getID()]);
                                         while($rdv_row = $rdv_query->fetch()){
                                             echo(
                                                 '<tr id="'.$rdv_row['id_reservation'].'">'.

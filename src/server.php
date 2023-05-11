@@ -1,6 +1,162 @@
 <?php
+    declare(strict_types=1);
     date_default_timezone_set('Europe/Paris');
 
+    # Global classes
+    class BasicSqlBuilder{
+        private string $array_type;
+        private array $query_parameters;
+
+        private function arrayTypeCheck(array $ARRAY, string $EXPECTED){
+            if(array_keys($ARRAY) === range(0, count($ARRAY) - 1)){ //Checks if the given array is an indexed array...
+                $this->array_type = 'indexed';
+            }
+            else{ //...else it's then an associative array.
+                $this->array_type = 'associative';
+            };
+            if($this->array_type !== $EXPECTED){
+                trigger_error(ucfirst($EXPECTED)." array expected, $this->array_type array given.", E_USER_ERROR);
+            }
+            else{return true;};
+        }
+    
+        private function buildSelectQuery(string $TABLE, array $DATA, array $CONDITIONS = []) : string {
+            if(sizeof($DATA) == 0){trigger_error("Datas expected, none given.", E_USER_ERROR);};
+            if(self::arrayTypeCheck($DATA, 'indexed')){
+                $query = "SELECT ";
+                foreach($DATA as $key => $value){
+                    $query .= "$value, ";
+                };
+                $query = rtrim($query, ', ');
+                $query .= " FROM $TABLE ";
+                if(sizeof($CONDITIONS) > 0 && self::arrayTypeCheck($CONDITIONS, 'associative')){
+                    $query .= " WHERE ";
+                    foreach($CONDITIONS as $key => $value){
+                        $query .= "$key = ? AND ";
+                        $this->query_parameters[] = $value;
+                    };
+                    $query = rtrim($query, " AND ");
+                };
+                $query .= ';';
+                return $query;
+            };
+        }
+
+        private function buildUpdateQuery(string $TABLE, array $DATA, array $CONDITIONS = []) : string {
+            if(sizeof($DATA) == 0){trigger_error("Datas expected, none given.", E_USER_ERROR);};
+            if(self::arrayTypeCheck($DATA, 'associative')){
+                $query = "UPDATE $TABLE SET ";
+                foreach($DATA as $key => $value){
+                    $query .= "$key = ?, ";
+                    $this->query_parameters[] = $value;
+                };
+                $query = rtrim($query, ', ');
+                if(sizeof($CONDITIONS) > 0 && self::arrayTypeCheck($CONDITIONS, 'associative')){
+                    $query .= " WHERE ";
+                    foreach($CONDITIONS as $key => $value){
+                        $query .= "$key = ? AND ";
+                        $this->query_parameters[] = $value;
+                    };
+                    $query = rtrim($query, " AND ");
+                }
+                else{trigger_error("Conditions expected, none given.", E_USER_ERROR);};
+                $query .= ';';
+                return $query;
+            };
+        }
+
+        private function buildDeleteQuery(string $TABLE, array $CONDITIONS = []) : string {
+            $query = "DELETE FROM $TABLE WHERE ";
+            if(sizeof($CONDITIONS) > 0 && self::arrayTypeCheck($CONDITIONS, 'associative')){
+                foreach($CONDITIONS as $key => $value){
+                    $query .= $key." = ? AND ";
+                    $this->query_parameters[] = $value;
+                };
+                $query = rtrim($query, " AND ");
+            }
+            else{trigger_error("Conditions expected, none given.", E_USER_ERROR);};
+            $query .= ';';
+            return $query;
+        }
+
+        protected function buildQuery(PDO $DATABASE, string $TYPE, string $TABLE, array $DATA, array $CONDITIONS = []) : array {
+            switch($TYPE){
+                case "SELECT" :{
+                    $query = self::buildSelectQuery($TABLE, $DATA, $CONDITIONS);
+                    break;
+                };
+                case "UPDATE" :{
+                    $query = self::buildUpdateQuery($TABLE, $DATA, $CONDITIONS);
+                    break;
+                };
+                case "DELETE" :{
+                    if(sizeof($CONDITIONS) == 0){$CONDITIONS = $DATA;};
+                    $query = self::buildDeleteQuery($TABLE, $CONDITIONS);
+                    break;
+                };
+                default :{
+                    trigger_error('Invalid query type : must be "SELECT", "UPDATE", or "DELETE".', E_USER_ERROR);
+                    break;
+                };
+            };
+            $query_execute = $DATABASE->prepare($query);
+            $query_execute->execute($this->query_parameters);
+            if($result = $query_execute->fetch()){
+                return $result;
+            }
+            else{return [];};
+        }
+    };
+
+    class User extends BasicSqlBuilder{
+        private int $privilege_level;
+        private int $id;
+        private string $profession;
+        private string $mail;
+        private string $full_name;
+
+        public function InitUser(PDO $DATABASE, string $USERNAME, string $PASSWORD) : bool {
+            $datas = [
+                "id_personnel",
+                "nom_personnel",
+                "prenom_personnel",
+                "profession",
+                "mail",
+                "admin"
+            ];
+            $conditions = [
+                "mot_de_passe" => $PASSWORD,
+                "identifiant" => $USERNAME
+            ];
+            $user_info = self::buildQuery($DATABASE, "SELECT", "personnel", $datas, $conditions);
+            if(sizeof($user_info) > 0){
+                $this->id = $user_info['id_personnel'];
+                $this->full_name = $user_info['prenom_personnel'].' '.$user_info['nom_personnel'];
+                $this->profession = $user_info['profession'];
+                $this->mail = $user_info['mail'];
+                $this->privilege_level = $user_info['admin'];
+                return true;
+            }
+            else{return false;};
+        }
+        public function getFullName() : string {return $this->full_name;}
+        public function getProfession() : string {return $this->profession;}
+        public function getPrivilegeLevel() : int {return $this->privilege_level;}
+        public function getID() : int {return $this->id;}
+        public function getMail() : string {return $this->mail;}
+        public function setMail(string $MAIL) : void {
+            $datas = ["mail" => $MAIL];
+            $conditions = ["id_personnel" => $this->id];
+            $user_info = self::buildQuery($DATABASE, "UPDATE", "personnel", $datas, $conditions);
+            $this->mail = $MAIL;
+        }
+        public function setPassword(string $MAIL, string $PASSWORD) : void {
+            $datas = ["admin" => $PASSWORD];
+            $conditions = ["id_personnel" => $this->id];
+            $user_info = self::buildQuery($DATABASE, "UPDATE", "personnel", $datas, $conditions);
+        }
+    };
+    
     # Global use functions
     function enlog($LOG, $DISPLAY){ //Pushes some logs into a text file and to the Arduino board.
         if($DISPLAY == true){echo "* ".$LOG;}; //Sends the log to the Arduino board.
@@ -25,41 +181,23 @@
 
     # HTML snippets
     $secretary_navbar = '
-        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="main.php">Accueil</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="staff_manage.php">Personnel</a></li>
-                                <li><a class="dropdown-item" href="patients_manage.php">Patients</a></li>
-                                <li><a class="dropdown-item" href="rooms_manage.php">Salles</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestion</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="rdv_manage.php">Rendez-vous</a></li>
-                                <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="password_update.php">Modifier mot de passe</a>
-                        </li>
-                    </ul>
-                    <form class="d-flex" action="logout.php" method="post">
-                        <button class="btn btn-primary" type="submit">Se déconnecter</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="staff_manage.php">Personnel</a></li>
+                <li><a class="dropdown-item" href="patients_manage.php">Patients</a></li>
+                <li><a class="dropdown-item" href="rooms_manage.php">Salles</a></li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestion</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="rdv_manage.php">Rendez-vous</a></li>
+                <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
+            </ul>
+        </li>
     ';
-    $non_secretary_navbar = '
+    $navbar = '
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" href="main.php">Accueil</a>
@@ -69,11 +207,9 @@
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="password_update.php">Modifier mot de passe</a>
+                            <a class="nav-link" href="user_update.php">Modifier mot de passe</a>
                         </li>
-                        <form class="d-flex" action="logout.php" method="post">
-                            <button class="btn btn-primary" type="submit">Se déconnecter</button>
-                        </form>
+                        <button class="btn btn-primary" type="submit" onclick="location.href=`logout.php`">Se déconnecter</button>
                     </ul>
                 </div>
             </div>
@@ -91,11 +227,15 @@
     try{
         $conn = new PDO("mysql:host=localhost:3307;dbname=cabinet;charset=utf8mb4", "root", "", $pdo_options); //Connection to the database.
     }
-    catch(Exception $e){echo "Connection failed : " . $e->getMessage();};
+    catch(Exception $e){echo "Connection failed : ".$e->getMessage();};
+    if(isset($_SESSION['user'])){
+        $user = $_SESSION['user'];
+    };
 
     # Navbar setting
-    if(isset($_SESSION['profession']) && $_SESSION['profession'] == 'secretaire'){$navbar = $secretary_navbar;};
-    if(isset($_SESSION['profession']) && $_SESSION['profession'] != 'secretaire'){$navbar = $non_secretary_navbar;};
+    if(isset($user) && $user->getPrivilegeLevel() == 3){
+        $navbar = substr_replace($navbar, $secretary_navbar, strpos($navbar, '<li class="nav-item">'), 0);
+    };
 
     # Staff registration
     if(isset($_POST['staff_register'])){
@@ -189,23 +329,15 @@
     if(isset($_POST['login'])){ //Check if Login button is pressed.
         $password = sha1($_POST['psswrd']);
         $login = filter_var(trim($_POST['user_login']), FILTER_SANITIZE_STRING);
-        $login_query = $conn->prepare("SELECT id_personnel, identifiant, profession, nom_personnel, prenom_personnel, admin FROM personnel WHERE mot_de_passe=? AND identifiant=?;");
-        $login_query->execute([$password, $login]);
-        if($row = $login_query->fetch()){
-            $_SESSION['user_id'] = $row['id_personnel'];
-            $_SESSION['username'] = $row['identifiant'];
-            $_SESSION['profession'] = $row['profession'];
-            $_SESSION['name'] = $row['prenom_personnel'];
-            $_SESSION['last_name'] = $row['nom_personnel'];
-            $_SESSION['admin'] = $row['admin'];
-            $_POST = array();
-            unset($row);
+        $user = new User;
+        if($user->InitUser($conn, $login, $password)){
+            $_SESSION['user'] = $user;
             header("Refresh: 0; url=main.php");
         }
         else{
             ?>
             <script>
-                alert("Identifiant ou mot de passe incorrect.");
+                alert("Identifiant et/ou mot de passe incorrect.");
             </script>
             <?php
         };
@@ -244,11 +376,6 @@
                 alert("Code modifié avec succès.");
             </script>
             <?php
-            //$doctors_mail_query = $conn->prepare("SELECT mail FROM personnel;");
-            //$doctors_mail_query->execute();
-            //while($row = $doctors_mail_query->fetch()){
-            //    mail($row['mail'], "Modification du code de porte du cabinet.", "TEST");
-            //};
         };
         unset($row);
         $_POST = array();
@@ -286,7 +413,7 @@
         $_POST = array();
     };
 
-    # Password updating
+    # Current user password updating
     if(isset($_POST['password_update'])){ //Handling password update.
         $current_password = sha1($_POST['current_password']);
         $new_password = sha1($_POST['new_password']);
@@ -300,7 +427,7 @@
             <?php
         };
         $current_password_query = $conn->prepare("SELECT mot_de_passe FROM personnel WHERE id_personnel = ? ;");
-        $current_password_query->execute([$_SESSION['user_id']]);
+        $current_password_query->execute([$user->getID()]);
         if($current_password != ($current_password_query->fetch())['mot_de_passe']){ //Checks if typed current password exists.
             array_push($errors, "Le mot de passe actuel saisi est incorrect.");
             ?>
@@ -310,14 +437,21 @@
             <?php
         };
         if(count($errors) == 0){
-            $password_update_query = $conn->prepare("UPDATE personnel SET mot_de_passe=? WHERE id_personnel=?;");
-            $password_update_query->execute([$new_password, $_SESSION['user_id']]);
+            $user->setPassword($new_password);
             ?>
             <script>
                 alert("Mot de passe modifié avec succès.");
             </script>
             <?php
         };
+        $_POST = array();
+        header("Refresh: 0; url=main.php");
+    };
+
+    # Current user mail updating
+    if(isset($_POST['password_update'])){
+        $new_mail = filter_var(trim($_POST['mail']), FILTER_SANITIZE_STRING);
+        $user->setMail($new_mail);
         $_POST = array();
         header("Refresh: 0; url=main.php");
     };

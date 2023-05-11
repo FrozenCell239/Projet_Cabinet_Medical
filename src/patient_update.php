@@ -13,7 +13,9 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if(!isset($_SESSION['profession'])){header("Location: index.php");};
+            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+            else{header("Location: index.php");};
+            if($user->getPrivilegeLevel() < 3){header("Location: main.php");};
             $patient_info = $conn->prepare("SELECT prenom_patient, nom_patient, numero_patient FROM patients WHERE id_patient=?;");
             $patient_info->execute([$_SESSION['u_patient_id']]);
             $patient_info_row = $patient_info->fetch();

@@ -10,29 +10,13 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-        <script>
-            $(function(){ //Handling tag toggling.
-                $('.toggle').click(function(){
-                    var id = $(this).closest('tr').attr('id');
-                    $.ajax({
-                        url: 'server.php?what=10&id=' + id,
-                        type: 'GET',
-                        success: function(data){
-                            alert(data);
-                            location.reload();
-                        },
-                        error: function(jqXHR, textStatus, errorThrown){
-                            alert('Error : ' + textStatus + ' - ' + errorThrown);
-                        }
-                    });
-                });
-            });
-        </script>
 
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if($_SESSION['admin'] == 0 || !isset($_SESSION['profession'])){header("Location: index.php");};
+            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+            else{header("Location: index.php");};
+            if($user->getPrivilegeLevel() < 3){header("Location: main.php");};
         ?>
 
         <!--Others.-->
@@ -91,46 +75,6 @@
                                 <button type="submit" name="change_doorcode">Modifier</button>
                             </form>
                         </div>
-                        <hr>
-                        <div class="mt-5 mb-3 d-flex justify-content-between">
-                            <h2 class="pull-left">Badges</h2>
-                            <!--button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Mofifier</button-->
-                        </div>
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Numéro badge</th>
-                                    <th>Statut</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $tag_list_query = $conn->prepare("SELECT id_badge, mdp_badge, actif FROM badges_visiophone;");
-                                    $tag_list_query->execute();
-                                    while($row = $tag_list_query->fetch()){
-                                        if($row['actif']){
-                                            $active = "Activé";
-                                            $stater = "Désactiver";
-                                        }
-                                        else{
-                                            $active = "Désactivé";
-                                            $stater = "Activer";
-                                        };
-                                        echo(
-                                            "<tr id='".$row['id_badge']."'>".
-                                            "<td>".base64_decode($row['mdp_badge'])."</td>".
-                                            "<td>$active</td>".
-                                            "<td>".
-                                            "<button class='btn btn-danger btn-sm toggle'>$stater</button>".
-                                            "</td>".
-                                            "</tr>"
-                                        );
-                                    };
-                                    unset($row);
-                                ?>
-                            </tbody>
-                        </table>
                         <hr>
                         <button class="btn" data-bs-toggle="collapse" data-bs-target="#logs_display">Afficher l'historique des accès</button>
                         <div id="logs_display" class="collapse">

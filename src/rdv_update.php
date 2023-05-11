@@ -18,7 +18,9 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if(!isset($_SESSION['profession'])){header("Location: index.php");};
+            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+            else{header("Location: index.php");};
+            if($user->getPrivilegeLevel() < 3){header("Location: main.php");};
             $rdv_info = $conn->prepare("
                 SELECT
                     id_reservation,

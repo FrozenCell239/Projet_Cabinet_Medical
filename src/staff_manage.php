@@ -34,7 +34,9 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if($_SESSION['admin'] == 0 || !isset($_SESSION['profession'])){header("Location: index.php");};
+            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+            else{header("Location: index.php");};
+            if($user->getPrivilegeLevel() < 3){header("Location: main.php");};
         ?>
 
         <!--Others.-->
