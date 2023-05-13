@@ -91,7 +91,7 @@
                     />
                 </div>
                 <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit" name="patient_register">Valider</button>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="patient_register_cancel">Annuler</button>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" onclick="location.href='patients_manage.php';" name="patient_register_cancel">Annuler</button>
             </form>
         </div>
     </body>
