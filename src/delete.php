@@ -19,6 +19,8 @@
     if(isset($_GET['what']) && $_GET['what'] == 3 && isset($_GET['id'])){
         $delete_query = $conn->prepare("DELETE FROM patients WHERE id_patient = ? ;");
         $delete_query->execute([$_GET['id']]);
+        $_POST = array();
+        unset($_SESSION['u_patient_id']);
         echo 'Patient supprimé avec succès.';
     };
 

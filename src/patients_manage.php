@@ -55,27 +55,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="mt-5 mb-3 d-flex justify-content-between">
                             <h2 class="pull-left">Liste des patients</h2>
-                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form">Ajouter</button>
-                        </div>
-                        <div id="add_form" class="collapse">
-                            <hr>
-                            <form action="patients_manage.php" method="post">
-                                <h3>Ajouter un patient</h3>
-                                <label for="new_patient_name">Prénom</label>
-                                <input type="text" name="new_patient_name" required/><br>
-                                <label for="new_patient_last_name">Nom</label>
-                                <input type="text" name="new_patient_last_name" required/><br>
-                                <label for="new_patient_number">Téléphone</label>
-                                <input
-                                    type="tel"
-                                    name="new_patient_number"
-                                    pattern="(01|02|03|04|05|06|07|08|09)[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}[ \.\-]?[0-9]{2}"
-                                    maxlength="14"
-                                    required
-                                /><br>
-                                <button type="submit" name="patient_register">Ajouter</button>
-                            </form>
-                            <hr>
+                            <button class="btn" onclick='location.href="patient_add.php"'>Ajouter</button>
                         </div>
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -83,12 +63,15 @@
                                     <th>Prénom</th>
                                     <th>Nom</th>
                                     <th>Téléphone</th>
+                                    <th>Numéro sécurité sociale</th>
+                                    <th>Adresse</th>
+                                    <th>Ville</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    $patient_list_query = $conn->prepare("SELECT id_patient, prenom_patient, nom_patient, numero_patient FROM patients ORDER BY nom_patient ASC;");
+                                    $patient_list_query = $conn->prepare("SELECT * FROM patients ORDER BY nom_patient ASC;");
                                     $patient_rdv_query = $conn->prepare("
                                         SELECT id_reservation, besoin, nom_personnel, prenom_personnel, nom_salle, date_heure
                                         FROM reservations
@@ -108,13 +91,15 @@
                                             "<td>".$row['prenom_patient']."</td>".
                                             "<td>".$row['nom_patient']."</td>".
                                             "<td>".$row['numero_patient']."</td>".
+                                            "<td>".$row['numero_securite_sociale']."</td>".
+                                            "<td>".$row['adresse_patient']."</td>".
+                                            "<td>".$row['ville_patient']."</td>".
                                             "<td>".
-                                            '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
                                             '<a class="btn btn-info btn-sm" href="patient_update.php?ptid_u='.$row['id_patient'].'">Modifier</a>'.
                                             "</td>".
                                             "</tr>".
                                             "<tr>".
-                                            "<td colspan='4'>"
+                                            "<td colspan='7'>"
                                         );
                                         $patient_rdv_query->execute([$row['id_patient']]);
                                         if($patient_rdv_query->rowCount() == 0){echo "Aucun rendez-vous à venir.";}
