@@ -79,7 +79,7 @@
                     />
                 </div>
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="password_update">Valider</button>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="location.href='main.php';"  name="password_update_cancel">Annuler</button>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="location.href='main.php';" name="password_update_cancel">Annuler</button>
             </form>
         </div>
     </body>

@@ -5,6 +5,7 @@
     # Global classes
     class BasicSqlBuilder{
         private string $array_type;
+        private string $query;
         private array $query_parameters;
 
         private function arrayTypeCheck(array $ARRAY, string $EXPECTED){
@@ -23,75 +24,75 @@
         private function buildSelectQuery(string $TABLE, array $DATA, array $CONDITIONS = []) : string {
             if(sizeof($DATA) == 0){trigger_error("Datas expected, none given.", E_USER_ERROR);};
             if(self::arrayTypeCheck($DATA, 'indexed')){
-                $query = "SELECT ";
+                $this->query = "SELECT ";
                 foreach($DATA as $key => $value){
-                    $query .= "$value, ";
+                    $this->query .= "$value, ";
                 };
-                $query = rtrim($query, ', ');
-                $query .= " FROM $TABLE ";
+                $this->query = rtrim($this->query, ', ');
+                $this->query .= " FROM $TABLE ";
                 if(sizeof($CONDITIONS) > 0 && self::arrayTypeCheck($CONDITIONS, 'associative')){
-                    $query .= " WHERE ";
+                    $this->query .= " WHERE ";
                     foreach($CONDITIONS as $key => $value){
-                        $query .= "$key = ? AND ";
+                        $this->query .= "$key = ? AND ";
                         $this->query_parameters[] = $value;
                     };
-                    $query = rtrim($query, " AND ");
+                    $this->query = rtrim($this->query, " AND ");
                 };
-                $query .= ';';
-                return $query;
+                $this->query .= ';';
+                return $this->query;
             };
         }
 
         private function buildUpdateQuery(string $TABLE, array $DATA, array $CONDITIONS = []) : string {
             if(sizeof($DATA) == 0){trigger_error("Datas expected, none given.", E_USER_ERROR);};
             if(self::arrayTypeCheck($DATA, 'associative')){
-                $query = "UPDATE $TABLE SET ";
+                $this->query = "UPDATE $TABLE SET ";
                 foreach($DATA as $key => $value){
-                    $query .= "$key = ?, ";
+                    $this->query .= "$key = ?, ";
                     $this->query_parameters[] = $value;
                 };
-                $query = rtrim($query, ', ');
+                $this->query = rtrim($this->query, ', ');
                 if(sizeof($CONDITIONS) > 0 && self::arrayTypeCheck($CONDITIONS, 'associative')){
-                    $query .= " WHERE ";
+                    $this->query .= " WHERE ";
                     foreach($CONDITIONS as $key => $value){
-                        $query .= "$key = ? AND ";
+                        $this->query .= "$key = ? AND ";
                         $this->query_parameters[] = $value;
                     };
-                    $query = rtrim($query, " AND ");
+                    $this->query = rtrim($this->query, " AND ");
                 }
                 else{trigger_error("Conditions expected, none given.", E_USER_ERROR);};
-                $query .= ';';
-                return $query;
+                $this->query .= ';';
+                return $this->query;
             };
         }
 
         private function buildDeleteQuery(string $TABLE, array $CONDITIONS = []) : string {
-            $query = "DELETE FROM $TABLE WHERE ";
+            $this->query = "DELETE FROM $TABLE WHERE ";
             if(sizeof($CONDITIONS) > 0 && self::arrayTypeCheck($CONDITIONS, 'associative')){
                 foreach($CONDITIONS as $key => $value){
-                    $query .= $key." = ? AND ";
+                    $this->query .= $key." = ? AND ";
                     $this->query_parameters[] = $value;
                 };
-                $query = rtrim($query, " AND ");
+                $this->query = rtrim($this->query, " AND ");
             }
             else{trigger_error("Conditions expected, none given.", E_USER_ERROR);};
-            $query .= ';';
-            return $query;
+            $this->query .= ';';
+            return $this->query;
         }
 
         protected function buildQuery(PDO $DATABASE, string $TYPE, string $TABLE, array $DATA, array $CONDITIONS = []) : array {
             switch($TYPE){
                 case "SELECT" :{
-                    $query = self::buildSelectQuery($TABLE, $DATA, $CONDITIONS);
+                    $this->query = self::buildSelectQuery($TABLE, $DATA, $CONDITIONS);
                     break;
                 };
                 case "UPDATE" :{
-                    $query = self::buildUpdateQuery($TABLE, $DATA, $CONDITIONS);
+                    $this->query = self::buildUpdateQuery($TABLE, $DATA, $CONDITIONS);
                     break;
                 };
                 case "DELETE" :{
                     if(sizeof($CONDITIONS) == 0){$CONDITIONS = $DATA;};
-                    $query = self::buildDeleteQuery($TABLE, $CONDITIONS);
+                    $this->query = self::buildDeleteQuery($TABLE, $CONDITIONS);
                     break;
                 };
                 default :{
@@ -99,9 +100,13 @@
                     break;
                 };
             };
-            $query_execute = $DATABASE->prepare($query);
+            $query_execute = $DATABASE->prepare($this->query);
             $query_execute->execute($this->query_parameters);
+            $this->query_parameters = [];
+            $this->array_type = '';
+            $this->query = '';
             if($result = $query_execute->fetch()){
+                unset($query_execute);
                 return $result;
             }
             else{return [];};
@@ -144,14 +149,14 @@
         public function getPrivilegeLevel() : int {return $this->privilege_level;}
         public function getID() : int {return $this->id;}
         public function getMail() : string {return $this->mail;}
-        public function setMail(string $MAIL) : void {
+        public function setMail(PDO $DATABASE, string $MAIL) : void {
             $datas = ["mail" => $MAIL];
             $conditions = ["id_personnel" => $this->id];
             $user_info = self::buildQuery($DATABASE, "UPDATE", "personnel", $datas, $conditions);
             $this->mail = $MAIL;
         }
-        public function setPassword(string $MAIL, string $PASSWORD) : void {
-            $datas = ["admin" => $PASSWORD];
+        public function setPassword(PDO $DATABASE, string $PASSWORD) : void {
+            $datas = ["mot_de_passe" => $PASSWORD];
             $conditions = ["id_personnel" => $this->id];
             $user_info = self::buildQuery($DATABASE, "UPDATE", "personnel", $datas, $conditions);
         }
@@ -218,7 +223,7 @@
 
     # Session and connection to database init
     session_start();
-    $errors = array(); //Used to collect errors if some happen.
+    $errors = []; //Used to collect errors if some happen.
     $pdo_options = [ //Some options to configure the PDO connection.
         PDO::ATTR_EMULATE_PREPARES => false, //Turn off emulation mode for "real" prepared statements.
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, //Turn on errors in the form of exceptions.
@@ -249,7 +254,7 @@
         if(isset($_POST['new_staff_admin'])){$new_admin = 1;}
         else{$new_admin = 0;};
         if($new_user_password != $new_user_confirm_password){ //Checks if passwords match.
-            array_push($errors, "Les mots de passe ne correspondent pas.");
+            $errors[] = "Les mots de passe ne correspondent pas.";
             ?>
             <script>
                 alert("Les mots de passe ne correspondent pas.");
@@ -259,7 +264,7 @@
         $login_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE identifiant=?;");
         $login_check_query->execute([$new_user_login]);
         if($login_check_query->rowCount() > 0){ //Checks if user login already exists.
-            array_push($errors, "Identifiant déjà utilisé.");
+            $errors[] = "Identifiant déjà utilisé.";
             ?>
             <script>
                 alert("Identifiant déjà utilisé.");
@@ -269,7 +274,7 @@
         $user_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE prenom_personnel=? AND nom_personnel=?;");
         $user_check_query->execute([$new_name, $new_last_name]);
         if($user_check_query->rowCount() > 0){ //Check if user already exists.
-            array_push($errors, "Cette personne est déjà répertoriée.");
+            $errors[] = "Cette personne est déjà répertoriée.";
             ?>
             <script>
                 alert("Cette personne est déjà répertoriée.");
@@ -280,7 +285,7 @@
             $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mail, mot_de_passe, admin) VALUES (?, ?, ?, ?, ?, ?, ?);");
             $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_mail, $new_user_password, $new_admin]);
         };
-        $_POST = array();
+        $_POST = [];
     };
 
 	# Room registration
@@ -289,7 +294,7 @@
         $room_check_query = $conn->prepare("SELECT id_salle FROM salles WHERE nom_salle=?");
         $room_check_query->execute([$new_room_name]);
         if($room_check_query->rowCount() > 0){ //Check if room already exists.
-            array_push($errors, "Cette salle est déjà répertoriée.");
+            $errors[] = "Cette salle est déjà répertoriée.";
             ?>
             <script>
                 alert("Cette salle est déjà répertoriée.");
@@ -300,7 +305,7 @@
             $insert_query = $conn->prepare("INSERT INTO salles (nom_salle) VALUES (?);");
             $insert_query->execute([$new_room_name]);
         };
-        $_POST = array();
+        $_POST = [];
     };
 
     # Patient registration
@@ -308,10 +313,13 @@
         $new_patient_name = filter_var(ucfirst(trim($_POST['new_patient_name'])), FILTER_SANITIZE_STRING);
         $new_patient_last_name = filter_var(ucfirst(trim($_POST['new_patient_last_name'])), FILTER_SANITIZE_STRING);
         $new_patient_number = filter_var(trim($_POST['new_patient_number']), FILTER_SANITIZE_STRING);
+        $new_patient_ssn = filter_var(trim($_POST['new_patient_ssn']), FILTER_SANITIZE_STRING);
+        $new_patient_address = filter_var(trim($_POST['new_patient_address']), FILTER_SANITIZE_STRING);
+        $new_patient_town = filter_var(ucfirst(trim($_POST['new_patient_town'])), FILTER_SANITIZE_STRING);
         $patient_check_query = $conn->prepare("SELECT id_patient FROM patients WHERE prenom_patient=? AND nom_patient=?;");
         $patient_check_query->execute([$new_patient_name, $new_patient_last_name]);
         if($patient_check_query->rowCount() > 0){ //Check if patient already exists.
-            array_push($errors, "Ce(tte) patient(e) est déjà répertorié(e).");
+            $errors[] = "Ce(tte) patient(e) est déjà répertorié(e).";
             ?>
             <script>
                 alert("Ce(tte) patient(e) est déjà répertorié(e).");
@@ -319,10 +327,26 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-            $insert_query = $conn->prepare("INSERT INTO patients (prenom_patient, nom_patient, numero_patient) VALUES (?, ?, ?);");
-            $insert_query->execute([$new_patient_name, $new_patient_last_name, $new_patient_number]);
+            $insert_query = $conn->prepare("
+                INSERT INTO patients (prenom_patient, nom_patient, numero_patient, numero_securite_sociale, adresse_patient, ville_patient)
+                VALUES (?, ?, ?, ?, ?, ?);
+            ");
+            $insert_query->execute([
+                $new_patient_name,
+                $new_patient_last_name,
+                $new_patient_number,
+                $new_patient_ssn,
+                $new_patient_address,
+                $new_patient_town
+            ]);
         };
-        $_POST = array();
+        $_POST = [];
+        ?>
+            <script>
+                alert("Patient(e) enregistré(e) avec succès.");
+            </script>
+            <?php
+        header("Refresh: 0; url=patients_manage.php");
     };
 
     # Login
@@ -341,7 +365,7 @@
             </script>
             <?php
         };
-        $_POST = array();
+        $_POST = [];
     };
 
     # Doorcode changing
@@ -350,7 +374,7 @@
         $new_doorcode = sha1($_POST['new_doorcode']);
         $confirm_new_doorcode = sha1($_POST['confirm_new_doorcode']);
         if($new_doorcode != $confirm_new_doorcode){ //Checks if new doorcodes match.
-            array_push($errors, "Les codes ne correspondent pas.");
+            $errors[] = "Les codes ne correspondent pas.";
             ?>
             <script>
                 alert("Les codes ne correspondent pas.");
@@ -360,7 +384,7 @@
         $current_doorcode_query = $conn->prepare("SELECT id_code FROM code_visiophone WHERE mdp_code = ? ;");
         $current_doorcode_query->execute([$current_doorcode]);
         if($current_doorcode_query->rowCount() == 0){ //Checks if typed current doorcode exists.
-            array_push($errors, "Le code actuel saisi est incorrect.");
+            $errors[] = "Le code actuel saisi est incorrect.";
             ?>
             <script>
                 alert("Le code actuel saisi est incorrect.");
@@ -378,7 +402,7 @@
             <?php
         };
         unset($row);
-        $_POST = array();
+        $_POST = [];
     };
 
     # New rendezvous creating
@@ -410,7 +434,7 @@
                 alert("Rendez-vous ajouté avec succès.");
             </script>
         <?php
-        $_POST = array();
+        $_POST = [];
     };
 
     # Current user password updating
@@ -419,17 +443,17 @@
         $new_password = sha1($_POST['new_password']);
         $confirm_new_password = sha1($_POST['confirm_new_password']);
         if($new_password != $confirm_new_password){ //Checks if passwords match.
-            array_push($errors, "Les codes ne correspondent pas.");
+            $errors[] = "Les mots de passe ne correspondent pas.";
             ?>
             <script>
-                alert("Les codes ne correspondent pas.");
+                alert("Les mots de passe ne correspondent pas.");
             </script>
             <?php
         };
         $current_password_query = $conn->prepare("SELECT mot_de_passe FROM personnel WHERE id_personnel = ? ;");
         $current_password_query->execute([$user->getID()]);
         if($current_password != ($current_password_query->fetch())['mot_de_passe']){ //Checks if typed current password exists.
-            array_push($errors, "Le mot de passe actuel saisi est incorrect.");
+            $errors[] = "Le mot de passe actuel saisi est incorrect.";
             ?>
             <script>
                 alert("Le mot de passe actuel saisi est incorrect.");
@@ -437,22 +461,27 @@
             <?php
         };
         if(count($errors) == 0){
-            $user->setPassword($new_password);
+            $user->setPassword($conn, $new_password);
             ?>
             <script>
                 alert("Mot de passe modifié avec succès.");
             </script>
             <?php
         };
-        $_POST = array();
+        $_POST = [];
         header("Refresh: 0; url=main.php");
     };
 
     # Current user mail updating
-    if(isset($_POST['password_update'])){
+    if(isset($_POST['mail_update'])){
         $new_mail = filter_var(trim($_POST['mail']), FILTER_SANITIZE_STRING);
-        $user->setMail($new_mail);
-        $_POST = array();
+        $user->setMail($conn, $new_mail);
+        ?>
+        <script>
+            alert("Adresse mail modifiée avec succès.");
+        </script>
+        <?php
+        $_POST = [];
         header("Refresh: 0; url=main.php");
     };
 
@@ -466,20 +495,30 @@
         $u_patient_name = filter_var(ucfirst(trim($_POST['u_patient_name'])), FILTER_SANITIZE_STRING);
         $u_patient_last_name = filter_var(ucfirst(trim($_POST['u_patient_last_name'])), FILTER_SANITIZE_STRING);
         $u_patient_number = filter_var(trim($_POST['u_patient_number']), FILTER_SANITIZE_STRING);
-        $patient_update_query = $conn->prepare("UPDATE patients SET prenom_patient=?, nom_patient=?, numero_patient=? WHERE id_patient=?;");
-        $patient_update_query->execute([$u_patient_name, $u_patient_last_name, $u_patient_number, $u_patient_id]);
+        $u_patient_ssn = filter_var(trim($_POST['u_patient_ssn']), FILTER_SANITIZE_STRING);
+        $u_patient_address = filter_var(trim($_POST['u_patient_address']), FILTER_SANITIZE_STRING);
+        $u_patient_town = filter_var(ucfirst(trim($_POST['u_patient_town'])), FILTER_SANITIZE_STRING);
+        $patient_update_query = $conn->prepare("
+            UPDATE patients
+            SET prenom_patient=?, nom_patient=?, numero_patient=?, numero_securite_sociale=?, adresse_patient=?, ville_patient=?
+            WHERE id_patient=?;
+        ");
+        $patient_update_query->execute([
+            $u_patient_name,
+            $u_patient_last_name,
+            $u_patient_number,
+            $u_patient_ssn,
+            $u_patient_address,
+            $u_patient_town,
+            $u_patient_id
+        ]);
         ?>
         <script>
             alert("Patient mis à jour avec succès.");
         </script>
         <?php
         unset($_SESSION['u_patient_id']);
-        $_POST = array();
-        header("Refresh: 0; url=patients_manage.php");
-    };
-    if(isset($_POST['patient_update_cancel'])){ //Patient information update canceling.
-        $_POST = array();
-        unset($_SESSION['u_patient_id']);
+        $_POST = [];
         header("Refresh: 0; url=patients_manage.php");
     };
 
@@ -499,11 +538,11 @@
         </script>
         <?php
         unset($_SESSION['u_room_id']);
-        $_POST = array();
+        $_POST = [];
         header("Refresh: 0; url=rooms_manage.php");
     };
     if(isset($_POST['room_update_cancel'])){ //Room information update canceling.
-        $_POST = array();
+        $_POST = [];
         unset($_SESSION['u_room_id']);
         header("Refresh: 0; url=rooms_manage.php");
     };
@@ -531,21 +570,13 @@
         <?php
         unset($_SESSION['u_rdv_id']);
         unset($_SESSION['urdv_patient_id']);
-        $_POST = array();
+        $_POST = [];
         header("Refresh: 0; url=rdv_manage.php");
     };
     if(isset($_POST['rdv_update_cancel'])){ //Rendezvous update canceling.
-        $_POST = array();
+        $_POST = [];
         unset($_SESSION['u_patient_id']);
         unset($_SESSION['urdv_patient_id']);
         header("Refresh: 0; url=rdv_manage.php");
-    };
-
-    # Tag toggling
-    if(isset($_GET['what']) && $_GET['what'] == 10 && isset($_GET['id'])){
-        $toggle_query = $conn->prepare("UPDATE badges_visiophone SET actif = 1 - actif WHERE id_badge = ?;");
-        $toggle_query->execute([$_GET['id']]);
-        echo 'Badge activé/désactivé avec succès.';
-        $_GET = array();
     };
 ?>
