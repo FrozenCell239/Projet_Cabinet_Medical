@@ -10,8 +10,8 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script>
-            $(function(){ //Handling patient deletion.
-                $('.remove').click(function(){
+            $(function(){
+                $('.remove').click(function(){ //Handling patient deletion.
                     var id = $(this).closest('button').attr('id');
                     if(confirm("Êtes-vous sûr(e) de vouloir retirer ce patient de la liste ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
                         $.ajax({
