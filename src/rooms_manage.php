@@ -6,30 +6,13 @@
         <!--Style sheets.-->
         <link rel="stylesheet" href="global.css"> <!--Customised style sheet.-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"> <!--Bootstrap 5.2.3.-->
+        <style>
+            table tr td:last-child{width: 120px;}
+        </style>
 
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-        <script>
-            $(function(){ //Handling room deletion.
-                $('.remove').click(function(){
-                    var id = $(this).closest('tr').attr('id');
-                    if(confirm("Êtes-vous sûr(e) de vouloir retirer cette salle de la liste ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
-                        $.ajax({
-                            url: 'delete.php?what=2&id=' + id,
-                            type: 'GET',
-                            success: function(data){
-                                alert(data);
-                                location.reload();
-                            },
-                            error: function(jqXHR, textStatus, errorThrown){
-                                alert('Error: ' + textStatus + ' - ' + errorThrown);
-                            }
-                        });
-                    };
-                });
-            });
-        </script>
 
         <!--PHP scripts.-->
         <?php
@@ -55,16 +38,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="mt-5 mb-3 d-flex justify-content-between">
                             <h2 class="pull-left">Liste des salles</h2>
-                            <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
-                        </div>
-                        <div id="add_form" class="collapse">
-                            <hr>
-                            <form action="rooms_manage.php" method="post">
-                                <h3>> Ajouter une salle</h3>
-                                <input type="text" name="new_room_name" placeholder="Nom" required/><br>
-                                <button type="submit" name="room_register">Ajouter</button>
-                            </form>
-                            <hr>
+                            <button class="btn" onclick='location.href="room_add.php"'>Ajouter</button>
                         </div>
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -82,7 +56,6 @@
                                             '<tr id="'.$row['id_salle'].'">'.
                                             "<td>".$row['nom_salle']."</td>".
                                             "<td>".
-                                            '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
                                             '<a class="btn btn-info btn-sm" href="room_update.php?rid_u='.$row['id_salle'].'">Modifier</a>'.
                                             "</td>".
                                             "</tr>"
