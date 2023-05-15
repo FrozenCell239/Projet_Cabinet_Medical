@@ -10,8 +10,8 @@
         <!--JS scripts.-->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-        <script> //Handling staff member deletion.
-            $(function(){
+        <script>
+            $(function(){ //Handling staff member deletion.
                 $('.remove').click(function(){
                     var id = $(this).closest('tr').attr('id');
                     if(confirm("Êtes-vous sûr(e) de vouloir retirer ce personnel de la liste ? Cette action est irréversible et n'engage aucune autre responsabilité que la vôtre.")){
@@ -54,7 +54,7 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="mt-5 mb-3 d-flex justify-content-between">
-                            <h2 class="pull-left">Liste du personnel interne</h2>
+                            <h2 class="pull-left">Liste du personnel</h2>
                             <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
                         </div>
                         <div id="add_form" class="collapse">
@@ -95,13 +95,13 @@
                                     <th>Identifiant</th>
                                     <th>Profession</th>
                                     <th>Mail</th>
-                                    <th>Administrateur</th>
+                                    <th>Catégorie de personnel</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    $staff_list_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, mail, admin FROM personnel");
+                                    $staff_list_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel, identifiant, profession, mail, niveau_privilege FROM personnel");
                                     $doctor_rdv_query = $conn->prepare("
                                         SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
                                         FROM reservations
@@ -116,7 +116,7 @@
                                     ;");
                                     $staff_list_query->execute();
                                     while($row = $staff_list_query->fetch()){
-                                        if($row['admin']){$is_admin = "Oui";}
+                                        if($row['niveau_privilege']){$is_admin = "Oui";}
                                         else{$is_admin = "Non";};
                                         echo(
                                             '<tr id="'.$row['id_personnel'].'">'.
