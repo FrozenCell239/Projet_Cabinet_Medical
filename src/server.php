@@ -127,7 +127,7 @@
                 "prenom_personnel",
                 "profession",
                 "mail",
-                "admin"
+                "niveau_privilege"
             ];
             $conditions = [
                 "mot_de_passe" => $PASSWORD,
@@ -139,7 +139,7 @@
                 $this->full_name = $user_info['prenom_personnel'].' '.$user_info['nom_personnel'];
                 $this->profession = $user_info['profession'];
                 $this->mail = $user_info['mail'];
-                $this->privilege_level = $user_info['admin'];
+                $this->privilege_level = $user_info['niveau_privilege'];
                 return true;
             }
             else{return false;};
@@ -177,7 +177,7 @@
             //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
             //echo "Acknowledgement : $udp_buffer<br>";
             sleep(1);
-            if($ORDER == '$'){$order_type = "unlocked";};
+            if($ORDER == '%'){$order_type = "unlocked";};
             if($ORDER == '#'){$order_type = "opened";};
             enlog("Door $order_type from office.".PHP_EOL, false);
         }
@@ -242,7 +242,7 @@
         $navbar = substr_replace($navbar, $secretary_navbar, strpos($navbar, '<li class="nav-item">'), 0);
     };
 
-    # Staff registration
+    # Staff registration //À MODIFIER
     if(isset($_POST['staff_register'])){
         $new_name = filter_var(ucfirst(trim($_POST['new_staff_name'])), FILTER_SANITIZE_STRING);
         $new_last_name = filter_var(ucfirst(trim($_POST['new_staff_last_name'])), FILTER_SANITIZE_STRING);
@@ -282,10 +282,9 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-            $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mail, mot_de_passe, admin) VALUES (?, ?, ?, ?, ?, ?, ?);");
+            $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mail, mot_de_passe, niveau_privilege) VALUES (?, ?, ?, ?, ?, ?, ?);");
             $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_mail, $new_user_password, $new_admin]);
         };
-        $_POST = [];
     };
 
 	# Room registration
@@ -304,8 +303,8 @@
         if(count($errors) == 0){ //If no errors, register.
             $insert_query = $conn->prepare("INSERT INTO salles (nom_salle) VALUES (?);");
             $insert_query->execute([$new_room_name]);
+            header("Refresh: 0; url=rooms_manage.php");
         };
-        $_POST = [];
     };
 
     # Patient registration
@@ -339,14 +338,13 @@
                 $new_patient_address,
                 $new_patient_town
             ]);
-        };
-        $_POST = [];
-        ?>
+            ?>
             <script>
                 alert("Patient(e) enregistré(e) avec succès.");
             </script>
             <?php
-        header("Refresh: 0; url=patients_manage.php");
+            header("Refresh: 0; url=patients_manage.php");
+        };
     };
 
     # Login
@@ -365,7 +363,6 @@
             </script>
             <?php
         };
-        $_POST = [];
     };
 
     # Doorcode changing
@@ -402,7 +399,6 @@
             <?php
         };
         unset($row);
-        $_POST = [];
     };
 
     # New rendezvous creating
@@ -434,7 +430,6 @@
                 alert("Rendez-vous ajouté avec succès.");
             </script>
         <?php
-        $_POST = [];
     };
 
     # Current user password updating
@@ -468,7 +463,6 @@
             </script>
             <?php
         };
-        $_POST = [];
         header("Refresh: 0; url=main.php");
     };
 
@@ -481,7 +475,6 @@
             alert("Adresse mail modifiée avec succès.");
         </script>
         <?php
-        $_POST = [];
         header("Refresh: 0; url=main.php");
     };
 
@@ -518,7 +511,6 @@
         </script>
         <?php
         unset($_SESSION['u_patient_id']);
-        $_POST = [];
         header("Refresh: 0; url=patients_manage.php");
     };
 
@@ -538,11 +530,9 @@
         </script>
         <?php
         unset($_SESSION['u_room_id']);
-        $_POST = [];
         header("Refresh: 0; url=rooms_manage.php");
     };
     if(isset($_POST['room_update_cancel'])){ //Room information update canceling.
-        $_POST = [];
         unset($_SESSION['u_room_id']);
         header("Refresh: 0; url=rooms_manage.php");
     };
@@ -570,11 +560,9 @@
         <?php
         unset($_SESSION['u_rdv_id']);
         unset($_SESSION['urdv_patient_id']);
-        $_POST = [];
         header("Refresh: 0; url=rdv_manage.php");
     };
     if(isset($_POST['rdv_update_cancel'])){ //Rendezvous update canceling.
-        $_POST = [];
         unset($_SESSION['u_patient_id']);
         unset($_SESSION['urdv_patient_id']);
         header("Refresh: 0; url=rdv_manage.php");

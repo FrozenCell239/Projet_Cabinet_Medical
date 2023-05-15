@@ -149,7 +149,7 @@ void getOrder(){
         udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE); //Reads the packet into packetBuffer.
         Serial.print("Contents : ");
         Serial.println(packetBuffer);
-        if(packetBuffer[0] == '$'){
+        if(packetBuffer[0] == '%'){
             Serial.println();
             unlockDoor();
         };
@@ -177,7 +177,7 @@ void doorcodeCheck(){
             if(client.available()){
                 reply = client.read(); //Read an incoming byte from the server.
                 Serial.print(reply); //Print it to serial monitor.
-                if(reply == '$'){
+                if(reply == '%'){
                     Serial.println();
                     unlockDoor();
                     opened = true;
@@ -210,7 +210,7 @@ void rfidCheck(){
             if(client.available()){
                 reply = client.read(); //Read an incoming byte from the server.
                 Serial.print(reply); //Print it to serial monitor.
-                if(reply == '$'){
+                if(reply == '%'){
                     Serial.println();
                     unlockDoor();
                     opened = true;

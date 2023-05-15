@@ -24,12 +24,12 @@
         };
         if($row['actif'] == 1){ //If the detected tag is not deactivated...
             enlog("Door opened with badge number ".$_GET['rt'].".".PHP_EOL, true); //...then logs a message with the number tag number...
-            echo '$'; //...and send the order to open the door.
+            echo '%'; //...and send the order to open the door.
         };
     };
     if(isset($row['mdp_code'])){ //If the typed doorcode is right...
         enlog("Door opened with doorcode (".$_GET['dc'].").".PHP_EOL, true); //...then logs a message with the typed doorcode...
-        echo '$'; //...and send the order to open the door.
+        echo '%'; //...and send the order to open the door.
     };
     unset($value); //Unsets the variable that contained the doorcode/tag number received from Arduino.
     unset($check_query); //Unsets the variable that contained the SQL query.
