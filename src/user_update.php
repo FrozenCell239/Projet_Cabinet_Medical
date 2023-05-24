@@ -19,7 +19,7 @@
 
         <!--Others.-->
         <title>Modification informations</title>
-        <link rel="icon" type="image/x-icon" href="../images/favicon.png"> <!--Favicon.-->
+        <link rel="icon" type="image/x-icon" href="images/favicon.png"> <!--Favicon.-->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Permet l'adaptation de la page et la disposition de ses éléments à tous les terminaux.-->
     </head>
@@ -82,6 +82,4 @@
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="location.href='main.php';" name="password_update_cancel">Annuler</button>
             </form>
         </div>
-    </body>
-</html>
-<?php $conn = null; //Close the connection to the database. ?>
+<?php include("footer.php"); ?>

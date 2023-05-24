@@ -184,43 +184,6 @@
         else{echo("Can't create socket.<br>");};
     };
 
-    # HTML snippets
-    $secretary_navbar = '
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Listes</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="staff_manage.php">Personnel</a></li>
-                <li><a class="dropdown-item" href="patients_manage.php">Patients</a></li>
-                <li><a class="dropdown-item" href="rooms_manage.php">Salles</a></li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Gestion</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="rdv_manage.php">Rendez-vous</a></li>
-                <li><a class="dropdown-item" href="access_manage.php">Accès</a></li>
-            </ul>
-        </li>
-    ';
-    $navbar = '
-        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="main.php">Accueil</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="user_update.php">Modifier mot de passe</a>
-                        </li>
-                        <button class="btn btn-primary" type="submit" onclick="location.href=`logout.php`">Se déconnecter</button>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    ';
-
     # Session and connection to database init
     session_start();
     $errors = []; //Used to collect errors if some happen.
@@ -235,11 +198,6 @@
     catch(Exception $e){echo "Connection failed : ".$e->getMessage();};
     if(isset($_SESSION['user'])){
         $user = $_SESSION['user'];
-    };
-
-    # Navbar setting
-    if(isset($user) && $user->getPrivilegeLevel() == 3){
-        $navbar = substr_replace($navbar, $secretary_navbar, strpos($navbar, '<li class="nav-item">'), 0);
     };
 
     # Staff registration //À MODIFIER
