@@ -471,6 +471,10 @@
         unset($_SESSION['u_patient_id']);
         header("Refresh: 0; url=patients_manage.php");
     };
+    if(isset($_GET['u_pt_cncl'])){ //Patient update canceling.
+        unset($_SESSION['u_patient_id']);
+        header("Refresh: 0; url=patients_manage.php");
+    };
 
     # Room information updating
     if(isset($_GET['rid_u'])){ //Hiding the room ID in the URL bar.
