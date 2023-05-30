@@ -166,7 +166,7 @@
     function enlog($LOG, $DISPLAY){ //Pushes some logs into a text file and to the Arduino board.
         if($DISPLAY == true){echo "* ".$LOG;}; //Sends the log to the Arduino board.
         $fp = fopen("log.txt", "a"); //Opens the log text file in "append" mode.
-        fwrite($fp, "• ".date(DATE_RFC2822)." : ".$LOG); //Pushes the date and time of the log message and its content.
+        fwrite($fp, "• ".date(DATE_RFC2822)." : ".$LOG.PHP_EOL); //Pushes the date and time of the log message and its content.
         fclose($fp); //Closes the log text file.
     };
     function doorControl($ORDER){ //Handles order sending to Arduino board.
@@ -177,12 +177,20 @@
             //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
             //echo "Acknowledgement : $udp_buffer<br>";
             sleep(1);
-            if($ORDER == '%'){$order_type = "unlocked";};
-            if($ORDER == '#'){$order_type = "opened";};
-            enlog("Door $order_type from office.".PHP_EOL, false);
+            if($ORDER == '%'){$order_type = "déverrouillée";};
+            if($ORDER == '#'){$order_type = "ouverte";};
+            enlog("Porte $order_type depuis le secrétariat.", false);
         }
-        else{echo("Can't create socket.<br>");};
+        else{echo("Impossible de créer le socket.<br>");};
     };
+
+    # Global use variables
+    $privilege_levels = [ //Privilege levels for the staff members, from lowest to highest.
+        "Personnel extérieur",
+        "Médecin",
+        "Médecin en chef",
+        "Secrétaire-gestionnaire"
+    ];
 
     # Session and connection to database init
     session_start();
@@ -209,8 +217,7 @@
         $new_user_mail = filter_var(trim($_POST['new_staff_mail']), FILTER_SANITIZE_STRING);
         $new_user_password = sha1($_POST['new_staff_password']);
         $new_user_confirm_password = sha1($_POST['new_staff_confirm_password']);
-        if(isset($_POST['new_staff_admin'])){$new_admin = 1;}
-        else{$new_admin = 0;};
+        $new_user_level = filter_var($_POST['new_staff_level'], FILTER_SANITIZE_STRING);
         if($new_user_password != $new_user_confirm_password){ //Checks if passwords match.
             $errors[] = "Les mots de passe ne correspondent pas.";
             ?>
@@ -241,8 +248,15 @@
         };
         if(count($errors) == 0){ //If no errors, register.
             $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mail, mot_de_passe, niveau_privilege) VALUES (?, ?, ?, ?, ?, ?, ?);");
-            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_mail, $new_user_password, $new_admin]);
-        };
+            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_mail, $new_user_password, $new_user_level]);
+            ?>
+            <script>
+                alert("Personnel enregistré avec succès.");
+            </script>
+            <?php
+            header("Refresh: 0; url=staff_manage.php");
+        }
+        else{header("Refresh: 0; url=staff_add.php");};
     };
 
 	# Room registration
@@ -261,6 +275,11 @@
         if(count($errors) == 0){ //If no errors, register.
             $insert_query = $conn->prepare("INSERT INTO salles (nom_salle) VALUES (?);");
             $insert_query->execute([$new_room_name]);
+            ?>
+            <script>
+                alert("Salle enregistrée avec succès.");
+            </script>
+            <?php
             header("Refresh: 0; url=rooms_manage.php");
         };
     };
