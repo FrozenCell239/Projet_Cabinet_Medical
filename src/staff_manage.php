@@ -5,37 +5,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="mt-5 mb-3 d-flex justify-content-between">
                     <h2 class="pull-left">Liste du personnel</h2>
-                    <button class="btn" data-bs-toggle="collapse" data-bs-target="#add_form"><i class="bi bi-plus"></i> Ajouter</button>
-                </div>
-                <div id="add_form" class="collapse">
-                    <hr>
-                    <form action="staff_manage.php" method="post">
-                        <h3>> Ajouter un personnel</h3>
-                        <input type="text" name="new_staff_name" placeholder="Prénom" required/><br>
-                        <input type="text" name="new_staff_last_name" placeholder="Nom" required/><br>
-                        <input type="text" name="new_staff_profession" placeholder="Profession" required/><br>
-                        <input type="text" name="new_staff_user_login" placeholder="Identifiant" required/><br>
-                        <input type="email" name="new_staff_mail" placeholder="Mail" required/><br>
-                        <input
-                            type="password"
-                            name="new_staff_password"
-                            placeholder="Mot de passe"
-                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
-                            title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
-                            required
-                        /><br>
-                        <input
-                            type="password"
-                            name="new_staff_confirm_password"
-                            placeholder="Confirmation du mot de passe"
-                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
-                            title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
-                            required
-                        /><br>
-                        <input type="checkbox" name="new_staff_admin"> Administrateur<br>
-                        <button type="submit" name="staff_register">Ajouter</button>
-                    </form>
-                    <hr>
+                    <button class="btn" onclick='location.href="staff_add.php";'>Ajouter</button>
                 </div>
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -66,22 +36,20 @@
                             ;");
                             $staff_list_query->execute();
                             while($row = $staff_list_query->fetch()){
-                                if($row['niveau_privilege']){$is_admin = "Oui";}
-                                else{$is_admin = "Non";};
                                 echo(
                                     '<tr id="'.$row['id_personnel'].'">'.
                                     "<td>".$row['prenom_personnel']."</td>".
                                     "<td>".$row['nom_personnel']."</td>".
                                     "<td>".$row['identifiant']."</td>".
-                                    "<td>".$row['profession']."</td>".
+                                    "<td>".ucfirst($row['profession'])."</td>".
                                     "<td>".$row['mail']."</td>".
-                                    "<td>$is_admin</td>".
+                                    "<td>".$privilege_levels[$row['niveau_privilege']]."</td>".
                                     "<td>".
-                                    '<button class="btn btn-danger btn-sm remove">Supprimer</button>'.
+                                    '<a class="btn btn-info btn-sm" href="staff_update.php?stfid_u='.$row['id_personnel'].'">Modifier</a>'.
                                     "</td>".
                                     "</tr>".
                                     "<tr>".
-                                    "<td colspan='6'>"
+                                    "<td colspan='7'>"
                                 );
                                 $doctor_rdv_query->execute([$row['id_personnel']]);
                                 if($doctor_rdv_query->rowCount() == 0){echo "Aucun rendez-vous à venir.";}
@@ -119,7 +87,6 @@
                         </div>
                     </div>
                 </div-->
-                <hr>
             </div>
         </div>
     </div>
