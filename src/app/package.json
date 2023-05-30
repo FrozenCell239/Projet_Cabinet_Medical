@@ -1,0 +1,16 @@
+{
+  "name": "node_packages",
+  "version": "1.0.0",
+  "description": "Install needed packages",
+  "dependencies": {
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.3.2",
+    "bootstrap": "^5.2.3",
+    "jquery": "^3.7.0"
+  },
+  "scripts": {
+    "build:tailwind": "npx tailwindcss init",
+    "build:css": "npx tailwindcss -i ./css/input.css -o ./css/output.css"
+  }
+}

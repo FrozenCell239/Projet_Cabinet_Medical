@@ -201,7 +201,7 @@
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, //Makes the default fetch be an associative array.
     ];
     try{
-        $conn = new PDO("mysql:host=localhost:3307;dbname=cabinet;charset=utf8mb4", "root", "", $pdo_options); //Connection to the database.
+        $conn = new PDO("mysql:host=mariadb:3306;dbname=cabinet;charset=utf8mb4", "root", "root", $pdo_options); //Connection to the database.
     }
     catch(Exception $e){echo "Connection failed : ".$e->getMessage();};
     if(isset($_SESSION['user'])){

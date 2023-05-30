@@ -30,3 +30,42 @@ Interface sous forme d'applicatif web destinée à la gestion d'un cabinet médi
 - 1 module caméra
 - 1 module bouton
 - 2 modules relais
+
+## Installation :
+Sur un système d'exploitation Linux, installez `Docker`, `Docker-compose` et les autres dépendances:
+
+##### Debian :
+```
+# apt install docker docker-compose git
+```
+
+##### Archlinux :
+```
+# pacman -S docker docker-compose git
+```
+
+##### Fedora :
+```
+# dnf install docker docker-compose git
+```
+
+##### OpenSUSE :
+```
+# zypper install docker docker-compose git
+```
+---
+Clonez ce depôt avec l'outil `git`:
+```
+$ git clone https://github.com/FrozenCell239/Projet_Cabinet_Medical.git
+```
+
+Puis rendez vous dans le sous-dossier `src`. Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS:
+```
+# docker-compose up -d
+```
+
+## Utilisation
+- Pour accéder au site web, rendez vous au http://localhost:1080/pages/index.php.
+- PhpMyAdmin, notre interface Web de notre base de donnée, se situe au http://localhost:1088.
+
+Vous avez la possibilité de changez les ports de connection (1080 et 1088) en éditant le fichier `docker-compose.yml`.
