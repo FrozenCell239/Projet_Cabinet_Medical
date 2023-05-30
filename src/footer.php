@@ -1,5 +1,5 @@
         <footer>
-            FOOTER OK !
+
         </footer>
     </body>
 </html>

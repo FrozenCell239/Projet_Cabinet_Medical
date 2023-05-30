@@ -12,9 +12,6 @@
         <script src="https://cdn.tailwindcss.com"></script> <!--Tailwind, latest.-->
         <?php }; ?>
         <?php if(basename($_SERVER['PHP_SELF']) === "rdv_update.php"){ ?>
-        <style>
-            input:read-only{background-color: #dddddd;}
-        </style>
         <?php }; ?>
 
         <!--JS scripts.-->
@@ -131,9 +128,14 @@
         <!--PHP scripts.-->
         <?php
             include('server.php');
-            if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
-            else{header("Location: index.php");};
-            if($user->getPrivilegeLevel() < 3 && basename($_SERVER['PHP_SELF']) !== "main.php"){header("Location: main.php");};
+            if(basename($_SERVER['PHP_SELF']) !== "index.php"){
+                if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
+                else{header("Location: index.php");};
+                if($user->getPrivilegeLevel() < 3 && basename($_SERVER['PHP_SELF']) !== "main.php"){header("Location: main.php");};
+            }
+            else{
+                if(isset($_SESSION['user'])){header("Location: main.php");};
+            };
         ?>
 
         <!--Others.-->
@@ -148,7 +150,6 @@
         <?php }; ?>
     >
         <header>
-            HEADER.PHP OK !<BR>
             <?php if(strpos(basename($_SERVER['PHP_SELF']), "manage") !== false || basename($_SERVER['PHP_SELF']) === "main.php"){ ?>
             <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
                 <div class="container-fluid">
