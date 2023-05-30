@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Keypad.h>
-#include "Relay.h" //Be careful about the path of this one if you downloaded it manually as I did.
+#include "Relay.h" //Be careful about the path and location of this one if you downloaded it manually as I did.
 #include <MFRC522.h>
 #include <EthernetUdp.h>
 
@@ -9,7 +9,9 @@
 #define PIR_PIN 2
 #define SS_PIN 53
 #define RST_PIN 48
-#define DEBUG_PIN 4 //Declare this pin but put nothing on it to fix a bug on the Ethernet shield (this pin is basically reserved for SD card).
+#define DEBUG_PIN 4 //Declare this pin but put nothing on it in order to fix a bug on the Ethernet shield (this pin is basically reserved for SD card).
+#define OPENED_DOOR_SENSOR_PIN 34
+#define CLOSED_DOOR_SENSOR_PIN 33
 #define UDP_PORT 8888
 const byte ROWS = 4, COLS = 4;
 
@@ -49,10 +51,12 @@ String to_check;
 void setup(){
     Serial.begin(9600);
     Serial.println("\nStart init...");
+    pinMode(OPENED_DOOR_SENSOR_PIN, INPUT);
+    pinMode(CLOSED_DOOR_SENSOR_PIN, INPUT);
+    pinMode(PIR_PIN, INPUT);
+    pinMode(BUZZER_PIN, OUTPUT);
     pinMode(DEBUG_PIN, OUTPUT);
     digitalWrite(DEBUG_PIN, HIGH);
-    pinMode(BUZZER_PIN, OUTPUT);
-    pinMode(PIR_PIN, INPUT);
     Ethernet.begin(mac, ip, dns); //Initializing the Ethernet shield not using DHCP.
     SPI.begin(); //Init SPI bus.
     rfid.PCD_Init(); //Init MFRC522.
@@ -99,8 +103,9 @@ void loop(){
 void unlockDoor(){
     strikeRelay.on();
     Serial.println("- Strike unlocked !");
-    //while(digitalRead(PIR_PIN) == HIGH){;};
-    delay(2000);
+    delay(10);
+    while(digitalRead(CLOSED_DOOR_SENSOR_PIN) == HIGH);
+    while(digitalRead(CLOSED_DOOR_SENSOR_PIN) == LOW);
     strikeRelay.off();
     Serial.println("- Strike locked !");
     delay(100);
@@ -109,14 +114,20 @@ void unlockDoor(){
 void openDoor(){
     strikeRelay.on();
     Serial.println("- Strike unlocked !");
-    delay(1500);
-    doorRelay.on();
-    Serial.println("- Door unlocked !");
-    //while(digitalRead(PIR_PIN) == HIGH){;};
-    delay(3000);
-    doorRelay.off();
-    Serial.println("- Door locked !");
-    delay(1500);
+    delay(10);
+    openDoorRelay.on();
+    Serial.println("- Door opening...");
+    while(digitalRead(OPENED_DOOR_SENSOR_PIN) == LOW);
+    openDoorRelay.off();
+    Serial.println("- Door opened !");
+    while(digitalRead(PIR_PIN) == LOW);
+    while(digitalRead(PIR_PIN) == HIGH);
+    closeDoorRelay.on();
+    Serial.println("- Door closing...");
+    delay(10);
+    while(digitalRead(CLOSED_DOOR_SENSOR_PIN) == LOW);
+    closeDoorRelay.off();
+    Serial.println("- Door closed !");
     strikeRelay.off();
     Serial.println("- Strike locked !");
     delay(100);
@@ -165,11 +176,11 @@ void getOrder(){
 };
 
 void doorcodeCheck(){
-    if(client.connect(HOST_NAME, 1080)){ //Connect to web server on port 80.
+    if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://192.168.10.3:1080/Pages/access_checker.php?dc=");
+        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/app/pages/access_checker.php?dc=");
         client.print(data);
-        client.println(" HTTP/1.0");
+        client.println(" HTTP/2.0");
         client.println("Host: " + String(HOST_NAME));
         client.println("Connection: close");
         client.println(); //End HTTP header.
@@ -198,11 +209,11 @@ void doorcodeCheck(){
 };
 
 void rfidCheck(){
-    if(client.connect(HOST_NAME, 1080)){ //Connect to web server on port 80.
+    if(client.connect(HOST_NAME, 80)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://192.168.10.3:1080/Pages/access_checker.php?rt=");
+        client.print("POST http://localhost/Pages/SNIR_2/Projet/Projet_Cabinet_Medical/src/app/pages/access_checker.php?rt=");
         client.print(to_check);
-        client.println(" HTTP/1.0");
+        client.println(" HTTP/2.0");
         client.println("Host: " + String(HOST_NAME));
         client.println("Connection: close");
         client.println(); //End HTTP header.
