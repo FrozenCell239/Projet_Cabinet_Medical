@@ -1,5 +1,5 @@
 <?php include("header.php"); ?>
-<div class="bg-white rounded-xl p-8 rounded shadow-md">
+<div class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Ajout d'une salle</h1>
     <form action="server.php" method="post">
         <div class="mb-6">
