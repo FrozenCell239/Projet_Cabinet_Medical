@@ -167,7 +167,7 @@ void getOrder(){
 void doorcodeCheck(){
     if(client.connect(HOST_NAME, 1080)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://192.168.10.3:1080/access_checker.php?dc=");
+        client.print("POST http://192.168.10.3:1080/Pages/access_checker.php?dc=");
         client.print(data);
         client.println(" HTTP/1.0");
         client.println("Host: " + String(HOST_NAME));
@@ -200,7 +200,7 @@ void doorcodeCheck(){
 void rfidCheck(){
     if(client.connect(HOST_NAME, 1080)){ //Connect to web server on port 80.
         Serial.println(" → Checking...");
-        client.print("POST http://192.168.10.3:1080/access_checker.php?rt=");
+        client.print("POST http://192.168.10.3:1080/Pages/access_checker.php?rt=");
         client.print(to_check);
         client.println(" HTTP/1.0");
         client.println("Host: " + String(HOST_NAME));
