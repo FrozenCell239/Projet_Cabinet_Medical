@@ -5,7 +5,7 @@ Projet développé dans le cadre de mon projet de deuxième année de BTS. Essen
 
 *Chaque fonctionnalité est testée dans le plus grand nombre de scénarios d'utilisation possibles avant d'être portée dans ce dépôt.*
 
-## Description:
+## Description :
 Interface sous forme d'applicatif web destinée à la gestion d'un cabinet médical, ainsi qu'à la commande à distance d'une carte programmable Arduino.
 
 ## Objectifs :
@@ -32,7 +32,7 @@ Interface sous forme d'applicatif web destinée à la gestion d'un cabinet médi
 - 2 modules relais
 
 ## Installation :
-Sur un système d'exploitation Linux, installez `Docker`, `Docker-compose` et les autres dépendances:
+Sur un système d'exploitation Linux, installez `Docker`, `Docker-compose` et les autres dépendances. :
 
 ##### Debian :
 ```
@@ -54,18 +54,18 @@ Sur un système d'exploitation Linux, installez `Docker`, `Docker-compose` et le
 # zypper install docker docker-compose git
 ```
 ---
-Clonez ce depôt avec l'outil `git`:
+Clonez ce depôt avec l'outil `git`. :
 ```
 $ git clone https://github.com/FrozenCell239/Projet_Cabinet_Medical.git
 ```
 
-Puis rendez vous dans le sous-dossier `src`. Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS:
+Puis rendez vous dans le sous-dossier `src`. Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS. :
 ```
 # docker-compose up -d
 ```
 
 ## Utilisation
-- Pour accéder au site web, rendez vous au http://localhost:1080/pages/index.php.
-- PhpMyAdmin, notre interface Web de notre base de donnée, se situe au http://localhost:1088.
+- Pour accéder au site web, rendez-vous sur http://localhost:1080/pages/index.php.
+- PhpMyAdmin, notre interface Web de notre base de données, se situe sur http://localhost:1088.
 
 Vous avez la possibilité de changez les ports de connection (1080 et 1088) en éditant le fichier `docker-compose.yml`.
