@@ -5,13 +5,17 @@
         <meta charset="utf-8">
 
         <!--Style sheets.-->
-        <link rel="stylesheet" href="global.css"> <!--Customised style sheet.-->
+        <link rel="stylesheet" href="./../css/global.css"/> <!--Customised style sheet.-->
+
         <?php if(strpos(basename($_SERVER['PHP_SELF']), "manage") !== false || basename($_SERVER['PHP_SELF']) === "main.php"){ ?>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"> <!--Bootstrap, v5.2.3.-->
+        <link rel="stylesheet" href="./../node_modules/bootstrap/dist/css/bootstrap.min.css"/> <!--Bootstrap-->
         <?php }else{ ?>
-        <script src="https://cdn.tailwindcss.com"></script> <!--Tailwind, latest.-->
+        <link rel="stylesheet" href="./../css/output.css"/> <!--TailwindCSS-->
         <?php }; ?>
         <?php if(basename($_SERVER['PHP_SELF']) === "rdv_update.php"){ ?>
+        <style>
+            input:read-only{background-color: #dddddd;}
+        </style>
         <?php }; ?>
 
         <!--PHP scripts.-->
@@ -29,7 +33,7 @@
 
         <!--Others.-->
         <title>Gestion cabinet médical</title>
-        <link rel="icon" type="image/x-icon" href="images/favicon.png"> <!--Favicon.-->
+        <link rel="icon" type="image/x-icon" href="./../img/favicon.png"> <!--Favicon.-->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Permet l'adaptation de la page et la disposition de ses éléments à tous les terminaux.-->
     </head>
