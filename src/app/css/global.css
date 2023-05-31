@@ -3,3 +3,7 @@
     margin: 0 auto;
 }
 table tr td:last-child{width: 120px;}*/
+
+input:disabled{
+    background-color: #e5e5e5;
+}
