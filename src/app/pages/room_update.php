@@ -4,7 +4,7 @@
     $room_info->execute([$_SESSION['u_room_id']]);
     $room_info_row = $room_info->fetch();
 ?>
-<div class="bg-white rounded-xl p-8 rounded shadow-md">
+<div class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Mise à jour informations salle</h1>
     <form action="server.php" method="post">
         <div class="mb-6">

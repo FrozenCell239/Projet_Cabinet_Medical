@@ -26,7 +26,7 @@
     $rdv_info_row = $rdv_info->fetch();
     $_SESSION['urdv_patient_id'] = $rdv_info_row['id_patient'];
 ?>
-<div style="margin-top: 250px;" class="bg-white rounded-xl p-8 rounded shadow-md">
+<div style="margin-top: 250px;" class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Mise à jour rendez-vous</h1>
     <form action="server.php" method="post">
         <div class="mb-6">

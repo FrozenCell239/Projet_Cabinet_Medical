@@ -4,7 +4,7 @@
     $patient_info->execute([$_SESSION['u_patient_id']]);
     $patient_info_row = $patient_info->fetch();
 ?>
-<div class="bg-white rounded-xl p-8 rounded shadow-md">
+<div class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Mise à jour informations patient</h1>
     <form action="patient_update.php" method="post">
         <div class="mb-6">
