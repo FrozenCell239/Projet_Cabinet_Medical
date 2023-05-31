@@ -16,7 +16,8 @@
     $row = $check_query->fetch(); //Checking if the doorcode/tag received from Arduino exists in the database.
     if($row === false){ //If doorcode/tag was wrong...
         if(isset($_GET['rt'])){enlog("Attention : le badge n°".$_GET['rt']." n'est pas un badge répertorié !", true);}; //...then logs an error message with the tag number.
-        if(isset($_GET['dc'])){enlog("Attention : ".$_GET['dc']." n'est pas un code de porte répertorié !", true);};  //...then logs an error message with the typed doorcode.
+        if(isset($_GET['dc']) && $_GET['dc'] != ''){enlog("Attention : ".$_GET['dc']." n'est pas un code de porte répertorié !", true);};  //...then logs an error message with the typed doorcode.
+        if(isset($_GET['dc']) && $_GET['dc'] == ''){enlog("Attention : aucun code de porte n'a été saisi !", true);};  //...then logs an error message stating that sharp key has been pressed while no doorcode has been typed.
     }
     else{ //Else, the doorcode/tag exists.
         if(isset($_GET['rt'])){ //If the tag detected exists in the database...
