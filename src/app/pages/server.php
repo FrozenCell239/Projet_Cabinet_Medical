@@ -210,14 +210,16 @@
 
     # Staff registration //À MODIFIER
     if(isset($_POST['staff_register'])){
-        $new_name = filter_var(ucfirst(trim($_POST['new_staff_name'])), FILTER_SANITIZE_STRING);
-        $new_last_name = filter_var(ucfirst(trim($_POST['new_staff_last_name'])), FILTER_SANITIZE_STRING);
-        $new_profession = filter_var(trim($_POST['new_staff_profession']), FILTER_SANITIZE_STRING);
-        $new_user_login = filter_var(trim($_POST['new_staff_user_login']), FILTER_SANITIZE_STRING);
-        $new_user_mail = filter_var(trim($_POST['new_staff_mail']), FILTER_SANITIZE_STRING);
+        $new_name = ucfirst(trim($_POST['new_staff_name']));
+        $new_last_name = ucfirst(trim($_POST['new_staff_last_name']));
+        $new_profession = trim($_POST['new_staff_profession']);
+        $new_user_login = trim($_POST['new_staff_user_login']);
+        $new_user_mail = trim($_POST['new_staff_mail']);
         $new_user_password = sha1($_POST['new_staff_password']);
         $new_user_confirm_password = sha1($_POST['new_staff_confirm_password']);
-        $new_user_level = filter_var($_POST['new_staff_level'], FILTER_SANITIZE_STRING);
+        $new_user_level = $_POST['new_staff_level'];
+        //$new_user_access_code = trim($_POST['new_staff_access_code']);
+        $new_user_access_type = trim($_POST['new_staff_access_type']);
         if($new_user_password != $new_user_confirm_password){ //Checks if passwords match.
             $errors[] = "Les mots de passe ne correspondent pas.";
             ?>
@@ -261,7 +263,7 @@
 
 	# Room registration
 	if(isset($_POST['room_register'])){
-        $new_room_name = filter_var(ucfirst(trim($_POST['new_room_name'])), FILTER_SANITIZE_STRING);
+        $new_room_name = ucfirst(trim($_POST['new_room_name']));
         $room_check_query = $conn->prepare("SELECT id_salle FROM salles WHERE nom_salle=?");
         $room_check_query->execute([$new_room_name]);
         if($room_check_query->rowCount() > 0){ //Check if room already exists.
@@ -286,12 +288,12 @@
 
     # Patient registration
     if(isset($_POST['patient_register'])){
-        $new_patient_name = filter_var(ucfirst(trim($_POST['new_patient_name'])), FILTER_SANITIZE_STRING);
-        $new_patient_last_name = filter_var(ucfirst(trim($_POST['new_patient_last_name'])), FILTER_SANITIZE_STRING);
-        $new_patient_number = filter_var(trim($_POST['new_patient_number']), FILTER_SANITIZE_STRING);
-        $new_patient_ssn = filter_var(trim($_POST['new_patient_ssn']), FILTER_SANITIZE_STRING);
-        $new_patient_address = filter_var(trim($_POST['new_patient_address']), FILTER_SANITIZE_STRING);
-        $new_patient_town = filter_var(ucfirst(trim($_POST['new_patient_town'])), FILTER_SANITIZE_STRING);
+        $new_patient_name = ucfirst(trim($_POST['new_patient_name']));
+        $new_patient_last_name = ucfirst(trim($_POST['new_patient_last_name']));
+        $new_patient_number = trim($_POST['new_patient_number']);
+        $new_patient_ssn = trim($_POST['new_patient_ssn']);
+        $new_patient_address = trim($_POST['new_patient_address']);
+        $new_patient_town = ucfirst(trim($_POST['new_patient_town']));
         $patient_check_query = $conn->prepare("SELECT id_patient FROM patients WHERE prenom_patient=? AND nom_patient=?;");
         $patient_check_query->execute([$new_patient_name, $new_patient_last_name]);
         if($patient_check_query->rowCount() > 0){ //Check if patient already exists.
@@ -327,7 +329,7 @@
     # Login
     if(isset($_POST['login'])){ //Check if Login button is pressed.
         $password = sha1($_POST['psswrd']);
-        $login = filter_var(trim($_POST['user_login']), FILTER_SANITIZE_STRING);
+        $login = trim($_POST['user_login']);
         $user = new User;
         if($user->InitUser($conn, $login, $password)){
             $_SESSION['user'] = $user;
@@ -380,13 +382,13 @@
 
     # New rendezvous creating
     if(isset($_POST['rdv_register'])){
-        $patient_name = filter_var(ucfirst(trim($_POST['patient_name'])), FILTER_SANITIZE_STRING);
-        $patient_last_name = filter_var(ucfirst(trim($_POST['patient_last_name'])), FILTER_SANITIZE_STRING);
-        $patient_need = filter_var(ucfirst(trim($_POST['patient_need'])), FILTER_SANITIZE_STRING);
-        $patient_number = filter_var(trim($_POST['patient_number']), FILTER_SANITIZE_STRING);
-        $doctor_select = filter_var($_POST['doctor_select'], FILTER_SANITIZE_STRING);
-        $room_select = filter_var($_POST['room_select'], FILTER_SANITIZE_STRING);
-        $new_rdv_datetime = filter_var($_POST['rdv_datetime'], FILTER_SANITIZE_STRING);
+        $patient_name = ucfirst(trim($_POST['patient_name']));
+        $patient_last_name = ucfirst(trim($_POST['patient_last_name']));
+        $patient_need = ucfirst(trim($_POST['patient_need']));
+        $patient_number = trim($_POST['patient_number']);
+        $doctor_select = $_POST['doctor_select'];
+        $room_select = $_POST['room_select'];
+        $new_rdv_datetime = $_POST['rdv_datetime'];
         $get_patient_id_query = $conn->prepare("SELECT id_patient FROM patients WHERE prenom_patient = ? AND nom_patient = ?;");
         $get_patient_id_query->execute([$patient_name, $patient_last_name]);
         if($get_patient_id_query->rowCount() == 0){
@@ -445,7 +447,7 @@
 
     # Current user mail updating
     if(isset($_POST['mail_update'])){
-        $new_mail = filter_var(trim($_POST['mail']), FILTER_SANITIZE_STRING);
+        $new_mail = trim($_POST['mail']);
         $user->setMail($conn, $new_mail);
         ?>
         <script>
@@ -462,12 +464,12 @@
     };
     if(isset($_POST['patient_update'])){ //Handling patient update.
         $u_patient_id = $_SESSION['u_patient_id'];
-        $u_patient_name = filter_var(ucfirst(trim($_POST['u_patient_name'])), FILTER_SANITIZE_STRING);
-        $u_patient_last_name = filter_var(ucfirst(trim($_POST['u_patient_last_name'])), FILTER_SANITIZE_STRING);
-        $u_patient_number = filter_var(trim($_POST['u_patient_number']), FILTER_SANITIZE_STRING);
-        $u_patient_ssn = filter_var(trim($_POST['u_patient_ssn']), FILTER_SANITIZE_STRING);
-        $u_patient_address = filter_var(trim($_POST['u_patient_address']), FILTER_SANITIZE_STRING);
-        $u_patient_town = filter_var(ucfirst(trim($_POST['u_patient_town'])), FILTER_SANITIZE_STRING);
+        $u_patient_name = ucfirst(trim($_POST['u_patient_name']));
+        $u_patient_last_name = ucfirst(trim($_POST['u_patient_last_name']));
+        $u_patient_number = trim($_POST['u_patient_number']);
+        $u_patient_ssn = trim($_POST['u_patient_ssn']);
+        $u_patient_address = trim($_POST['u_patient_address']);
+        $u_patient_town = ucfirst(trim($_POST['u_patient_town']));
         $patient_update_query = $conn->prepare("
             UPDATE patients
             SET prenom_patient=?, nom_patient=?, numero_patient=?, numero_securite_sociale=?, adresse_patient=?, ville_patient=?
@@ -502,7 +504,7 @@
     };
     if(isset($_POST['room_update'])){ //Handling room update.
         $u_room_id = $_SESSION['u_room_id'];
-        $u_room_name = filter_var(ucfirst(trim($_POST['u_room_name'])), FILTER_SANITIZE_STRING);
+        $u_room_name = ucfirst(trim($_POST['u_room_name']));
         $room_update_query = $conn->prepare("UPDATE salles SET nom_salle=? WHERE id_salle=?;");
         $room_update_query->execute([$u_room_name, $u_room_id]);
         ?>
@@ -525,11 +527,11 @@
     };
     if(isset($_POST['rdv_update'])){ //Handling rendezvous update.
         $rdv_update_query_options = [
-            filter_var(ucfirst(trim($_POST['urdv_patient_need'])), FILTER_SANITIZE_STRING),
+            ucfirst(trim($_POST['urdv_patient_need'])),
             $_SESSION['urdv_patient_id'],
-            filter_var($_POST['urdv_doctor'], FILTER_SANITIZE_STRING),
-            filter_var($_POST['urdv_room'], FILTER_SANITIZE_STRING),
-            filter_var($_POST['urdv_datetime'], FILTER_SANITIZE_STRING),
+            $_POST['urdv_doctor'],
+            $_POST['urdv_room'],
+            $_POST['urdv_datetime'],
             $_SESSION['u_rdv_id']
         ];
         $rdv_update_query = $conn->prepare("UPDATE reservations SET besoin=?, id_patient=?, id_personnel=?, id_salle=?, date_heure=? WHERE id_reservation=?;");
