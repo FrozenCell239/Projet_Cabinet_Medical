@@ -9,6 +9,8 @@
 #define PIR_PIN 2
 #define SS_PIN 53
 #define RST_PIN 48
+#define GREEN_LED_PIN 41
+#define RED_LED_PIN 42
 #define DEBUG_PIN 4 //Declare this pin but put nothing on it in order to fix a bug on the Ethernet shield (this pin is basically reserved for SD card).
 #define OPENED_DOOR_SENSOR_PIN 34
 #define CLOSED_DOOR_SENSOR_PIN 33
@@ -24,8 +26,8 @@ byte
 ;
 EthernetClient client;
 EthernetUDP udp;
-IPAddress ip(192, 168, 20, 50); //Arduino board's IP.
-IPAddress dns(192, 168, 20, 1);
+IPAddress ip(192, 168, 10, 50); //Arduino board's IP.
+IPAddress dns(192, 168, 10, 1);
 char
     reply, //Used to read the response from the server.
     customKey, //Stores the last key pressed on keypad.
@@ -41,12 +43,14 @@ char
     ReplyBuffer[] = "Acknowledged !"
 ;
 bool opened = false;
+
+String to_check;
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 Relay strikeRelay(30);
-Relay doorRelay(31);
+Relay openDoorRelay(31);
+Relay closeDoorRelay(32);
 MFRC522 rfid(SS_PIN, RST_PIN); //Instance of the class.
 MFRC522::MIFARE_Key key;
-String to_check;
 
 void setup(){
     Serial.begin(9600);
@@ -56,6 +60,8 @@ void setup(){
     pinMode(PIR_PIN, INPUT);
     pinMode(BUZZER_PIN, OUTPUT);
     pinMode(DEBUG_PIN, OUTPUT);
+    pinMode(GREEN_LED_PIN, OUTPUT);
+    pinMode(RED_LED_PIN, OUTPUT);
     digitalWrite(DEBUG_PIN, HIGH);
     Ethernet.begin(mac, ip, dns); //Initializing the Ethernet shield not using DHCP.
     SPI.begin(); //Init SPI bus.
@@ -101,10 +107,12 @@ void loop(){
 };
 
 void unlockDoor(){
+    digitalWrite(GREEN_LED_PIN, HIGH);
     strikeRelay.on();
     Serial.println("- Strike unlocked !");
     delay(10);
     while(digitalRead(CLOSED_DOOR_SENSOR_PIN) == HIGH);
+    digitalWrite(GREEN_LED_PIN, LOW);
     while(digitalRead(CLOSED_DOOR_SENSOR_PIN) == LOW);
     strikeRelay.off();
     Serial.println("- Strike locked !");
@@ -112,6 +120,7 @@ void unlockDoor(){
 };
 
 void openDoor(){
+    digitalWrite(GREEN_LED_PIN, HIGH);
     strikeRelay.on();
     Serial.println("- Strike unlocked !");
     delay(10);
@@ -124,6 +133,7 @@ void openDoor(){
     while(digitalRead(PIR_PIN) == HIGH);
     closeDoorRelay.on();
     Serial.println("- Door closing...");
+    digitalWrite(GREEN_LED_PIN, LOW);
     delay(10);
     while(digitalRead(CLOSED_DOOR_SENSOR_PIN) == LOW);
     closeDoorRelay.off();
@@ -136,8 +146,10 @@ void openDoor(){
 void refused(){
     Serial.println("Accès refusé !");
     digitalWrite(BUZZER_PIN, HIGH);
+    digitalWrite(RED_LED_PIN, HIGH);
     delay(1000);
     digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(RED_LED_PIN, LOW);
     delay(100);
 };
 
@@ -206,6 +218,7 @@ void doorcodeCheck(){
     while(data_count != 0){
         data[data_count--] = 0; 
     };
+    data[0] = 0;
 };
 
 void rfidCheck(){
