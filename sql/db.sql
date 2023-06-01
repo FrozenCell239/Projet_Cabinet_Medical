@@ -12,18 +12,17 @@ CREATE TABLE `patients`(
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `personnel`(
-  `id_personnel` int(11) NOT NULL AUTO_INCREMENT,
+  `id_personnel` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `prenom_personnel` varchar(42) NOT NULL,
   `nom_personnel` varchar(42) NOT NULL,
   `profession` varchar(42) NOT NULL,
   `mail` varchar(42) NOT NULL,
+  `niveau_privilege` tinyint(1) NOT NULL,
+  `numero_badge` varchar(42) DEFAULT NULL,
+  `code_porte` varchar(42) DEFAULT NULL,
   `identifiant` varchar(42) DEFAULT NULL,
   `mot_de_passe` varchar(42) DEFAULT NULL,
-  `date_mdp` DATE DEFAULT NULL, -- CURRENT_TIMESTAMP
-  `code_porte` varchar(42) DEFAULT NULL,
-  `numero_badge` varchar(42) DEFAULT NULL,
-  `niveau_privilege` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id_personnel`)
+  `date_mdp` DATE DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `reservations`(
