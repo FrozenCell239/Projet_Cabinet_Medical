@@ -264,17 +264,17 @@
         };
         if(count($errors) == 0){ //If no errors, register.
             var_dump($insert_query);
-            var_dump($insert_query_parameters);// CHECK AUSSI LES VALEURS PAR DéFAUT !! 
+            var_dump($insert_query_parameters);
             $insert_query = $conn->prepare($insert_query);
             $insert_query->execute($insert_query_parameters);
             ?>
             <script>
                 alert("Personnel enregistré avec succès.");
             </script>
-            <?php /*
+            <?php
             header("Refresh: 0; url=staff_manage.php");
         }
-        else{header("Refresh: 0; url=staff_add.php");*/};
+        else{header("Refresh: 0; url=staff_add.php");};
     };
 
 	# Room registration
