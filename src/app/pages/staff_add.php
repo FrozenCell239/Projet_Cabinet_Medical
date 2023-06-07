@@ -145,7 +145,7 @@
                     },
                     tag_attributes = {
                         "maxlength" : "12",
-                        "pattern" : "[1-9]",
+                        "pattern" : "[1-9]+",
                         "oninvalid" : "setCustomValidity('12 caractères maximum allant de 1 à 9. Ne pas noter les zéros et les espaces.')",
                         "oninput" : "setCustomValidity('')"
                     }
