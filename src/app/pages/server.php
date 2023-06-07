@@ -204,42 +204,56 @@
         $conn = new PDO("mysql:host=localhost:3307;dbname=cabinet;charset=utf8mb4", "root", "", $pdo_options); //Connection to the database. # $conn = new PDO("mysql:host=mariadb:3306;dbname=cabinet;charset=utf8mb4", "root", "root", $pdo_options);
     }
     catch(Exception $e){echo "Connection failed : ".$e->getMessage();};
-    if(isset($_SESSION['user'])){
-        $user = $_SESSION['user'];
-    };
+    if(isset($_SESSION['user'])){$user = $_SESSION['user'];};
 
-    # Staff registration //À MODIFIER
+    # Staff registration
     if(isset($_POST['staff_register'])){
-        $new_name = ucfirst(trim($_POST['new_staff_name']));
-        $new_last_name = ucfirst(trim($_POST['new_staff_last_name']));
-        $new_profession = trim($_POST['new_staff_profession']);
-        $new_user_login = trim($_POST['new_staff_user_login']);
-        $new_user_mail = trim($_POST['new_staff_mail']);
-        $new_user_password = sha1($_POST['new_staff_password']);
-        $new_user_confirm_password = sha1($_POST['new_staff_confirm_password']);
-        $new_user_level = $_POST['new_staff_level'];
-        //$new_user_access_code = trim($_POST['new_staff_access_code']);
-        $new_user_access_type = trim($_POST['new_staff_access_type']);
-        if($new_user_password != $new_user_confirm_password){ //Checks if passwords match.
-            $errors[] = "Les mots de passe ne correspondent pas.";
-            ?>
-            <script>
-                alert("Les mots de passe ne correspondent pas.");
-            </script>
-            <?php
-        };
-        $login_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE identifiant=?;");
-        $login_check_query->execute([$new_user_login]);
-        if($login_check_query->rowCount() > 0){ //Checks if user login already exists.
-            $errors[] = "Identifiant déjà utilisé.";
-            ?>
-            <script>
-                alert("Identifiant déjà utilisé.");
-            </script>
-            <?php
+        $insert_query = "INSERT INTO personnel (prenom_personnel, nom_personnel, profession, mail, niveau_privilege, ".trim($_POST['new_staff_access_type'])."#pswlogin#) VALUES (?, ?, ?, ?, ?, ?#pswlogin_params#);";
+        $insert_query_parameters = [
+            ucfirst(trim($_POST['new_staff_name'])), //New staff's name.
+            ucfirst(trim($_POST['new_staff_last_name'])), //New staff's last name.
+            trim($_POST['new_staff_profession']), //New staff's profession.
+            trim($_POST['new_staff_mail']), //New staff's mail address.
+            $_POST['new_staff_level'], //New staff's privilege level.
+        ];
+        $insert_query_parameters[] = ($_POST['new_staff_access_type'] == "code_porte") ? base64_encode(trim($_POST['new_staff_access_code'])) : sha1(trim($_POST['new_staff_access_code'])) ;
+        if($_POST['new_staff_level'] > 0){
+            $new_user_login = trim($_POST['new_staff_user_login']);
+            $new_user_password = sha1($_POST['new_staff_password']);
+            $new_user_confirm_password = sha1($_POST['new_staff_confirm_password']);
+            if($new_user_password != $new_user_confirm_password){ //Checks if passwords match.
+                $errors[] = "Les mots de passe ne correspondent pas.";
+                ?>
+                <script>
+                    alert("Les mots de passe ne correspondent pas.");
+                </script>
+                <?php
+            }
+            $login_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE identifiant=?;");
+            $login_check_query->execute([$new_user_login]);
+            if($login_check_query->rowCount() > 0){ //Checks if user login already exists.
+                $errors[] = "Identifiant déjà utilisé.";
+                ?>
+                <script>
+                    alert("Identifiant déjà utilisé.");
+                </script>
+                <?php
+            };
+            if(count($errors) == 0){
+                array_push($insert_query_parameters, $new_user_login, $new_user_password, date("Y-m-d"));
+                $insert_query = str_replace("#pswlogin#", ", identifiant, mot_de_passe, date_mdp", $insert_query);
+                $insert_query = str_replace("#pswlogin_params#", ", ?, ?, ?", $insert_query);
+            };
+        }
+        else{
+            $insert_query = str_replace("#pswlogin#", "", $insert_query);
+            $insert_query = str_replace("#pswlogin_params#", "", $insert_query);
         };
         $user_check_query = $conn->prepare("SELECT id_personnel FROM personnel WHERE prenom_personnel=? AND nom_personnel=?;");
-        $user_check_query->execute([$new_name, $new_last_name]);
+        $user_check_query->execute([
+            ucfirst(trim($_POST['new_staff_name'])),
+            ucfirst(trim($_POST['new_staff_last_name']))
+        ]);
         if($user_check_query->rowCount() > 0){ //Check if user already exists.
             $errors[] = "Cette personne est déjà répertoriée.";
             ?>
@@ -249,16 +263,18 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-            $insert_query = $conn->prepare("INSERT INTO personnel (prenom_personnel, nom_personnel, profession, identifiant, mail, mot_de_passe, niveau_privilege) VALUES (?, ?, ?, ?, ?, ?, ?);");
-            $insert_query->execute([$new_name, $new_last_name, $new_profession, $new_user_login, $new_user_mail, $new_user_password, $new_user_level]);
+            var_dump($insert_query);
+            var_dump($insert_query_parameters);// CHECK AUSSI LES VALEURS PAR DéFAUT !! 
+            $insert_query = $conn->prepare($insert_query);
+            $insert_query->execute($insert_query_parameters);
             ?>
             <script>
                 alert("Personnel enregistré avec succès.");
             </script>
-            <?php
+            <?php /*
             header("Refresh: 0; url=staff_manage.php");
         }
-        else{header("Refresh: 0; url=staff_add.php");};
+        else{header("Refresh: 0; url=staff_add.php");*/};
     };
 
 	# Room registration
