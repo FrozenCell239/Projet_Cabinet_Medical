@@ -97,23 +97,19 @@
         </div>
         <script>
             var
-                password_inputs = document.querySelectorAll('input[name*="password"], input[name*="login"]'),
+                login_input = document.getElementsByName('u_staff_user_login')[0],
                 staff_level = document.getElementsByName("u_staff_level")[0]
             ;
 
             staff_level.addEventListener("change", function(){
                 if(parseInt(this.value) > 0){
-                    password_inputs.forEach(function(input){
-                        input.removeAttribute("disabled");
-                        input.setAttribute("required", '');
-                    });
+                    login_input.removeAttribute("disabled");
+                    login_input.setAttribute("required", '');
                 }
                 else{
-                    password_inputs.forEach(function(input){
-                        input.setAttribute("disabled", '');
-                        input.removeAttribute("required");
-                        input.value = '';
-                    });
+                    login_input.setAttribute("disabled", '');
+                    login_input.removeAttribute("required");
+                    login_input.value = '';
                 };
             });
         </script>
@@ -168,8 +164,8 @@
                 };
             </script>
         </div>
-        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit" name="staff_register">Valider</button>
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" onclick="location.href='staff_manage.php';" name="staff_register_cancel">Annuler</button>
+        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit" name="staff_update">Valider</button>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" onclick="location.href='staff_manage.php';" name="staff_update_cancel">Annuler</button>
     </form>
 </div>
 <?php include("footer.php"); ?>
