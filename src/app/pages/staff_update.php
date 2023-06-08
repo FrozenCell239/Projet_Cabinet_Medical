@@ -98,12 +98,10 @@
         <script>
             var
                 password_inputs = document.querySelectorAll('input[name*="password"], input[name*="login"]'),
-                staff_level = document.getElementsByName("u_staff_level")[0],
-                selected_value
+                staff_level = document.getElementsByName("u_staff_level")[0]
             ;
 
             staff_level.addEventListener("change", function(){
-                selected_value = staff_level.value;
                 if(parseInt(this.value) > 0){
                     password_inputs.forEach(function(input){
                         input.removeAttribute("disabled");
