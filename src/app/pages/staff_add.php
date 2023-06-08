@@ -135,7 +135,7 @@
             />
             <script>
                 var
-                    access_type = document.getElementsByName("new_staff_access_type"),
+                    access_type = document.getElementsByName("new_staff_access_type")[0],
                     code_input = document.getElementsByName("new_staff_access_code")[0],
                     doorcode_attributes = {
                         "maxlength" : "8",
