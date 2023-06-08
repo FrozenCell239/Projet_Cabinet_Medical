@@ -1,5 +1,5 @@
 <?php include("header.php"); ?>
-<div class="bg-white rounded-xl p-8 shadow-md" style="margin-top: 100px">
+<div class="bg-white rounded-xl p-8 shadow-md" style="margin-top: 250px">
     <h1 class="text-2xl font-bold mb-6">Ajout d'un personnel</h1>
     <form action="server.php" method="post">
         <div class="mb-6">
