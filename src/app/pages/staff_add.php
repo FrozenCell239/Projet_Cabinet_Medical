@@ -3,50 +3,50 @@
     <h1 class="text-2xl font-bold mb-6">Ajout d'un personnel</h1>
     <form action="server.php" method="post">
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_name">Prénom</label>
+            <label class="block font-bold mb-2" for="u_staff_name">Prénom</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="new_staff_name"
+                name="u_staff_name"
                 maxlength="42"
                 required
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_last_name">Nom</label>
+            <label class="block font-bold mb-2" for="u_staff_last_name">Nom</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="new_staff_last_name"
+                name="u_staff_last_name"
                 maxlength="42"
                 required
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_profession">Profession</label>
+            <label class="block font-bold mb-2" for="u_staff_profession">Profession</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="new_staff_profession"
+                name="u_staff_profession"
                 maxlength="42"
                 required
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_mail">Mail</label>
+            <label class="block font-bold mb-2" for="u_staff_mail">Mail</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="email"
-                name="new_staff_mail"
+                name="u_staff_mail"
                 maxlength="42"
                 required
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_level">Catégorie de personnel</label>
+            <label class="block font-bold mb-2" for="u_staff_level">Catégorie de personnel</label>
             <select
                 class="block border border-gray-400 p-2 w-full"
-                name="new_staff_level"
+                name="u_staff_level"
                 required
             >
                 <option value="">-- Choisir une catégorie --</option>
@@ -58,11 +58,11 @@
             </select>
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_user_login">Identifiant</label>
+            <label class="block font-bold mb-2" for="u_staff_user_login">Identifiant</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="new_staff_user_login"
+                name="u_staff_user_login"
                 maxlength="42"
                 minlength="4"
                 pattern="[a-z0-9_]+"
@@ -70,11 +70,11 @@
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_password">Mot de passe</label>
+            <label class="block font-bold mb-2" for="u_staff_password">Mot de passe</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="password"
-                name="new_staff_password"
+                name="u_staff_password"
                 maxlength="42"
                 pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
                 title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
@@ -82,11 +82,11 @@
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_confirm_password">Confirmation du mot de passe</label>
+            <label class="block font-bold mb-2" for="u_staff_confirm_password">Confirmation du mot de passe</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="password"
-                name="new_staff_confirm_password"
+                name="u_staff_confirm_password"
                 maxlength="42"
                 pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}"
                 title="8 caractères minimum dont au moins une majuscule, une minuscule, un chiffre, et un symbole ( @#$%^&*_=+- )."
@@ -95,48 +95,42 @@
         </div>
         <script>
             var
-                password_inputs = document.querySelectorAll('input[name*="password"], input[name*="login"]'),
-                staff_level = document.getElementsByName("new_staff_level")[0],
-                selected_value
+                login_input = document.getElementsByName("u_staff_user_login")[0],
+                staff_level = document.getElementsByName("u_staff_level")[0]
             ;
 
             staff_level.addEventListener("change", function(){
-                selected_value = staff_level.value;
                 if(parseInt(this.value) > 0){
-                    password_inputs.forEach(function(input){
-                        input.removeAttribute("disabled");
-                        input.setAttribute("required", '');
-                    });
+                    login_input.removeAttribute("disabled");
+                    login_input.setAttribute("required", '');
                 }
                 else{
-                    password_inputs.forEach(function(input){
-                        input.setAttribute("disabled", '');
-                        input.removeAttribute("required");
-                        input.value = '';
-                    });
+                    login_input.setAttribute("disabled", '');
+                    login_input.removeAttribute("required");
+                    login_input.value = '';
                 };
             });
         </script>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="new_staff_access_type">Code d'accès</label>
+            <label class="block font-bold mb-2" for="u_staff_access_type">Code d'accès</label>
             <label class="inline-flex items-center">
-                <input type="radio" name="new_staff_access_type" value="code_porte" required>
+                <input type="radio" name="u_staff_access_type" value="code_porte" required>
                 <span class="ml-2">Digicode</span>
             </label>
             <label class="inline-flex items-center ml-6">
-                <input type="radio" name="new_staff_access_type" value="numero_badge" required>
+                <input type="radio" name="u_staff_access_type" value="numero_badge" required>
                 <span class="ml-2">Badge/carte</span>
             </label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="new_staff_access_code"
+                name="u_staff_access_code"
                 required
             />
             <script>
                 var
-                    access_type = document.getElementsByName("new_staff_access_type")[0],
-                    code_input = document.getElementsByName("new_staff_access_code")[0],
+                    access_type = document.getElementsByName("u_staff_access_type")[0],
+                    code_input = document.getElementsByName("u_staff_access_code")[0],
                     doorcode_attributes = {
                         "maxlength" : "8",
                         "pattern" : "[A-D0-9*]{4,8}",
