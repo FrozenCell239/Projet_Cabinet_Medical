@@ -5,6 +5,7 @@
     if(isset($_GET['what']) && $_GET['what'] == 1 && isset($_GET['id'])){
         $delete_query = $conn->prepare("DELETE FROM personnel WHERE id_personnel = ? ;");
         $delete_query->execute([$_GET['id']]);
+        unset($_SESSION['u_staff_id']);
         echo 'Personnel supprimé avec succès.';
     };
 
@@ -28,6 +29,7 @@
     if(isset($_GET['what']) && $_GET['what'] == 4 && isset($_GET['id'])){
         $delete_query = $conn->prepare("DELETE FROM reservations WHERE id_reservation = ? ;");
         $delete_query->execute([$_GET['id']]);
+        unset($_SESSION['u_rdv_id']);
         echo 'Rendez-vous annulé avec succès.';
     };
 
