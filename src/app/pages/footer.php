@@ -1,7 +1,7 @@
         <footer>
-          <!--JS scripts.-->
-          <script src="./../node_modules/jquery/dist/jquery.min.js"></script> <!--JQuery-->
-          <?php if(strpos(basename($_SERVER['PHP_SELF']), "manage") !== false || basename($_SERVER['PHP_SELF']) === "main.php"){ ?>
+            <!--JS scripts.-->
+            <script src="./../node_modules/jquery/dist/jquery.min.js"></script> <!--JQuery-->
+            <?php if(strpos(basename($_SERVER['PHP_SELF']), "manage") !== false || basename($_SERVER['PHP_SELF']) === "main.php"){ ?>
             <script src="./../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script> <!--Bootstrap-->
             <?php
                 };
