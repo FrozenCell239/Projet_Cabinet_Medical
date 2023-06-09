@@ -32,6 +32,4 @@
         unset($_SESSION['u_rdv_id']);
         echo 'Rendez-vous annulé avec succès.';
     };
-
-    unset($delete_query);
 ?>
