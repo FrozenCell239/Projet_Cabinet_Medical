@@ -208,15 +208,18 @@
 
     # Staff registration
     if(isset($_POST['staff_register'])){
-        $insert_query = "INSERT INTO personnel (prenom_personnel, nom_personnel, profession, mail, niveau_privilege, ".trim($_POST['new_staff_access_type'])."#pswlogin#) VALUES (?, ?, ?, ?, ?, ?#pswlogin_params#);";
+        $insert_query = "
+            INSERT INTO personnel (prenom_personnel, nom_personnel, profession, mail, niveau_privilege, ".trim($_POST['new_staff_access_type'])."#pswlogin#)
+            VALUES (?, ?, ?, ?, ?, ?#pswlogin_params#);
+        ";
         $insert_query_parameters = [
             ucfirst(trim($_POST['new_staff_name'])), //New staff's name.
             ucfirst(trim($_POST['new_staff_last_name'])), //New staff's last name.
             trim($_POST['new_staff_profession']), //New staff's profession.
             trim($_POST['new_staff_mail']), //New staff's mail address.
             $_POST['new_staff_level'], //New staff's privilege level.
+            ($_POST['new_staff_access_type'] == "code_porte") ? sha1(trim($_POST['new_staff_access_code'])) : base64_encode(trim($_POST['new_staff_access_code']))
         ];
-        $insert_query_parameters[] = ($_POST['new_staff_access_type'] == "code_porte") ? base64_encode(trim($_POST['new_staff_access_code'])) : sha1(trim($_POST['new_staff_access_code'])) ;
         if($_POST['new_staff_level'] > 0){
             $new_user_login = trim($_POST['new_staff_user_login']);
             $new_user_password = sha1($_POST['new_staff_password']);
@@ -263,8 +266,6 @@
             <?php
         };
         if(count($errors) == 0){ //If no errors, register.
-            var_dump($insert_query);
-            var_dump($insert_query_parameters);
             $insert_query = $conn->prepare($insert_query);
             $insert_query->execute($insert_query_parameters);
             ?>
@@ -277,11 +278,54 @@
         else{header("Refresh: 0; url=staff_add.php");};
     };
 
+    # Staff member update
+    if(isset($_GET['stfid_u'])){ //Hiding the staff member ID in the URL bar.
+        $_SESSION['u_staff_id'] = $_GET['stfid_u'];
+        header("Refresh: 0; url=staff_update.php");
+    };
+    if(isset($_POST['staff_update'])){ //Handling staff update.
+        $staff_update_query_parameters = [
+            ucfirst(trim($_POST['u_staff_name'])),
+            ucfirst(trim($_POST['u_staff_last_name'])),
+            trim($_POST['u_staff_profession']),
+            trim($_POST['u_staff_mail']),
+            $_POST['u_staff_level'],
+            (trim($_POST['u_staff_user_login']) == "") ? null : trim($_POST['u_staff_user_login']),
+            ($_POST['u_staff_access_type'] == "code_porte") ? sha1(trim($_POST['u_staff_access_code'])) : null,
+            ($_POST['u_staff_access_type'] == "numero_badge") ? base64_encode(trim($_POST['u_staff_access_code'])) : null,
+            $_SESSION['u_staff_id']
+        ];
+        $staff_update_query = $conn->prepare("
+            UPDATE personnel
+            SET
+                prenom_personnel=?,
+                nom_personnel=?,
+                profession=?,
+                mail=?,
+                niveau_privilege=?,
+                identifiant=?,
+                code_porte=?,
+                numero_badge=?
+            WHERE id_personnel=?;
+        ");
+        $staff_update_query->execute($staff_update_query_parameters);
+        ?>
+        <script>
+            alert("Personnel(le) mis(e) à jour avec succès.");
+        </script>
+        <?php
+        unset($_SESSION['u_staff_id']);
+        header("Refresh: 0; url=staff_manage.php");
+    };
+    if(isset($_POST['staff_update_cancel'])){ //Staff information update canceling.
+        unset($_SESSION['u_staff_id']);
+        header("Refresh: 0; url=staff_manage.php");
+    };
+
 	# Room registration
 	if(isset($_POST['room_register'])){
-        $new_room_name = ucfirst(trim($_POST['new_room_name']));
         $room_check_query = $conn->prepare("SELECT id_salle FROM salles WHERE nom_salle=?");
-        $room_check_query->execute([$new_room_name]);
+        $room_check_query->execute([ucfirst(trim($_POST['new_room_name']))]);
         if($room_check_query->rowCount() > 0){ //Check if room already exists.
             $errors[] = "Cette salle est déjà répertoriée.";
             ?>
@@ -292,7 +336,7 @@
         };
         if(count($errors) == 0){ //If no errors, register.
             $insert_query = $conn->prepare("INSERT INTO salles (nom_salle) VALUES (?);");
-            $insert_query->execute([$new_room_name]);
+            $insert_query->execute([ucfirst(trim($_POST['new_room_name']))]);
             ?>
             <script>
                 alert("Salle enregistrée avec succès.");
@@ -479,30 +523,23 @@
         header("Refresh: 0; url=patient_update.php");
     };
     if(isset($_POST['patient_update'])){ //Handling patient update.
-        $u_patient_id = $_SESSION['u_patient_id'];
-        $u_patient_name = ucfirst(trim($_POST['u_patient_name']));
-        $u_patient_last_name = ucfirst(trim($_POST['u_patient_last_name']));
-        $u_patient_number = trim($_POST['u_patient_number']);
-        $u_patient_ssn = trim($_POST['u_patient_ssn']);
-        $u_patient_address = trim($_POST['u_patient_address']);
-        $u_patient_town = ucfirst(trim($_POST['u_patient_town']));
         $patient_update_query = $conn->prepare("
             UPDATE patients
             SET prenom_patient=?, nom_patient=?, numero_patient=?, numero_securite_sociale=?, adresse_patient=?, ville_patient=?
             WHERE id_patient=?;
         ");
         $patient_update_query->execute([
-            $u_patient_name,
-            $u_patient_last_name,
-            $u_patient_number,
-            $u_patient_ssn,
-            $u_patient_address,
-            $u_patient_town,
-            $u_patient_id
+            ucfirst(trim($_POST['u_patient_name'])),
+            ucfirst(trim($_POST['u_patient_last_name'])),
+            trim($_POST['u_patient_number']),
+            trim($_POST['u_patient_ssn']),
+            trim($_POST['u_patient_address']),
+            ucfirst(trim($_POST['u_patient_town'])),
+            $_SESSION['u_patient_id']
         ]);
         ?>
         <script>
-            alert("Patient mis à jour avec succès.");
+            alert("Patient(e) mis(e) à jour avec succès.");
         </script>
         <?php
         unset($_SESSION['u_patient_id']);
