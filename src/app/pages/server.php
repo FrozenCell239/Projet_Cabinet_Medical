@@ -181,7 +181,13 @@
             if($ORDER == '#'){$order_type = "ouverte";};
             enlog("Porte $order_type depuis le secrétariat.", false);
         }
-        else{echo("Impossible de créer le socket.<br>");};
+        else{
+            ?>
+            <script>
+                alert("Impossible d'établir une communication pour envoyer l'ordre de déverrouillage.");
+            </script>
+            <?php
+        };
     };
 
     # Global use variables
