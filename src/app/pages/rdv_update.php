@@ -91,7 +91,17 @@
             >
                 <option value="<?= $rdv_info_row['id_personnel']; ?>"><?= $rdv_info_row['prenom_personnel']." ".$rdv_info_row['nom_personnel']; ?></option>
                 <?php
-                    $doctor_select_query = $conn->prepare("SELECT id_personnel, prenom_personnel, nom_personnel FROM personnel WHERE id_personnel != ? AND profession !='secretaire';");
+                    $doctor_select_query = $conn->prepare("
+                        SELECT
+                            id_personnel,
+                            prenom_personnel,
+                            nom_personnel
+                        FROM personnel
+                        WHERE
+                            id_personnel != ? AND
+                            niveau_privilege > 0 AND
+                            niveau_privilege< 3
+                        ");
                     $doctor_select_query->execute([$rdv_info_row['id_personnel']]);
                     while($doctor_select_row = $doctor_select_query->fetch()){
                         echo(
