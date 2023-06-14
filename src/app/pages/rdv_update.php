@@ -24,48 +24,48 @@
     ;");
     $rdv_info->execute([$_SESSION['u_rdv_id']]);
     $rdv_info_row = $rdv_info->fetch();
-    $_SESSION['urdv_patient_id'] = $rdv_info_row['id_patient'];
+    $_SESSION['u_rdv_patient_id'] = $rdv_info_row['id_patient'];
 ?>
 <div class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Mise à jour rendez-vous</h1>
     <form action="server.php" method="post">
         <div class="mb-6 tooltip">
-            <label class="block font-bold mb-2" for="urdv_patient_name">Prénom</label>
+            <label class="block font-bold mb-2" for="u_rdv_patient_name">Prénom</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="urdv_patient_name"
+                name="u_rdv_patient_name"
                 value="<?= $rdv_info_row['prenom_patient']; ?>"
                 readonly
             />
             <span class="tooltiptext">Pour des raisons de sécurité, les informations concernant le/la patient(e) ne sont modifiables que depuis la section Patients.</span>
         </div>
         <div class="mb-6 tooltip">
-            <label class="block font-bold mb-2" for="urdv_patient_last_name">Nom</label>
+            <label class="block font-bold mb-2" for="u_rdv_patient_last_name">Nom</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="urdv_patient_last_name"
+                name="u_rdv_patient_last_name"
                 value="<?= $rdv_info_row['nom_patient']; ?>"
                 readonly
             />
             <span class="tooltiptext">Pour des raisons de sécurité, les informations concernant le/la patient(e) ne sont modifiables que depuis la section Patients.</span>
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="urdv_patient_need">Besoin</label>
+            <label class="block font-bold mb-2" for="u_rdv_patient_need">Besoin</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="text"
-                name="urdv_patient_need"
+                name="u_rdv_patient_need"
                 value="<?= $rdv_info_row['besoin']; ?>"
                 required
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="urdv_room">Salle</label>
+            <label class="block font-bold mb-2" for="u_rdv_room">Salle</label>
             <select
                 class="block border border-gray-400 p-2 w-full"
-                name="urdv_room"
+                name="u_rdv_room"
                 required
             >
                 <option value="<?= $rdv_info_row['id_salle']; ?>"><?= $rdv_info_row['nom_salle']; ?></option>
@@ -83,10 +83,10 @@
             </select>
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="urdv_doctor">Médecin</label>
+            <label class="block font-bold mb-2" for="u_rdv_doctor">Médecin</label>
             <select
                 class="block border border-gray-400 p-2 w-full"
-                name="urdv_doctor"
+                name="u_rdv_doctor"
                 required
             >
                 <option value="<?= $rdv_info_row['id_personnel']; ?>"><?= $rdv_info_row['prenom_personnel']." ".$rdv_info_row['nom_personnel']; ?></option>
@@ -104,16 +104,16 @@
             </select>
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="urdv_datetime">Date et heure</label>
+            <label class="block font-bold mb-2" for="u_rdv_datetime">Date et heure</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
                 type="datetime-local"
-                name="urdv_datetime"
+                name="u_rdv_datetime"
                 value="<?= $rdv_info_row['date_heure']; ?>"
                 required
             />
             <script>
-                document.getElementsByName("urdv_datetime")[0].setAttribute("min", new Date().toISOString().slice(0, 16));
+                document.getElementsByName("u_rdv_datetime")[0].setAttribute("min", new Date().toISOString().slice(0, 16));
             </script>
         </div>
         <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit" name="rdv_update">Valider</button>

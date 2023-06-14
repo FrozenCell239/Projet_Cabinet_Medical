@@ -627,11 +627,11 @@
     };
     if(isset($_POST['rdv_update'])){ //Handling rendezvous update.
         $rdv_update_query_options = [
-            ucfirst(trim($_POST['urdv_patient_need'])),
-            $_SESSION['urdv_patient_id'],
-            $_POST['urdv_doctor'],
-            $_POST['urdv_room'],
-            $_POST['urdv_datetime'],
+            ucfirst(trim($_POST['u_rdv_patient_need'])),
+            $_SESSION['u_rdv_patient_id'],
+            $_POST['u_rdv_doctor'],
+            $_POST['u_rdv_room'],
+            $_POST['u_rdv_datetime'],
             $_SESSION['u_rdv_id']
         ];
         $rdv_update_query = $conn->prepare("UPDATE reservations SET besoin=?, id_patient=?, id_personnel=?, id_salle=?, date_heure=? WHERE id_reservation=?;");
@@ -642,12 +642,12 @@
         </script>
         <?php
         unset($_SESSION['u_rdv_id']);
-        unset($_SESSION['urdv_patient_id']);
+        unset($_SESSION['u_rdv_patient_id']);
         header("Refresh: 0; url=rdv_manage.php");
     };
     if(isset($_POST['rdv_update_cancel'])){ //Rendezvous update canceling.
         unset($_SESSION['u_patient_id']);
-        unset($_SESSION['urdv_patient_id']);
+        unset($_SESSION['u_rdv_patient_id']);
         header("Refresh: 0; url=rdv_manage.php");
     };
 ?>
