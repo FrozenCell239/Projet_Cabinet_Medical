@@ -26,10 +26,10 @@
     $rdv_info_row = $rdv_info->fetch();
     $_SESSION['urdv_patient_id'] = $rdv_info_row['id_patient'];
 ?>
-<div style="margin-top: 250px;" class="bg-white rounded-xl p-8 shadow-md">
+<div class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Mise à jour rendez-vous</h1>
     <form action="server.php" method="post">
-        <div class="mb-6">
+        <div class="mb-6 tooltip">
             <label class="block font-bold mb-2" for="urdv_patient_name">Prénom</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
@@ -38,8 +38,9 @@
                 value="<?= $rdv_info_row['prenom_patient']; ?>"
                 readonly
             />
+            <span class="tooltiptext">Pour des raisons de sécurité, les informations concernant le/la patient(e) ne sont modifiables que depuis la section Patients.</span>
         </div>
-        <div class="mb-6">
+        <div class="mb-6 tooltip">
             <label class="block font-bold mb-2" for="urdv_patient_last_name">Nom</label>
             <input
                 class="block border border-gray-400 p-2 w-full"
@@ -48,6 +49,7 @@
                 value="<?= $rdv_info_row['nom_patient']; ?>"
                 readonly
             />
+            <span class="tooltiptext">Pour des raisons de sécurité, les informations concernant le/la patient(e) ne sont modifiables que depuis la section Patients.</span>
         </div>
         <div class="mb-6">
             <label class="block font-bold mb-2" for="urdv_patient_need">Besoin</label>
@@ -114,8 +116,9 @@
                 document.getElementsByName("urdv_datetime")[0].setAttribute("min", new Date().toISOString().slice(0, 16));
             </script>
         </div>
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="rdv_update">Valider</button>
+        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit" name="rdv_update">Valider</button>
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="rdv_update_cancel">Annuler</button>
+        <button id="<?= $_SESSION['u_rdv_id']; ?>" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded remove" type="submit" name="rdv_delete" style="float: right;">Supprimer</button>
     </form>
 </div>
 <?php include("footer.php"); ?>

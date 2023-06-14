@@ -15,6 +15,25 @@
         <?php if(basename($_SERVER['PHP_SELF']) === "rdv_update.php"){ ?>
         <style>
             input:read-only{background-color: #dddddd;}
+            .tooltip {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 200px;
+                background-color: black;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 0;
+            
+                position: absolute;
+                z-index: 1;
+            }
+  
+            .tooltip:hover .tooltiptext {visibility: visible;}
         </style>
         <?php }; ?>
 
