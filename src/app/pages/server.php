@@ -446,30 +446,71 @@
         unset($row);
     };
 
-    # New rendezvous creating
+    # Rendezvous creating
     if(isset($_POST['rdv_register'])){
         $patient_name = ucfirst(trim($_POST['patient_name']));
         $patient_last_name = ucfirst(trim($_POST['patient_last_name']));
         $patient_need = ucfirst(trim($_POST['patient_need']));
         $patient_number = trim($_POST['patient_number']);
+        $patient_ssn = trim($_POST['patient_ssn']);
+        $patient_address = trim($_POST['patient_address']);
+        $patient_town = trim($_POST['patient_town']);
         $doctor_select = $_POST['doctor_select'];
         $room_select = $_POST['room_select'];
         $new_rdv_datetime = $_POST['rdv_datetime'];
         $get_patient_id_query = $conn->prepare("SELECT id_patient FROM patients WHERE prenom_patient = ? AND nom_patient = ?;");
         $get_patient_id_query->execute([$patient_name, $patient_last_name]);
         if($get_patient_id_query->rowCount() == 0){
-            $new_patient_query = $conn->prepare("INSERT INTO patients (prenom_patient, nom_patient, numero_patient) VALUES (?, ?, ?);");
-            $new_patient_query->execute([$patient_name, $patient_last_name, $patient_number]);
+            $new_patient_query = $conn->prepare("
+                INSERT INTO patients (
+                    prenom_patient,
+                    nom_patient,
+                    numero_patient,
+                    numero_securite_sociale,
+                    adresse_patient,
+                    ville_patient
+                )
+                VALUES (?, ?, ?, ?, ?, ?);
+            ");
+            $new_patient_query->execute([
+                $patient_name,
+                $patient_last_name,
+                $patient_number,
+                $patient_ssn,
+                $patient_address,
+                $patient_town
+            ]);
             $get_patient_id_query->execute([$patient_name, $patient_last_name]);
             $patient_id = ($get_patient_id_query->fetch())['id_patient'];
         }
         else{
             $patient_id = ($get_patient_id_query->fetch())['id_patient'];
-            $update_patient_number = $conn->prepare("UPDATE patients SET numero_patient = ? WHERE  id_patient = ?;");
-            $update_patient_number->execute([$patient_number, $patient_id]);
+            $update_patient_number = $conn->prepare("
+                UPDATE patients
+                SET
+                    numero_patient = ?,
+                    numero_securite_sociale = ?,
+                    adresse_patient = ?,
+                    ville_patient = ?
+                WHERE id_patient = ?
+                ;
+            ");
+            $update_patient_number->execute([
+                $patient_number,
+                $patient_ssn,
+                $patient_address,
+                $patient_town,
+                $patient_id
+            ]);
         };
         $new_rdv_query = $conn->prepare("INSERT INTO reservations (id_patient, id_personnel, id_salle, date_heure, besoin) VALUES (?, ?, ?, ?, ?);");
-        $new_rdv_query->execute([$patient_id, $doctor_select, $room_select, $new_rdv_datetime, $patient_need]);
+        $new_rdv_query->execute([
+            $patient_id,
+            $doctor_select,
+            $room_select,
+            $new_rdv_datetime,
+            $patient_need
+        ]);
         ?>
             <script>
                 alert("Rendez-vous ajouté avec succès.");
