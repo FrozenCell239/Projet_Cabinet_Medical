@@ -2,25 +2,55 @@
 <main>
     <div class="container">
         <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12 mt-4">
                 <h1>Connecté(e) en tant que <b><?= $user->getFullName()."</b>, poste ".$user->getProfession(); ?>.</h1>
                 <hr>
                 <?php if($user->getPrivilegeLevel() >= 2){ //Interface propre aux administrateurs. ?>
                 <h2>Caméras de surveillance</h2>
-                <div></div>
-                <form action="main.php" method="post">
-                    <button type="submit" name="door_unlock">Déverrouiller la porte</button>
-                </form>
-                <form action="main.php" method="post">
-                    <button type="submit" name="door_open">Ouvrir la porte</button>
-                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="./../img/bliss.png" class="card-img-top" alt="Caméra interphone">
+                    <div class="card-body">
+                        <h5 class="card-title">Interphone</h5>
+                        <form action="main.php" method="post">
+                            <button class="btn btn-primary" type="submit" name="door_unlock">Déverrouiller la porte</button>
+                        </form>
+                        <form action="main.php" method="post">
+                            <button class="btn btn-primary" type="submit" name="door_open">Ouvrir la porte</button>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="./../img/bliss.png" class="card-img-top" alt="Caméra salle d'attente">
+                    <div class="card-body">
+                        <h5 class="card-title">Salle d'attente</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="./../img/bliss.png" class="card-img-top" alt="Caméra couloir">
+                    <div class="card-body">
+                        <h5 class="card-title">Couloir</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                 <?php
                     };
                     if(isset($_POST['door_unlock'])){doorControl('%');};
                     if(isset($_POST['door_open'])){doorControl('#');};
                     $_POST = array();
-                ?>
-                <?php if($user->getPrivilegeLevel() == 1 || $user->getPrivilegeLevel() == 2){ //Interface propre aux médecins. ?>
+                    if($user->getPrivilegeLevel() == 2){echo "<hr>";};
+                    if($user->getPrivilegeLevel() == 1 || $user->getPrivilegeLevel() == 2){ //Interface propre aux médecins. ?>
                     <div class="mt-5 mb-3 d-flex justify-content-between">
                         <h2 class="pull-left">Vos prochains rendez-vous</h2>
                     </div>
@@ -63,7 +93,6 @@
                         </tbody>
                     </table>
                 <?php }; ?>
-                <hr>
             </div>
         </div>
     </div>
