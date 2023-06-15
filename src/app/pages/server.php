@@ -410,42 +410,6 @@
         };
     };
 
-    # Doorcode changing
-    if(isset($_POST['change_doorcode'])){
-        $current_doorcode = sha1($_POST['current_doorcode']);
-        $new_doorcode = sha1($_POST['new_doorcode']);
-        $confirm_new_doorcode = sha1($_POST['confirm_new_doorcode']);
-        if($new_doorcode != $confirm_new_doorcode){ //Checks if new doorcodes match.
-            $errors[] = "Les codes ne correspondent pas.";
-            ?>
-            <script>
-                alert("Les codes ne correspondent pas.");
-            </script>
-            <?php
-        };
-        $current_doorcode_query = $conn->prepare("SELECT id_code FROM code_visiophone WHERE mdp_code = ? ;");
-        $current_doorcode_query->execute([$current_doorcode]);
-        if($current_doorcode_query->rowCount() == 0){ //Checks if typed current doorcode exists.
-            $errors[] = "Le code actuel saisi est incorrect.";
-            ?>
-            <script>
-                alert("Le code actuel saisi est incorrect.");
-            </script>
-            <?php
-        }
-        else{$doorcode_id = ($current_doorcode_query->fetch())['id_code'];};
-        if(count($errors) == 0){
-            $doorcode_change_query = $conn->prepare("UPDATE code_visiophone SET mdp_code=? WHERE id_code=?;");
-            $doorcode_change_query->execute([$new_doorcode, $doorcode_id]);
-            ?>
-            <script>
-                alert("Code modifié avec succès.");
-            </script>
-            <?php
-        };
-        unset($row);
-    };
-
     # Rendezvous creating
     if(isset($_POST['rdv_register'])){
         $patient_name = ucfirst(trim($_POST['patient_name']));
