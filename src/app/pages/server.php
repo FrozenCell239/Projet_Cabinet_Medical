@@ -480,6 +480,7 @@
                 alert("Rendez-vous ajouté avec succès.");
             </script>
         <?php
+        header("Refresh: 0; url=rdv_manage.php");
     };
 
     # Current user password updating
