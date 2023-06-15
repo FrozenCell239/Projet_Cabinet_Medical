@@ -18,7 +18,7 @@
                                             type: 'GET',
                                             success: function(data){
                                                 alert(data);
-                                                location.reload();
+                                                window.location.replace("staff_manage.php");
                                             },
                                             error: function(jqXHR, textStatus, errorThrown){
                                                 alert('Error: ' + textStatus + ' - ' + errorThrown);
@@ -93,7 +93,7 @@
                                             type: 'GET',
                                             success: function(data){
                                                 alert(data);
-                                                location.reload();
+                                                window.location.replace("rdv_manage.php");
                                             },
                                             error: function(jqXHR, textStatus, errorThrown){
                                                 alert('Error: ' + textStatus + ' - ' + errorThrown);
