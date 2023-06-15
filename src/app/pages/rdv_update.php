@@ -11,6 +11,7 @@
             besoin,
             nom_personnel,
             prenom_personnel,
+            profession,
             nom_salle,
             date_heure
         FROM reservations
@@ -68,25 +69,30 @@
                 name="u_rdv_doctor"
                 required
             >
-                <option value="<?= $rdv_info_row['id_personnel']; ?>"><?= $rdv_info_row['prenom_personnel']." ".$rdv_info_row['nom_personnel']; ?></option>
+                <option value="<?=$rdv_info_row['id_personnel']; ?>">
+                    <?= $rdv_info_row['prenom_personnel']." ".$rdv_info_row['nom_personnel']." (".$rdv_info_row['profession'].")"; ?>
+                </option>
                 <?php
                     $doctor_select_query = $conn->prepare("
                         SELECT
                             id_personnel,
                             prenom_personnel,
-                            nom_personnel
+                            nom_personnel,
+                            profession
                         FROM personnel
                         WHERE
                             id_personnel != ? AND
                             niveau_privilege > 0 AND
                             niveau_privilege< 3
-                        ");
+                        ;");
                     $doctor_select_query->execute([$rdv_info_row['id_personnel']]);
                     while($doctor_select_row = $doctor_select_query->fetch()){
                         echo(
                             '<option value="'.$doctor_select_row['id_personnel'].'">'.
-                            $doctor_select_row['prenom_personnel']." ".$doctor_select_row['nom_personnel'].
-                            "</option>"
+                            $doctor_select_row['prenom_personnel']." ".
+                            $doctor_select_row['nom_personnel']." (".
+                            $doctor_select_row['profession'].
+                            ")</option>"
                         );
                     };
                 ?>
