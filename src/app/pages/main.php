@@ -11,7 +11,7 @@
         </div>
         <div class="row">
             <div class="col-md-4 col-sm-4 col-xs-4">
-                <div class="card" style="width: 18rem;">
+                <div class="card">
                     <img src="./../img/bliss.png" class="card-img-top" alt="Caméra interphone">
                     <div class="card-body">
                         <h5 class="card-title">Interphone</h5>
@@ -26,7 +26,7 @@
                 
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4">
-                <div class="card" style="width: 18rem;">
+                <div class="card">
                     <img src="./../img/bliss.png" class="card-img-top" alt="Caméra salle d'attente">
                     <div class="card-body">
                         <h5 class="card-title">Salle d'attente</h5>
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4">
-                <div class="card" style="width: 18rem;">
+                <div class="card">
                     <img src="./../img/bliss.png" class="card-img-top" alt="Caméra couloir">
                     <div class="card-body">
                         <h5 class="card-title">Couloir</h5>
