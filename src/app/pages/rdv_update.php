@@ -62,27 +62,6 @@
             />
         </div>
         <div class="mb-6">
-            <label class="block font-bold mb-2" for="u_rdv_room">Salle</label>
-            <select
-                class="block border border-gray-400 p-2 w-full"
-                name="u_rdv_room"
-                required
-            >
-                <option value="<?= $rdv_info_row['id_salle']; ?>"><?= $rdv_info_row['nom_salle']; ?></option>
-                <?php
-                    $room_select_query = $conn->prepare("SELECT id_salle, nom_salle FROM salles WHERE id_salle != ?;");
-                    $room_select_query->execute([$rdv_info_row['id_salle']]);
-                    while($room_select_row = $room_select_query->fetch()){
-                        echo(
-                            '<option value="'.$room_select_row['id_salle'].'">'.
-                            $room_select_row['nom_salle'].
-                            "</option>"
-                        );
-                    };
-                ?>
-            </select>
-        </div>
-        <div class="mb-6">
             <label class="block font-bold mb-2" for="u_rdv_doctor">Médecin</label>
             <select
                 class="block border border-gray-400 p-2 w-full"
@@ -107,6 +86,27 @@
                         echo(
                             '<option value="'.$doctor_select_row['id_personnel'].'">'.
                             $doctor_select_row['prenom_personnel']." ".$doctor_select_row['nom_personnel'].
+                            "</option>"
+                        );
+                    };
+                ?>
+            </select>
+        </div>
+        <div class="mb-6">
+            <label class="block font-bold mb-2" for="u_rdv_room">Salle</label>
+            <select
+                class="block border border-gray-400 p-2 w-full"
+                name="u_rdv_room"
+                required
+            >
+                <option value="<?= $rdv_info_row['id_salle']; ?>"><?= $rdv_info_row['nom_salle']; ?></option>
+                <?php
+                    $room_select_query = $conn->prepare("SELECT id_salle, nom_salle FROM salles WHERE id_salle != ?;");
+                    $room_select_query->execute([$rdv_info_row['id_salle']]);
+                    while($room_select_row = $room_select_query->fetch()){
+                        echo(
+                            '<option value="'.$room_select_row['id_salle'].'">'.
+                            $room_select_row['nom_salle'].
                             "</option>"
                         );
                     };
