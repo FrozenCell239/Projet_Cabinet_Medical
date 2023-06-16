@@ -26,8 +26,8 @@ byte
 ;
 EthernetClient client;
 EthernetUDP udp;
-IPAddress ip(192, 168, 10, 50); //Arduino board's IP.
-IPAddress dns(192, 168, 10, 1);
+IPAddress ip(192, 168, 20, 50); //Arduino board's IP.
+IPAddress dns(192, 168, 20, 1);
 char
     reply, //Used to read the response from the server.
     customKey, //Stores the last key pressed on keypad.
