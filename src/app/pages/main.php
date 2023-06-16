@@ -27,7 +27,7 @@
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4">
                 <div class="card">
-                    <img src="./../img/bliss.png" class="card-img-top" alt="Caméra salle d'attente">
+                    <img src="http://192.168.20.2:88/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr=glados&pwd=glados02" class="card-img-top" alt="Caméra salle d'attente">
                     <div class="card-body">
                         <h5 class="card-title">Salle d'attente</h5>
                     </div>
