@@ -172,7 +172,7 @@
     function doorControl($ORDER){ //Handles order sending to Arduino board.
         if($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)){
             $udp_port = 8888;
-            $arduino_ip = '192.168.10.50';
+            $arduino_ip = '192.168.20.50';
             socket_sendto($socket, $ORDER, strlen($ORDER), 0, $arduino_ip, $udp_port);
             //socket_recvfrom($socket, $udp_buffer, 64, 0, $arduino_ip, $udp_port);
             //echo "Acknowledgement : $udp_buffer<br>";
@@ -207,7 +207,7 @@
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, //Makes the default fetch be an associative array.
     ];
     try{
-        $conn = new PDO("mysql:host=localhost:3307;dbname=cabinet;charset=utf8mb4", "root", "", $pdo_options); //Connection to the database. # $conn = new PDO("mysql:host=mariadb:3306;dbname=cabinet;charset=utf8mb4", "root", "root", $pdo_options);
+        $conn = new PDO("mysql:host=mariadb:3306;dbname=cabinet;charset=utf8mb4", "root", "root", $pdo_options); //Connection to the database. # $conn = new PDO("mysql:host=localhost:3307;dbname=cabinet;charset=utf8mb4", "root", "", $pdo_options);
     }
     catch(Exception $e){echo "Connection failed : ".$e->getMessage();};
     if(isset($_SESSION['user'])){$user = $_SESSION['user'];};
