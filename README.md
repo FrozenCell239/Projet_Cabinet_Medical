@@ -59,7 +59,7 @@ Clonez ce depôt avec l'outil Git. :
 $ git clone https://github.com/FrozenCell239/Projet_Cabinet_Medical.git
 ```
 
-Puis rendez vous dans le sous-dossier "src". Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS. :
+Puis rendez vous dans le sous-dossier `src`. Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS. :
 ```
 # docker-compose up -d
 ```
