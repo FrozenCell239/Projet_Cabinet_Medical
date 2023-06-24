@@ -1,4 +1,4 @@
-# Projet Cabinet Medical
+# Projet Cabinet Médical
 Projet développé dans le cadre de mon projet de deuxième année de BTS. Essentiellement Backend.
 
 **⚠️ Le développement de ce projet a été stoppé à la fin de mon BTS. J'en développe actuellement une version améliorée utilisant le framework Symfony 6 dans un autre repository.**
