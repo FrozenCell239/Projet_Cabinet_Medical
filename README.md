@@ -1,4 +1,4 @@
-# Projet Cabinet Medical
+# Projet Cabinet Médical
 Projet développé dans le cadre de mon projet de deuxième année de BTS. Essentiellement Backend.
 
 **⚠️ Le développement de ce projet a été stoppé à la fin de mon BTS. J'en développe actuellement une version améliorée utilisant le framework Symfony 6 dans un autre repository.**
@@ -59,7 +59,7 @@ Clonez ce depôt avec l'outil Git. :
 $ git clone https://github.com/FrozenCell239/Projet_Cabinet_Medical.git
 ```
 
-Puis rendez vous dans le sous-dossier "src". Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS. :
+Puis rendez vous dans le sous-dossier `src`. Entrez ensuite cette commande pour démarrer les conteneurs et installer les modules Node JS. :
 ```
 # docker-compose up -d
 ```
