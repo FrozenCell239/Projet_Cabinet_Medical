@@ -43,7 +43,7 @@
             if(basename($_SERVER['PHP_SELF']) !== "index.php"){
                 if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
                 else{header("Location: index.php");};
-                if($user->getPrivilegeLevel() < 3 && basename($_SERVER['PHP_SELF']) !== "main.php"){header("Location: main.php");};
+                if($user->getPrivilegeLevel() < 3 && basename($_SERVER['PHP_SELF']) !== "main.php" && basename($_SERVER['PHP_SELF']) !== "user_update.php"){header("Location: main.php");};
             }
             else{
                 if(isset($_SESSION['user'])){header("Location: main.php");};
