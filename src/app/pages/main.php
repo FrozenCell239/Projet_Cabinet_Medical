@@ -16,10 +16,10 @@
                     <div class="card-body">
                         <h5 class="card-title">Interphone</h5>
                         <form action="main.php" method="post">
-                            <button class="btn btn-primary" type="submit" name="door_unlock">Déverrouiller la porte</button>
+                            <button style="width: 100%;" class="btn btn-primary mt-3" type="submit" name="door_unlock">Déverrouiller la porte</button>
                         </form>
                         <form action="main.php" method="post">
-                            <button class="btn btn-primary" type="submit" name="door_open">Ouvrir la porte</button>
+                            <button style="width: 100%;" class="btn btn-primary mt-3" type="submit" name="door_open">Ouvrir la porte</button>
                         </form>
                     </div>
                 </div>
@@ -49,12 +49,30 @@
                     if(isset($_POST['door_unlock'])){doorControl('%');};
                     if(isset($_POST['door_open'])){doorControl('#');};
                     $_POST = array();
-                    if($user->getPrivilegeLevel() == 2){echo "<hr>";};
-                    if($user->getPrivilegeLevel() == 1 || $user->getPrivilegeLevel() == 2){ //Interface propre aux médecins. ?>
+                    if($user->getPrivilegeLevel() == 2){echo '<hr class="mt-5">';};
+                    if($user->getPrivilegeLevel() == 1 || $user->getPrivilegeLevel() == 2){ //Interface propre aux médecins.
+                        $rdv_query = $conn->prepare("
+                            SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
+                            FROM reservations
+                            INNER JOIN personnel
+                            ON reservations.id_personnel = personnel.id_personnel
+                            INNER JOIN patients
+                            ON reservations.id_patient = patients.id_patient
+                            INNER JOIN salles
+                            ON reservations.id_salle = salles.id_salle
+                            WHERE date_heure > NOW() AND personnel.id_personnel = ?
+                            ORDER BY reservations.date_heure ASC
+                        ;");
+                        $rdv_query->execute([$user->getID()]);
+                ?>
                     <div class="mt-5 mb-3 d-flex justify-content-between">
                         <h2 class="pull-left">Vos prochains rendez-vous</h2>
                     </div>
-                    <table class="table table-bordered table-striped">
+                <?php
+                        if($rdv_query->rowCount() == 0){echo '<p class="mb-5"><i>Vous n\'avez aucun rendez-vous à venir.</i></p>';}
+                        else{
+                ?>
+                    <table class="table table-bordered table-striped mb-5">
                         <thead>
                             <tr>
                                 <th>Patient</th>
@@ -64,20 +82,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
-                                $rdv_query = $conn->prepare("
-                                    SELECT id_reservation, prenom_patient, nom_patient, besoin, nom_salle, date_heure
-                                    FROM reservations
-                                    INNER JOIN personnel
-                                    ON reservations.id_personnel = personnel.id_personnel
-                                    INNER JOIN patients
-                                    ON reservations.id_patient = patients.id_patient
-                                    INNER JOIN salles
-                                    ON reservations.id_salle = salles.id_salle
-                                    WHERE date_heure > NOW() AND personnel.id_personnel = ?
-                                    ORDER BY reservations.date_heure ASC
-                                ;");
-                                $rdv_query->execute([$user->getID()]);
+                            <?php
                                 while($rdv_row = $rdv_query->fetch()){
                                     echo(
                                         '<tr id="'.$rdv_row['id_reservation'].'">'.
@@ -92,7 +97,7 @@
                             ?>
                         </tbody>
                     </table>
-                <?php }; ?>
+                <?php };}; ?>
             </div>
         </div>
     </div>
