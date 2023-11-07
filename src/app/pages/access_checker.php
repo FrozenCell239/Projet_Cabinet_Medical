@@ -1,5 +1,5 @@
 <?php
-    include('server.php');
+    require_once('server.php');
 
     if(isset($_GET['dc'])){ //Determines the SQL query for checking in case a doorcode is typed.
         $value = sha1($_GET['dc']);

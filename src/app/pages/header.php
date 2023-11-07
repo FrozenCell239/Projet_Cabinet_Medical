@@ -39,7 +39,7 @@
 
         <!--PHP scripts.-->
         <?php
-            include('server.php');
+            require_once('server.php');
             if(basename($_SERVER['PHP_SELF']) !== "index.php"){
                 if(isset($_SESSION['user'])){$user = $_SESSION['user'];}
                 else{header("Location: index.php");};

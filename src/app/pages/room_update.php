@@ -1,5 +1,5 @@
 <?php
-    include('header.php');
+    require_once('header.php');
     $room_info = $conn->prepare("SELECT nom_salle FROM salles WHERE id_salle=?;");
     $room_info->execute([$_SESSION['u_room_id']]);
     $room_info_row = $room_info->fetch();
@@ -22,4 +22,4 @@
         <button id="<?= $_SESSION['u_room_id']; ?>" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded remove" type="submit" name="room_delete" style="float: right;">Supprimer</button>
     </form>
 </div>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>

@@ -1,4 +1,4 @@
-<?php include("header.php"); ?>
+<?php require_once("header.php"); ?>
 <div class="bg-white rounded-xl p-8 shadow-md">
     <h1 class="text-2xl font-bold mb-6">Connexion</h1>
     <form action="index.php" method="post">
@@ -20,4 +20,4 @@
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="login">Se connecter</button>
     </form>
 </div>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>

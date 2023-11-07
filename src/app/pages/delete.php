@@ -1,5 +1,5 @@
 <?php
-    include('server.php');
+    require_once('server.php');
 
     # Staff deletion
     if(isset($_GET['what']) && $_GET['what'] == 1 && isset($_GET['id'])){

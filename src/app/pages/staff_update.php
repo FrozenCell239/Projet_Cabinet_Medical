@@ -1,5 +1,5 @@
 <?php
-    include("header.php");
+    require_once("header.php");
     $staff_info = $conn->prepare("
         SELECT
             prenom_personnel,
@@ -169,4 +169,4 @@
         <button id="<?= $_SESSION['u_staff_id']; ?>" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded remove" type="submit" name="staff_delete" style="float: right;">Supprimer</button>
     </form>
 </div>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>

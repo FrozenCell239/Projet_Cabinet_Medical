@@ -1,5 +1,5 @@
 <?php
-    include("header.php");
+    require_once("header.php");
     $rdv_info = $conn->prepare("
         SELECT
             id_reservation,
@@ -137,4 +137,4 @@
         <button id="<?= $_SESSION['u_rdv_id']; ?>" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded remove" type="submit" name="rdv_delete" style="float: right;">Supprimer</button>
     </form>
 </div>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>

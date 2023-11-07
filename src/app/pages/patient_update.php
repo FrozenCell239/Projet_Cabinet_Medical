@@ -1,5 +1,5 @@
 <?php
-    include('header.php');
+    require_once('header.php');
     $patient_info = $conn->prepare("SELECT prenom_patient, nom_patient, numero_patient, numero_securite_sociale, adresse_patient, ville_patient FROM patients WHERE id_patient=?;");
     $patient_info->execute([$_SESSION['u_patient_id']]);
     $patient_info_row = $patient_info->fetch();
@@ -80,4 +80,4 @@
         <button id="<?= $_SESSION['u_patient_id']; ?>" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded remove" type="submit" name="patient_delete" style="float: right;">Supprimer</button>
     </form>
 </div>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>

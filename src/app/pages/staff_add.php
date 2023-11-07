@@ -1,4 +1,4 @@
-<?php include("header.php"); ?>
+<?php require_once("header.php"); ?>
 <div class="bg-white rounded-xl p-8 shadow-md" style="margin-top: 250px">
     <h1 class="text-2xl font-bold mb-6">Ajout d'un personnel</h1>
     <form action="server.php" method="post">
@@ -169,4 +169,4 @@
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" onclick="location.href='staff_manage.php';" name="staff_register_cancel">Annuler</button>
     </form>
 </div>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>

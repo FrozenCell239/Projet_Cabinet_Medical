@@ -1,4 +1,4 @@
-<?php include("header.php"); ?>
+<?php require_once("header.php"); ?>
 <main>
     <div class="container">
         <div class="row">
@@ -17,4 +17,4 @@
         </div>
     </div>
 </main>
-<?php include("footer.php"); ?>
+<?php require_once("footer.php"); ?>
